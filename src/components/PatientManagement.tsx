@@ -1,19 +1,22 @@
 
 import React, { useState } from 'react';
-import { Plus, Search, Edit, Trash2, Eye, Phone, Mail, Calendar } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Phone, Mail, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarInitials } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Textarea } from '@/components/ui/textarea';
 
 const PatientManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
-  
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
   const [patients, setPatients] = useState([
     {
       id: 1,
@@ -22,31 +25,40 @@ const PatientManagement = () => {
       phone: '(11) 99999-9999',
       email: 'maria@email.com',
       birthDate: '1985-03-15',
-      lastVisit: '2024-05-20',
-      status: 'Ativo',
-      nextAppointment: '2024-06-10 14:00'
+      address: 'Rua das Flores, 123 - São Paulo, SP',
+      bloodType: 'O+',
+      allergies: 'Penicilina',
+      emergencyContact: 'João Silva - (11) 88888-8888',
+      lastVisit: '2024-05-15',
+      status: 'Ativo'
     },
     {
       id: 2,
-      name: 'João Santos',
+      name: 'Pedro Costa',
       cpf: '987.654.321-00',
-      phone: '(11) 88888-8888',
-      email: 'joao@email.com',
-      birthDate: '1978-08-22',
-      lastVisit: '2024-05-18',
-      status: 'Ativo',
-      nextAppointment: null
+      phone: '(11) 77777-7777',
+      email: 'pedro@email.com',
+      birthDate: '1990-07-22',
+      address: 'Av. Paulista, 456 - São Paulo, SP',
+      bloodType: 'A+',
+      allergies: 'Nenhuma',
+      emergencyContact: 'Ana Costa - (11) 66666-6666',
+      lastVisit: '2024-05-20',
+      status: 'Ativo'
     },
     {
       id: 3,
-      name: 'Ana Costa',
+      name: 'Ana Oliveira',
       cpf: '456.789.123-00',
-      phone: '(11) 77777-7777',
+      phone: '(11) 55555-5555',
       email: 'ana@email.com',
-      birthDate: '1992-12-05',
-      lastVisit: '2024-04-30',
-      status: 'Inativo',
-      nextAppointment: '2024-06-12 09:30'
+      birthDate: '1978-12-10',
+      address: 'Rua Augusta, 789 - São Paulo, SP',
+      bloodType: 'B-',
+      allergies: 'Latex',
+      emergencyContact: 'Carlos Oliveira - (11) 44444-4444',
+      lastVisit: '2024-05-18',
+      status: 'Inativo'
     }
   ]);
 
@@ -55,30 +67,58 @@ const PatientManagement = () => {
     cpf: '',
     phone: '',
     email: '',
-    birthDate: ''
+    birthDate: '',
+    address: '',
+    bloodType: '',
+    allergies: '',
+    emergencyContact: ''
   });
 
   const filteredPatients = patients.filter(patient =>
     patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     patient.cpf.includes(searchTerm) ||
-    patient.email.toLowerCase().includes(searchTerm.toLowerCase())
+    patient.phone.includes(searchTerm)
   );
 
   const handleAddPatient = () => {
     const patient = {
       id: patients.length + 1,
       ...newPatient,
-      lastVisit: null,
-      status: 'Ativo',
-      nextAppointment: null
+      lastVisit: new Date().toISOString().split('T')[0],
+      status: 'Ativo'
     };
     setPatients([...patients, patient]);
-    setNewPatient({ name: '', cpf: '', phone: '', email: '', birthDate: '' });
+    setNewPatient({
+      name: '',
+      cpf: '',
+      phone: '',
+      email: '',
+      birthDate: '',
+      address: '',
+      bloodType: '',
+      allergies: '',
+      emergencyContact: ''
+    });
     setIsAddDialogOpen(false);
   };
 
+  const handleEditPatient = () => {
+    setPatients(patients.map(p => p.id === selectedPatient.id ? selectedPatient : p));
+    setIsEditDialogOpen(false);
+    setSelectedPatient(null);
+  };
+
+  const handleDeletePatient = (id) => {
+    setPatients(patients.filter(p => p.id !== id));
+  };
+
+  const openEditDialog = (patient) => {
+    setSelectedPatient({...patient});
+    setIsEditDialogOpen(true);
+  };
+
   const getInitials = (name) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
   };
 
   return (
@@ -97,7 +137,7 @@ const PatientManagement = () => {
               Novo Paciente
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Cadastrar Novo Paciente</DialogTitle>
               <DialogDescription>
@@ -105,50 +145,101 @@ const PatientManagement = () => {
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="name">Nome Completo</Label>
+                  <Input
+                    id="name"
+                    value={newPatient.name}
+                    onChange={(e) => setNewPatient({...newPatient, name: e.target.value})}
+                    placeholder="Nome do paciente"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="cpf">CPF</Label>
+                  <Input
+                    id="cpf"
+                    value={newPatient.cpf}
+                    onChange={(e) => setNewPatient({...newPatient, cpf: e.target.value})}
+                    placeholder="000.000.000-00"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="phone">Telefone</Label>
+                  <Input
+                    id="phone"
+                    value={newPatient.phone}
+                    onChange={(e) => setNewPatient({...newPatient, phone: e.target.value})}
+                    placeholder="(11) 99999-9999"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={newPatient.email}
+                    onChange={(e) => setNewPatient({...newPatient, email: e.target.value})}
+                    placeholder="email@exemplo.com"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="birthDate">Data de Nascimento</Label>
+                  <Input
+                    id="birthDate"
+                    type="date"
+                    value={newPatient.birthDate}
+                    onChange={(e) => setNewPatient({...newPatient, birthDate: e.target.value})}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="bloodType">Tipo Sanguíneo</Label>
+                  <Select onValueChange={(value) => setNewPatient({...newPatient, bloodType: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="A+">A+</SelectItem>
+                      <SelectItem value="A-">A-</SelectItem>
+                      <SelectItem value="B+">B+</SelectItem>
+                      <SelectItem value="B-">B-</SelectItem>
+                      <SelectItem value="AB+">AB+</SelectItem>
+                      <SelectItem value="AB-">AB-</SelectItem>
+                      <SelectItem value="O+">O+</SelectItem>
+                      <SelectItem value="O-">O-</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
               <div className="grid gap-2">
-                <Label htmlFor="name">Nome Completo</Label>
+                <Label htmlFor="address">Endereço</Label>
                 <Input
-                  id="name"
-                  value={newPatient.name}
-                  onChange={(e) => setNewPatient({...newPatient, name: e.target.value})}
-                  placeholder="Digite o nome completo"
+                  id="address"
+                  value={newPatient.address}
+                  onChange={(e) => setNewPatient({...newPatient, address: e.target.value})}
+                  placeholder="Rua, número, bairro, cidade, estado"
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="cpf">CPF</Label>
-                <Input
-                  id="cpf"
-                  value={newPatient.cpf}
-                  onChange={(e) => setNewPatient({...newPatient, cpf: e.target.value})}
-                  placeholder="000.000.000-00"
+                <Label htmlFor="allergies">Alergias</Label>
+                <Textarea
+                  id="allergies"
+                  value={newPatient.allergies}
+                  onChange={(e) => setNewPatient({...newPatient, allergies: e.target.value})}
+                  placeholder="Descreva alergias conhecidas"
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="phone">Telefone</Label>
+                <Label htmlFor="emergencyContact">Contato de Emergência</Label>
                 <Input
-                  id="phone"
-                  value={newPatient.phone}
-                  onChange={(e) => setNewPatient({...newPatient, phone: e.target.value})}
-                  placeholder="(00) 00000-0000"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={newPatient.email}
-                  onChange={(e) => setNewPatient({...newPatient, email: e.target.value})}
-                  placeholder="email@exemplo.com"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="birthDate">Data de Nascimento</Label>
-                <Input
-                  id="birthDate"
-                  type="date"
-                  value={newPatient.birthDate}
-                  onChange={(e) => setNewPatient({...newPatient, birthDate: e.target.value})}
+                  id="emergencyContact"
+                  value={newPatient.emergencyContact}
+                  onChange={(e) => setNewPatient({...newPatient, emergencyContact: e.target.value})}
+                  placeholder="Nome - Telefone"
                 />
               </div>
             </div>
@@ -166,7 +257,7 @@ const PatientManagement = () => {
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
         <Input
-          placeholder="Buscar por nome, CPF ou email..."
+          placeholder="Buscar por nome, CPF ou telefone..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10"
@@ -180,51 +271,54 @@ const PatientManagement = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
-                  <Avatar>
+                  <Avatar className="h-12 w-12">
                     <AvatarFallback className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
                       {getInitials(patient.name)}
                     </AvatarFallback>
                   </Avatar>
+                  
                   <div>
                     <h3 className="font-semibold text-lg">{patient.name}</h3>
                     <div className="flex items-center space-x-4 text-sm text-gray-600">
-                      <span>{patient.cpf}</span>
+                      <span>CPF: {patient.cpf}</span>
+                      <span>•</span>
                       <span className="flex items-center">
-                        <Phone className="mr-1 h-3 w-3" />
+                        <Phone className="h-3 w-3 mr-1" />
                         {patient.phone}
                       </span>
+                      <span>•</span>
                       <span className="flex items-center">
-                        <Mail className="mr-1 h-3 w-3" />
+                        <Mail className="h-3 w-3 mr-1" />
                         {patient.email}
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <Badge variant={patient.status === 'Ativo' ? 'default' : 'secondary'}>
+                        {patient.status}
+                      </Badge>
+                      <span className="text-sm text-gray-500">
+                        Última visita: {new Date(patient.lastVisit).toLocaleDateString('pt-BR')}
                       </span>
                     </div>
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-4">
-                  <div className="text-right">
-                    <Badge variant={patient.status === 'Ativo' ? 'default' : 'secondary'}>
-                      {patient.status}
-                    </Badge>
-                    {patient.nextAppointment && (
-                      <p className="text-sm text-gray-600 mt-1 flex items-center">
-                        <Calendar className="mr-1 h-3 w-3" />
-                        Próx: {new Date(patient.nextAppointment).toLocaleDateString('pt-BR')}
-                      </p>
-                    )}
-                  </div>
-                  
-                  <div className="flex space-x-2">
-                    <Button variant="outline" size="sm">
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+                <div className="flex space-x-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => openEditDialog(patient)}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleDeletePatient(patient.id)}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             </CardContent>
@@ -232,11 +326,72 @@ const PatientManagement = () => {
         ))}
       </div>
 
-      {filteredPatients.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-gray-500">Nenhum paciente encontrado</p>
-        </div>
-      )}
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Editar Paciente</DialogTitle>
+            <DialogDescription>
+              Atualize as informações do paciente.
+            </DialogDescription>
+          </DialogHeader>
+          {selectedPatient && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="edit-name">Nome Completo</Label>
+                  <Input
+                    id="edit-name"
+                    value={selectedPatient.name}
+                    onChange={(e) => setSelectedPatient({...selectedPatient, name: e.target.value})}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="edit-cpf">CPF</Label>
+                  <Input
+                    id="edit-cpf"
+                    value={selectedPatient.cpf}
+                    onChange={(e) => setSelectedPatient({...selectedPatient, cpf: e.target.value})}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="edit-phone">Telefone</Label>
+                  <Input
+                    id="edit-phone"
+                    value={selectedPatient.phone}
+                    onChange={(e) => setSelectedPatient({...selectedPatient, phone: e.target.value})}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="edit-email">Email</Label>
+                  <Input
+                    id="edit-email"
+                    type="email"
+                    value={selectedPatient.email}
+                    onChange={(e) => setSelectedPatient({...selectedPatient, email: e.target.value})}
+                  />
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="edit-address">Endereço</Label>
+                <Input
+                  id="edit-address"
+                  value={selectedPatient.address}
+                  onChange={(e) => setSelectedPatient({...selectedPatient, address: e.target.value})}
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleEditPatient}>Salvar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
