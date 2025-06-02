@@ -1,10 +1,11 @@
 
 import React, { useState } from 'react';
-import { Calendar, Users, Clock, FileText, Menu, Bell, Search } from 'lucide-react';
+import { Calendar, Users, Clock, FileText, Menu, Bell, Search, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Link } from 'react-router-dom';
 import Dashboard from '@/components/Dashboard';
 import PatientManagement from '@/components/PatientManagement';
 import AppointmentScheduling from '@/components/AppointmentScheduling';
@@ -46,6 +47,12 @@ const Index = () => {
           </div>
           
           <div className="flex items-center space-x-4">
+            <Link to="/agendar">
+              <Button variant="outline" size="sm">
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Página do Cliente
+              </Button>
+            </Link>
             <div className="relative hidden md:block">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
