@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Search, Plus, Edit, Trash2, Phone, Mail, User } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Phone, Mail, User, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,12 +10,14 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const PatientManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
 
   const [patients, setPatients] = useState([
     {
@@ -30,7 +32,18 @@ const PatientManagement = () => {
       allergies: 'Penicilina',
       emergencyContact: 'João Silva - (11) 88888-8888',
       lastVisit: '2024-05-15',
-      status: 'Ativo'
+      status: 'Ativo',
+      insurance: 'convenio',
+      anamnese: {
+        subjetivo: 'Paciente relata dor no peito há 3 dias',
+        objetivo: 'PA: 130/80, FC: 72bpm, ausculta cardíaca normal',
+        avaliacao: 'Possível ansiedade, descartar problemas cardíacos',
+        plano: 'ECG, exames laboratoriais, retorno em 1 semana'
+      },
+      historico: [
+        { tipo: 'Consulta', descricao: 'Consulta cardiológica', data: '2024-05-15' },
+        { tipo: 'Exame', descricao: 'ECG normal', data: '2024-05-10' }
+      ]
     },
     {
       id: 2,
@@ -44,21 +57,15 @@ const PatientManagement = () => {
       allergies: 'Nenhuma',
       emergencyContact: 'Ana Costa - (11) 66666-6666',
       lastVisit: '2024-05-20',
-      status: 'Ativo'
-    },
-    {
-      id: 3,
-      name: 'Ana Oliveira',
-      cpf: '456.789.123-00',
-      phone: '(11) 55555-5555',
-      email: 'ana@email.com',
-      birthDate: '1978-12-10',
-      address: 'Rua Augusta, 789 - São Paulo, SP',
-      bloodType: 'B-',
-      allergies: 'Latex',
-      emergencyContact: 'Carlos Oliveira - (11) 44444-4444',
-      lastVisit: '2024-05-18',
-      status: 'Inativo'
+      status: 'Ativo',
+      insurance: 'particular',
+      anamnese: {
+        subjetivo: 'Dor de cabeça recorrente',
+        objetivo: 'Exame neurológico normal',
+        avaliacao: 'Cefaleia tensional',
+        plano: 'Analgésicos, técnicas de relaxamento'
+      },
+      historico: []
     }
   ]);
 
@@ -71,7 +78,14 @@ const PatientManagement = () => {
     address: '',
     bloodType: '',
     allergies: '',
-    emergencyContact: ''
+    emergencyContact: '',
+    insurance: 'particular',
+    anamnese: {
+      subjetivo: '',
+      objetivo: '',
+      avaliacao: '',
+      plano: ''
+    }
   });
 
   const filteredPatients = patients.filter(patient =>
@@ -85,7 +99,8 @@ const PatientManagement = () => {
       id: patients.length + 1,
       ...newPatient,
       lastVisit: new Date().toISOString().split('T')[0],
-      status: 'Ativo'
+      status: 'Ativo',
+      historico: []
     };
     setPatients([...patients, patient]);
     setNewPatient({
@@ -97,7 +112,14 @@ const PatientManagement = () => {
       address: '',
       bloodType: '',
       allergies: '',
-      emergencyContact: ''
+      emergencyContact: '',
+      insurance: 'particular',
+      anamnese: {
+        subjetivo: '',
+        objetivo: '',
+        avaliacao: '',
+        plano: ''
+      }
     });
     setIsAddDialogOpen(false);
   };
@@ -115,6 +137,11 @@ const PatientManagement = () => {
   const openEditDialog = (patient) => {
     setSelectedPatient({...patient});
     setIsEditDialogOpen(true);
+  };
+
+  const openHistoryDialog = (patient) => {
+    setSelectedPatient(patient);
+    setIsHistoryDialogOpen(true);
   };
 
   const getInitials = (name) => {
@@ -137,112 +164,197 @@ const PatientManagement = () => {
               Novo Paciente
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+          <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Cadastrar Novo Paciente</DialogTitle>
               <DialogDescription>
                 Preencha as informações do paciente abaixo.
               </DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
+            <Tabs defaultValue="dados" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="dados">Dados Pessoais</TabsTrigger>
+                <TabsTrigger value="anamnese">Anamnese SOAP</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="dados" className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="name">Nome Completo</Label>
+                    <Input
+                      id="name"
+                      value={newPatient.name}
+                      onChange={(e) => setNewPatient({...newPatient, name: e.target.value})}
+                      placeholder="Nome do paciente"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="cpf">CPF</Label>
+                    <Input
+                      id="cpf"
+                      value={newPatient.cpf}
+                      onChange={(e) => setNewPatient({...newPatient, cpf: e.target.value})}
+                      placeholder="000.000.000-00"
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="phone">Telefone</Label>
+                    <Input
+                      id="phone"
+                      value={newPatient.phone}
+                      onChange={(e) => setNewPatient({...newPatient, phone: e.target.value})}
+                      placeholder="(11) 99999-9999"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={newPatient.email}
+                      onChange={(e) => setNewPatient({...newPatient, email: e.target.value})}
+                      placeholder="email@exemplo.com"
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="birthDate">Data de Nascimento</Label>
+                    <Input
+                      id="birthDate"
+                      type="date"
+                      value={newPatient.birthDate}
+                      onChange={(e) => setNewPatient({...newPatient, birthDate: e.target.value})}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="bloodType">Tipo Sanguíneo</Label>
+                    <Select onValueChange={(value) => setNewPatient({...newPatient, bloodType: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="A+">A+</SelectItem>
+                        <SelectItem value="A-">A-</SelectItem>
+                        <SelectItem value="B+">B+</SelectItem>
+                        <SelectItem value="B-">B-</SelectItem>
+                        <SelectItem value="AB+">AB+</SelectItem>
+                        <SelectItem value="AB-">AB-</SelectItem>
+                        <SelectItem value="O+">O+</SelectItem>
+                        <SelectItem value="O-">O-</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="insurance">Tipo de Atendimento</Label>
+                    <Select onValueChange={(value) => setNewPatient({...newPatient, insurance: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="particular">Particular</SelectItem>
+                        <SelectItem value="convenio">Convênio</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
                 <div className="grid gap-2">
-                  <Label htmlFor="name">Nome Completo</Label>
+                  <Label htmlFor="address">Endereço</Label>
                   <Input
-                    id="name"
-                    value={newPatient.name}
-                    onChange={(e) => setNewPatient({...newPatient, name: e.target.value})}
-                    placeholder="Nome do paciente"
+                    id="address"
+                    value={newPatient.address}
+                    onChange={(e) => setNewPatient({...newPatient, address: e.target.value})}
+                    placeholder="Rua, número, bairro, cidade, estado"
                   />
                 </div>
+                
                 <div className="grid gap-2">
-                  <Label htmlFor="cpf">CPF</Label>
-                  <Input
-                    id="cpf"
-                    value={newPatient.cpf}
-                    onChange={(e) => setNewPatient({...newPatient, cpf: e.target.value})}
-                    placeholder="000.000.000-00"
+                  <Label htmlFor="allergies">Alergias</Label>
+                  <Textarea
+                    id="allergies"
+                    value={newPatient.allergies}
+                    onChange={(e) => setNewPatient({...newPatient, allergies: e.target.value})}
+                    placeholder="Descreva alergias conhecidas"
                   />
                 </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
+                
                 <div className="grid gap-2">
-                  <Label htmlFor="phone">Telefone</Label>
+                  <Label htmlFor="emergencyContact">Contato de Emergência</Label>
                   <Input
-                    id="phone"
-                    value={newPatient.phone}
-                    onChange={(e) => setNewPatient({...newPatient, phone: e.target.value})}
-                    placeholder="(11) 99999-9999"
+                    id="emergencyContact"
+                    value={newPatient.emergencyContact}
+                    onChange={(e) => setNewPatient({...newPatient, emergencyContact: e.target.value})}
+                    placeholder="Nome - Telefone"
                   />
                 </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={newPatient.email}
-                    onChange={(e) => setNewPatient({...newPatient, email: e.target.value})}
-                    placeholder="email@exemplo.com"
-                  />
+              </TabsContent>
+              
+              <TabsContent value="anamnese" className="space-y-4">
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="subjetivo">S - Subjetivo (Queixas do paciente)</Label>
+                    <Textarea
+                      id="subjetivo"
+                      value={newPatient.anamnese.subjetivo}
+                      onChange={(e) => setNewPatient({
+                        ...newPatient, 
+                        anamnese: {...newPatient.anamnese, subjetivo: e.target.value}
+                      })}
+                      placeholder="O que o paciente relata, sintomas, queixas..."
+                      rows={3}
+                    />
+                  </div>
+                  
+                  <div className="grid gap-2">
+                    <Label htmlFor="objetivo">O - Objetivo (Dados observáveis)</Label>
+                    <Textarea
+                      id="objetivo"
+                      value={newPatient.anamnese.objetivo}
+                      onChange={(e) => setNewPatient({
+                        ...newPatient, 
+                        anamnese: {...newPatient.anamnese, objetivo: e.target.value}
+                      })}
+                      placeholder="Sinais vitais, exame físico, resultados de exames..."
+                      rows={3}
+                    />
+                  </div>
+                  
+                  <div className="grid gap-2">
+                    <Label htmlFor="avaliacao">A - Avaliação (Diagnóstico/Impressão clínica)</Label>
+                    <Textarea
+                      id="avaliacao"
+                      value={newPatient.anamnese.avaliacao}
+                      onChange={(e) => setNewPatient({
+                        ...newPatient, 
+                        anamnese: {...newPatient.anamnese, avaliacao: e.target.value}
+                      })}
+                      placeholder="Hipóteses diagnósticas, avaliação clínica..."
+                      rows={3}
+                    />
+                  </div>
+                  
+                  <div className="grid gap-2">
+                    <Label htmlFor="plano">P - Plano (Conduta/Tratamento)</Label>
+                    <Textarea
+                      id="plano"
+                      value={newPatient.anamnese.plano}
+                      onChange={(e) => setNewPatient({
+                        ...newPatient, 
+                        anamnese: {...newPatient.anamnese, plano: e.target.value}
+                      })}
+                      placeholder="Medicações, exames solicitados, retornos, orientações..."
+                      rows={3}
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="birthDate">Data de Nascimento</Label>
-                  <Input
-                    id="birthDate"
-                    type="date"
-                    value={newPatient.birthDate}
-                    onChange={(e) => setNewPatient({...newPatient, birthDate: e.target.value})}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="bloodType">Tipo Sanguíneo</Label>
-                  <Select onValueChange={(value) => setNewPatient({...newPatient, bloodType: value})}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="A+">A+</SelectItem>
-                      <SelectItem value="A-">A-</SelectItem>
-                      <SelectItem value="B+">B+</SelectItem>
-                      <SelectItem value="B-">B-</SelectItem>
-                      <SelectItem value="AB+">AB+</SelectItem>
-                      <SelectItem value="AB-">AB-</SelectItem>
-                      <SelectItem value="O+">O+</SelectItem>
-                      <SelectItem value="O-">O-</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="address">Endereço</Label>
-                <Input
-                  id="address"
-                  value={newPatient.address}
-                  onChange={(e) => setNewPatient({...newPatient, address: e.target.value})}
-                  placeholder="Rua, número, bairro, cidade, estado"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="allergies">Alergias</Label>
-                <Textarea
-                  id="allergies"
-                  value={newPatient.allergies}
-                  onChange={(e) => setNewPatient({...newPatient, allergies: e.target.value})}
-                  placeholder="Descreva alergias conhecidas"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="emergencyContact">Contato de Emergência</Label>
-                <Input
-                  id="emergencyContact"
-                  value={newPatient.emergencyContact}
-                  onChange={(e) => setNewPatient({...newPatient, emergencyContact: e.target.value})}
-                  placeholder="Nome - Telefone"
-                />
-              </div>
-            </div>
+              </TabsContent>
+            </Tabs>
+            
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
                 Cancelar
@@ -296,6 +408,9 @@ const PatientManagement = () => {
                       <Badge variant={patient.status === 'Ativo' ? 'default' : 'secondary'}>
                         {patient.status}
                       </Badge>
+                      <Badge variant={patient.insurance === 'convenio' ? 'outline' : 'secondary'}>
+                        {patient.insurance === 'convenio' ? 'Convênio' : 'Particular'}
+                      </Badge>
                       <span className="text-sm text-gray-500">
                         Última visita: {new Date(patient.lastVisit).toLocaleDateString('pt-BR')}
                       </span>
@@ -304,6 +419,13 @@ const PatientManagement = () => {
                 </div>
                 
                 <div className="flex space-x-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => openHistoryDialog(patient)}
+                  >
+                    <FileText className="h-4 w-4" />
+                  </Button>
                   <Button
                     size="sm"
                     variant="outline"
@@ -375,6 +497,18 @@ const PatientManagement = () => {
                 </div>
               </div>
               <div className="grid gap-2">
+                <Label htmlFor="edit-insurance">Tipo de Atendimento</Label>
+                <Select onValueChange={(value) => setSelectedPatient({...selectedPatient, insurance: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={selectedPatient.insurance === 'convenio' ? 'Convênio' : 'Particular'} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="particular">Particular</SelectItem>
+                    <SelectItem value="convenio">Convênio</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
                 <Label htmlFor="edit-address">Endereço</Label>
                 <Input
                   id="edit-address"
@@ -389,6 +523,71 @@ const PatientManagement = () => {
               Cancelar
             </Button>
             <Button onClick={handleEditPatient}>Salvar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* History Dialog */}
+      <Dialog open={isHistoryDialogOpen} onOpenChange={setIsHistoryDialogOpen}>
+        <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Histórico do Paciente</DialogTitle>
+            <DialogDescription>
+              {selectedPatient?.name} - Anamnese e histórico médico
+            </DialogDescription>
+          </DialogHeader>
+          {selectedPatient && (
+            <div className="space-y-6">
+              {/* Última Anamnese */}
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Última Anamnese (SOAP)</h3>
+                <div className="grid gap-4">
+                  <div className="p-3 bg-blue-50 rounded-lg">
+                    <h4 className="font-medium text-blue-900">S - Subjetivo</h4>
+                    <p className="text-blue-800">{selectedPatient.anamnese?.subjetivo || 'Não informado'}</p>
+                  </div>
+                  <div className="p-3 bg-green-50 rounded-lg">
+                    <h4 className="font-medium text-green-900">O - Objetivo</h4>
+                    <p className="text-green-800">{selectedPatient.anamnese?.objetivo || 'Não informado'}</p>
+                  </div>
+                  <div className="p-3 bg-yellow-50 rounded-lg">
+                    <h4 className="font-medium text-yellow-900">A - Avaliação</h4>
+                    <p className="text-yellow-800">{selectedPatient.anamnese?.avaliacao || 'Não informado'}</p>
+                  </div>
+                  <div className="p-3 bg-purple-50 rounded-lg">
+                    <h4 className="font-medium text-purple-900">P - Plano</h4>
+                    <p className="text-purple-800">{selectedPatient.anamnese?.plano || 'Não informado'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Histórico */}
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Histórico de Consultas</h3>
+                {selectedPatient.historico && selectedPatient.historico.length > 0 ? (
+                  <div className="space-y-2">
+                    {selectedPatient.historico.map((item, index) => (
+                      <div key={index} className="p-3 border rounded-lg">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <Badge variant="outline">{item.tipo}</Badge>
+                            <p className="mt-1">{item.descricao}</p>
+                          </div>
+                          <span className="text-sm text-gray-500">
+                            {new Date(item.data).toLocaleDateString('pt-BR')}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500">Nenhum histórico registrado</p>
+                )}
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button onClick={() => setIsHistoryDialogOpen(false)}>Fechar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

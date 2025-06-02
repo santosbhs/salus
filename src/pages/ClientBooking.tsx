@@ -18,6 +18,8 @@ const ClientBooking = () => {
     dataConsulta: '',
     horario: '',
     profissional: '',
+    tipoConsulta: 'primeira',
+    tipoAtendimento: 'particular',
     observacoes: ''
   });
   const { toast } = useToast();
@@ -49,6 +51,8 @@ const ClientBooking = () => {
       dataConsulta: '',
       horario: '',
       profissional: '',
+      tipoConsulta: 'primeira',
+      tipoAtendimento: 'particular',
       observacoes: ''
     });
   };
@@ -193,6 +197,33 @@ const ClientBooking = () => {
                   </Select>
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="tipoConsulta">Tipo de Consulta</Label>
+                    <Select onValueChange={(value) => handleInputChange('tipoConsulta', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Primeira Consulta" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="primeira">Primeira Consulta</SelectItem>
+                        <SelectItem value="retorno">Retorno</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="tipoAtendimento">Tipo de Atendimento</Label>
+                    <Select onValueChange={(value) => handleInputChange('tipoAtendimento', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Particular" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="particular">Particular</SelectItem>
+                        <SelectItem value="convenio">Convênio</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
                 <div>
                   <Label htmlFor="observacoes">Observações</Label>
                   <Textarea
@@ -253,6 +284,24 @@ const ClientBooking = () => {
                       <span className="text-sm">{prof}</span>
                     </div>
                   ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Tipos de Consulta</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div>
+                    <h4 className="font-medium text-purple-900">Primeira Consulta</h4>
+                    <p className="text-sm text-gray-600">Avaliação inicial completa, anamnese e exame físico</p>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-blue-900">Retorno</h4>
+                    <p className="text-sm text-gray-600">Acompanhamento e reavaliação de pacientes já atendidos</p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
