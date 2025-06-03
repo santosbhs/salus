@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, UserCheck, FileText, Clock, Save } from 'lucide-react';
+import { Search, UserCheck, FileText, Clock, Save, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -36,7 +36,20 @@ const NovoAtendimento = () => {
       comorbidities: 'Hipertensão arterial, Diabetes tipo 2',
       continuousMedications: 'Losartana 50mg, Metformina 850mg',
       previousExams: 'ECG (2024-05-10) - Normal, Glicemia (2024-05-12) - 140mg/dL',
-      insurance: 'convenio'
+      insurance: 'convenio',
+      // Dados da triagem
+      triagem: {
+        queixaPrincipal: 'Dor no peito há 2 horas',
+        pressaoArterial: '140x90 mmHg',
+        frequenciaCardiaca: '95 bpm',
+        temperatura: '36.8°C',
+        saturacaoO2: '97%',
+        peso: '68 kg',
+        altura: '1.65 m',
+        dor: '7',
+        prioridadeManchesterCor: 'amarelo',
+        prioridadeManchesterTexto: 'Urgente - 60 minutos'
+      }
     },
     {
       id: 2,
@@ -49,9 +62,92 @@ const NovoAtendimento = () => {
       comorbidities: 'Nenhuma',
       continuousMedications: 'Nenhuma',
       previousExams: 'Hemograma completo (2024-05-18) - Normal',
-      insurance: 'particular'
+      insurance: 'particular',
+      triagem: {
+        queixaPrincipal: 'Consulta de rotina',
+        pressaoArterial: '120x80 mmHg',
+        frequenciaCardiaca: '72 bpm',
+        temperatura: '36.5°C',
+        saturacaoO2: '99%',
+        peso: '75 kg',
+        altura: '1.78 m',
+        dor: '0',
+        prioridadeManchesterCor: 'verde',
+        prioridadeManchesterTexto: 'Pouco urgente - 120 minutos'
+      }
     }
   ];
+
+  // Função para impressão
+  const handlePrint = (content, title) => {
+    const printWindow = window.open('', '_blank');
+    const currentDate = new Date().toLocaleDateString('pt-BR');
+    const currentTime = new Date().toLocaleTimeString('pt-BR');
+    
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>${title} - ${selectedPatient.name}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
+            .patient-info { margin-bottom: 20px; background: #f5f5f5; padding: 15px; border-radius: 5px; }
+            .content { margin: 20px 0; line-height: 1.6; }
+            .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #666; }
+            .doctor-signature { margin-top: 50px; text-align: right; }
+            h1 { color: #333; margin-bottom: 10px; }
+            h2 { color: #666; margin-bottom: 15px; }
+            .info-row { display: flex; justify-content: space-between; margin: 5px 0; }
+            @media print { 
+              body { margin: 0; } 
+              .no-print { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Flash Clinics</h1>
+            <h2>${title}</h2>
+            <p>Data: ${currentDate} - Horário: ${currentTime}</p>
+          </div>
+          
+          <div class="patient-info">
+            <div class="info-row"><strong>Paciente:</strong> ${selectedPatient.name}</div>
+            <div class="info-row"><strong>CPF:</strong> ${selectedPatient.cpf}</div>
+            <div class="info-row"><strong>Idade:</strong> ${calculateAge(selectedPatient.birthDate)} anos</div>
+            <div class="info-row"><strong>Telefone:</strong> ${selectedPatient.phone}</div>
+          </div>
+          
+          <div class="content">
+            ${content}
+          </div>
+          
+          <div class="doctor-signature">
+            <p>_________________________________</p>
+            <p>Dr(a). [Nome do Médico]</p>
+            <p>CRM: [Número do CRM]</p>
+          </div>
+          
+          <div class="footer">
+            <p>Flash Clinics - Seus atendimentos em um flash!</p>
+            <p>Este documento foi gerado eletronicamente em ${currentDate} às ${currentTime}</p>
+          </div>
+        </body>
+      </html>
+    `);
+    
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+  };
+
+  const printAtestado = () => {
+    handlePrint(medicalCertificate.replace(/\n/g, '<br>'), 'Atestado Médico');
+  };
+
+  const printExames = () => {
+    handlePrint(examRequests.replace(/\n/g, '<br>'), 'Solicitação de Exames');
+  };
 
   const filteredPatients = patients.filter(patient =>
     patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -106,6 +202,17 @@ const NovoAtendimento = () => {
     return age;
   };
 
+  const getManchesterBadge = (cor) => {
+    const colors = {
+      vermelho: 'bg-red-500 text-white',
+      laranja: 'bg-orange-500 text-white',
+      amarelo: 'bg-yellow-500 text-black',
+      verde: 'bg-green-500 text-white',
+      azul: 'bg-blue-500 text-white'
+    };
+    return colors[cor] || 'bg-gray-500 text-white';
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -158,6 +265,14 @@ const NovoAtendimento = () => {
                             <span>CPF: {patient.cpf}</span>
                             <span>•</span>
                             <span>{patient.phone}</span>
+                            {patient.triagem && (
+                              <>
+                                <span>•</span>
+                                <Badge className={`${getManchesterBadge(patient.triagem.prioridadeManchesterCor)} text-xs`}>
+                                  {patient.triagem.prioridadeManchesterTexto}
+                                </Badge>
+                              </>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -178,8 +293,53 @@ const NovoAtendimento = () => {
           </Card>
         </div>
       ) : (
-        // Anamnese SOAP
+        // Anamnese SOAP with Triagem info
         <div className="space-y-6">
+          {/* Dados da Triagem */}
+          {selectedPatient.triagem && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <FileText className="mr-2 h-5 w-5" />
+                  Dados da Triagem de Enfermagem
+                </CardTitle>
+                <CardDescription>
+                  Avaliação inicial realizada pela enfermagem
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <div className="p-3 bg-blue-50 rounded-lg">
+                      <h4 className="font-medium text-blue-900 text-sm">Queixa Principal</h4>
+                      <p className="text-blue-800 text-sm">{selectedPatient.triagem.queixaPrincipal}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div><strong>PA:</strong> {selectedPatient.triagem.pressaoArterial}</div>
+                      <div><strong>FC:</strong> {selectedPatient.triagem.frequenciaCardiaca}</div>
+                      <div><strong>Temp:</strong> {selectedPatient.triagem.temperatura}</div>
+                      <div><strong>Sat O2:</strong> {selectedPatient.triagem.saturacaoO2}</div>
+                      <div><strong>Peso:</strong> {selectedPatient.triagem.peso}</div>
+                      <div><strong>Altura:</strong> {selectedPatient.triagem.altura}</div>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div>
+                      <h4 className="font-medium text-sm mb-2">Classificação de Risco</h4>
+                      <Badge className={`${getManchesterBadge(selectedPatient.triagem.prioridadeManchesterCor)}`}>
+                        {selectedPatient.triagem.prioridadeManchesterTexto}
+                      </Badge>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-sm">Escala da Dor</h4>
+                      <p className="text-lg font-bold text-red-600">{selectedPatient.triagem.dor}/10</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Supra Anamnese - Informações do Prontuário */}
           <Card>
             <CardHeader>
@@ -322,8 +482,19 @@ const NovoAtendimento = () => {
                 </TabsContent>
 
                 <TabsContent value="atestado" className="space-y-4 mt-6">
-                  <div className="space-y-2">
+                  <div className="flex justify-between items-center">
                     <Label className="text-base font-medium">Atestado Médico</Label>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={printAtestado}
+                      disabled={!medicalCertificate}
+                    >
+                      <Printer className="h-4 w-4 mr-2" />
+                      Imprimir
+                    </Button>
+                  </div>
+                  <div className="space-y-2">
                     <Textarea
                       value={medicalCertificate}
                       onChange={(e) => setMedicalCertificate(e.target.value)}
@@ -338,8 +509,19 @@ const NovoAtendimento = () => {
                 </TabsContent>
 
                 <TabsContent value="exames" className="space-y-4 mt-6">
-                  <div className="space-y-2">
+                  <div className="flex justify-between items-center">
                     <Label className="text-base font-medium">Solicitação de Exames</Label>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={printExames}
+                      disabled={!examRequests}
+                    >
+                      <Printer className="h-4 w-4 mr-2" />
+                      Imprimir
+                    </Button>
+                  </div>
+                  <div className="space-y-2">
                     <Textarea
                       value={examRequests}
                       onChange={(e) => setExamRequests(e.target.value)}

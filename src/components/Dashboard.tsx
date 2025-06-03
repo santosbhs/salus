@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Calendar, Users, Clock, TrendingUp, Activity, AlertCircle, UserPlus, FileText, Zap } from 'lucide-react';
+import { Calendar, Users, Clock, TrendingUp, Activity, AlertCircle, UserPlus, FileText, Zap, Stethoscope } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -42,10 +41,10 @@ const Dashboard = ({ onNavigate }) => {
   ];
 
   const upcomingAppointments = [
-    { time: '09:00', patient: 'Maria Silva', type: 'Consulta', doctor: 'Dr. João' },
-    { time: '10:30', patient: 'Pedro Santos', type: 'Retorno', doctor: 'Dra. Ana' },
-    { time: '14:00', patient: 'Ana Costa', type: 'Exame', doctor: 'Dr. Carlos' },
-    { time: '15:30', patient: 'José Oliveira', type: 'Consulta', doctor: 'Dra. Maria' },
+    { time: '09:00', patient: 'Maria Silva', type: 'Consulta', doctor: 'Dr. João', priority: 'amarelo', priorityText: 'Urgente' },
+    { time: '10:30', patient: 'Pedro Santos', type: 'Retorno', doctor: 'Dra. Ana', priority: 'verde', priorityText: 'Pouco urgente' },
+    { time: '14:00', patient: 'Ana Costa', type: 'Exame', doctor: 'Dr. Carlos', priority: 'vermelho', priorityText: 'Emergência' },
+    { time: '15:30', patient: 'José Oliveira', type: 'Consulta', doctor: 'Dra. Maria', priority: 'verde', priorityText: 'Pouco urgente' },
   ];
 
   const alerts = [
@@ -54,13 +53,24 @@ const Dashboard = ({ onNavigate }) => {
     { type: 'warning', message: 'Estoque de materiais baixo' },
   ];
 
+  const getManchesterBadge = (cor) => {
+    const colors = {
+      vermelho: 'bg-red-500 text-white',
+      laranja: 'bg-orange-500 text-white',
+      amarelo: 'bg-yellow-500 text-black',
+      verde: 'bg-green-500 text-white',
+      azul: 'bg-blue-500 text-white'
+    };
+    return colors[cor] || 'bg-gray-500 text-white';
+  };
+
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6 text-white">
         <div className="flex items-center mb-4">
           <Zap className="h-8 w-8 text-white mr-3" />
-          <h2 className="text-2xl font-bold">Bem-vindo ao Flash Clinic</h2>
+          <h2 className="text-2xl font-bold">Bem-vindo ao Flash Clinics</h2>
         </div>
         <p className="text-blue-100">
           Seus atendimentos em um flash!
@@ -68,7 +78,24 @@ const Dashboard = ({ onNavigate }) => {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('triagem')}>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center text-lg">
+              <Stethoscope className="mr-2 h-5 w-5 text-red-600" />
+              Triagem
+            </CardTitle>
+            <CardDescription>
+              Classificação de risco e avaliação inicial
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800">
+              Iniciar Triagem
+            </Button>
+          </CardContent>
+        </Card>
+
         <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('novo-atendimento')}>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
@@ -147,7 +174,7 @@ const Dashboard = ({ onNavigate }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Upcoming Appointments */}
+        {/* Upcoming Appointments with Triagem Priority */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
@@ -155,7 +182,7 @@ const Dashboard = ({ onNavigate }) => {
               Próximos Agendamentos
             </CardTitle>
             <CardDescription>
-              Consultas agendadas para hoje
+              Consultas agendadas para hoje com classificação de risco
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -171,9 +198,14 @@ const Dashboard = ({ onNavigate }) => {
                       <p className="text-sm text-gray-500">{appointment.doctor}</p>
                     </div>
                   </div>
-                  <Badge variant="secondary">
-                    {appointment.type}
-                  </Badge>
+                  <div className="flex items-center space-x-2">
+                    <Badge variant="secondary">
+                      {appointment.type}
+                    </Badge>
+                    <Badge className={`text-xs ${getManchesterBadge(appointment.priority)}`}>
+                      {appointment.priorityText}
+                    </Badge>
+                  </div>
                 </div>
               ))}
             </div>

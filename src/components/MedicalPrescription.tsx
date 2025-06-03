@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Plus, Trash2, Pill } from 'lucide-react';
+import { Plus, Trash2, Pill, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -74,13 +73,102 @@ const MedicalPrescription = ({ onSave, patientName }) => {
     onSave(prescription);
   };
 
+  const handlePrint = () => {
+    const printWindow = window.open('', '_blank');
+    const currentDate = new Date().toLocaleDateString('pt-BR');
+    const currentTime = new Date().toLocaleTimeString('pt-BR');
+    
+    let medicationsHtml = '';
+    medications.forEach((med, index) => {
+      medicationsHtml += `
+        <div style="margin: 15px 0; padding: 10px; border-left: 3px solid #3b82f6;">
+          <strong>${index + 1}. ${med.name} ${med.dose}</strong><br>
+          <em>Tomar ${med.frequency} por ${med.duration}</em><br>
+          ${med.instructions ? `<small>${med.instructions}</small>` : ''}
+        </div>
+      `;
+    });
+    
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Receita Médica - ${patientName}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
+            .patient-info { margin-bottom: 20px; background: #f5f5f5; padding: 15px; border-radius: 5px; }
+            .content { margin: 20px 0; line-height: 1.6; }
+            .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #666; }
+            .doctor-signature { margin-top: 50px; text-align: right; }
+            h1 { color: #333; margin-bottom: 10px; }
+            h2 { color: #666; margin-bottom: 15px; }
+            .medications { background: #f9f9f9; padding: 20px; border-radius: 5px; margin: 20px 0; }
+            @media print { 
+              body { margin: 0; } 
+              .no-print { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Flash Clinics</h1>
+            <h2>Receita Médica</h2>
+            <p>Data: ${currentDate} - Horário: ${currentTime}</p>
+          </div>
+          
+          <div class="patient-info">
+            <strong>Paciente:</strong> ${patientName}
+          </div>
+          
+          <div class="medications">
+            <h3>Medicações Prescritas:</h3>
+            ${medicationsHtml}
+          </div>
+          
+          ${observations ? `
+            <div class="content">
+              <h3>Observações:</h3>
+              <p>${observations.replace(/\n/g, '<br>')}</p>
+            </div>
+          ` : ''}
+          
+          <div class="doctor-signature">
+            <p>_________________________________</p>
+            <p>Dr(a). [Nome do Médico]</p>
+            <p>CRM: [Número do CRM]</p>
+          </div>
+          
+          <div class="footer">
+            <p>Flash Clinics - Seus atendimentos em um flash!</p>
+            <p>Este documento foi gerado eletronicamente em ${currentDate} às ${currentTime}</p>
+          </div>
+        </body>
+      </html>
+    `);
+    
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+  };
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center">
-          <Pill className="mr-2 h-5 w-5" />
-          Receita Médica - {patientName}
-        </CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle className="flex items-center">
+            <Pill className="mr-2 h-5 w-5" />
+            Receita Médica - {patientName}
+          </CardTitle>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={handlePrint}
+            disabled={medications.length === 0}
+          >
+            <Printer className="h-4 w-4 mr-2" />
+            Imprimir
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">

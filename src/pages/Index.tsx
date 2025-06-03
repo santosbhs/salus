@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Calendar, Users, Clock, FileText, Menu, Bell, Search, ExternalLink, Stethoscope, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,7 @@ import AppointmentScheduling from '@/components/AppointmentScheduling';
 import MedicalHistory from '@/components/MedicalHistory';
 import NovoAtendimento from '@/components/NovoAtendimento';
 import ProfessionalManagement from '@/components/ProfessionalManagement';
+import Triagem from '@/components/Triagem';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -19,7 +19,8 @@ const Index = () => {
 
   const navigation = [
     { id: 'dashboard', name: 'Dashboard', icon: Calendar },
-    { id: 'novo-atendimento', name: 'Novo Atendimento', icon: Stethoscope },
+    { id: 'triagem', name: 'Triagem', icon: Stethoscope },
+    { id: 'novo-atendimento', name: 'Novo Atendimento', icon: FileText },
     { id: 'patients', name: 'Pacientes', icon: Users },
     { id: 'professionals', name: 'Profissionais', icon: Users },
     { id: 'appointments', name: 'Agendamentos', icon: Clock },
@@ -50,7 +51,7 @@ const Index = () => {
                 <Zap className="text-white font-bold text-sm h-5 w-5" />
               </div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Flash Clinic
+                Flash Clinics
               </h1>
             </div>
           </div>
@@ -110,6 +111,7 @@ const Index = () => {
         <main className="flex-1 p-6 lg:ml-0">
           <div className="max-w-7xl mx-auto">
             {activeTab === 'dashboard' && <Dashboard onNavigate={handleNavigate} />}
+            {activeTab === 'triagem' && <Triagem />}
             {activeTab === 'novo-atendimento' && <NovoAtendimento />}
             {activeTab === 'patients' && <PatientManagement />}
             {activeTab === 'professionals' && <ProfessionalManagement />}
