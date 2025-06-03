@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Calendar, Users, Clock, FileText, Menu, Bell, Search, ExternalLink } from 'lucide-react';
+import { Calendar, Users, Clock, FileText, Menu, Bell, Search, ExternalLink, Stethoscope } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,7 @@ import Dashboard from '@/components/Dashboard';
 import PatientManagement from '@/components/PatientManagement';
 import AppointmentScheduling from '@/components/AppointmentScheduling';
 import MedicalHistory from '@/components/MedicalHistory';
+import NovoAtendimento from '@/components/NovoAtendimento';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -17,10 +18,16 @@ const Index = () => {
 
   const navigation = [
     { id: 'dashboard', name: 'Dashboard', icon: Calendar },
+    { id: 'novo-atendimento', name: 'Novo Atendimento', icon: Stethoscope },
     { id: 'patients', name: 'Pacientes', icon: Users },
     { id: 'appointments', name: 'Agendamentos', icon: Clock },
     { id: 'history', name: 'Histórico', icon: FileText },
   ];
+
+  const handleNavigate = (tabId) => {
+    setActiveTab(tabId);
+    setSidebarOpen(false);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -83,10 +90,7 @@ const Index = () => {
                   key={item.id}
                   variant={activeTab === item.id ? 'default' : 'ghost'}
                   className="w-full justify-start"
-                  onClick={() => {
-                    setActiveTab(item.id);
-                    setSidebarOpen(false);
-                  }}
+                  onClick={() => handleNavigate(item.id)}
                 >
                   <Icon className="mr-2 h-4 w-4" />
                   {item.name}
@@ -99,7 +103,8 @@ const Index = () => {
         {/* Main Content */}
         <main className="flex-1 p-6 lg:ml-0">
           <div className="max-w-7xl mx-auto">
-            {activeTab === 'dashboard' && <Dashboard />}
+            {activeTab === 'dashboard' && <Dashboard onNavigate={handleNavigate} />}
+            {activeTab === 'novo-atendimento' && <NovoAtendimento />}
             {activeTab === 'patients' && <PatientManagement />}
             {activeTab === 'appointments' && <AppointmentScheduling />}
             {activeTab === 'history' && <MedicalHistory />}

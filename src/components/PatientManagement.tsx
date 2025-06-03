@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search, Plus, Edit, Trash2, Phone, Mail, User, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,7 +9,6 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const PatientManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -34,12 +32,9 @@ const PatientManagement = () => {
       lastVisit: '2024-05-15',
       status: 'Ativo',
       insurance: 'convenio',
-      anamnese: {
-        subjetivo: 'Paciente relata dor no peito há 3 dias',
-        objetivo: 'PA: 130/80, FC: 72bpm, ausculta cardíaca normal',
-        avaliacao: 'Possível ansiedade, descartar problemas cardíacos',
-        plano: 'ECG, exames laboratoriais, retorno em 1 semana'
-      },
+      comorbidities: 'Hipertensão arterial, Diabetes tipo 2',
+      continuousMedications: 'Losartana 50mg, Metformina 850mg',
+      previousExams: 'ECG (2024-05-10) - Normal, Glicemia (2024-05-12) - 140mg/dL',
       historico: [
         { tipo: 'Consulta', descricao: 'Consulta cardiológica', data: '2024-05-15' },
         { tipo: 'Exame', descricao: 'ECG normal', data: '2024-05-10' }
@@ -59,12 +54,9 @@ const PatientManagement = () => {
       lastVisit: '2024-05-20',
       status: 'Ativo',
       insurance: 'particular',
-      anamnese: {
-        subjetivo: 'Dor de cabeça recorrente',
-        objetivo: 'Exame neurológico normal',
-        avaliacao: 'Cefaleia tensional',
-        plano: 'Analgésicos, técnicas de relaxamento'
-      },
+      comorbidities: 'Nenhuma',
+      continuousMedications: 'Nenhuma',
+      previousExams: 'Hemograma completo (2024-05-18) - Normal',
       historico: []
     }
   ]);
@@ -80,12 +72,9 @@ const PatientManagement = () => {
     allergies: '',
     emergencyContact: '',
     insurance: 'particular',
-    anamnese: {
-      subjetivo: '',
-      objetivo: '',
-      avaliacao: '',
-      plano: ''
-    }
+    comorbidities: '',
+    continuousMedications: '',
+    previousExams: ''
   });
 
   const filteredPatients = patients.filter(patient =>
@@ -114,12 +103,9 @@ const PatientManagement = () => {
       allergies: '',
       emergencyContact: '',
       insurance: 'particular',
-      anamnese: {
-        subjetivo: '',
-        objetivo: '',
-        avaliacao: '',
-        plano: ''
-      }
+      comorbidities: '',
+      continuousMedications: '',
+      previousExams: ''
     });
     setIsAddDialogOpen(false);
   };
@@ -171,189 +157,153 @@ const PatientManagement = () => {
                 Preencha as informações do paciente abaixo.
               </DialogDescription>
             </DialogHeader>
-            <Tabs defaultValue="dados" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="dados">Dados Pessoais</TabsTrigger>
-                <TabsTrigger value="anamnese">Anamnese SOAP</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="dados" className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="name">Nome Completo</Label>
-                    <Input
-                      id="name"
-                      value={newPatient.name}
-                      onChange={(e) => setNewPatient({...newPatient, name: e.target.value})}
-                      placeholder="Nome do paciente"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="cpf">CPF</Label>
-                    <Input
-                      id="cpf"
-                      value={newPatient.cpf}
-                      onChange={(e) => setNewPatient({...newPatient, cpf: e.target.value})}
-                      placeholder="000.000.000-00"
-                    />
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="phone">Telefone</Label>
-                    <Input
-                      id="phone"
-                      value={newPatient.phone}
-                      onChange={(e) => setNewPatient({...newPatient, phone: e.target.value})}
-                      placeholder="(11) 99999-9999"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={newPatient.email}
-                      onChange={(e) => setNewPatient({...newPatient, email: e.target.value})}
-                      placeholder="email@exemplo.com"
-                    />
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="birthDate">Data de Nascimento</Label>
-                    <Input
-                      id="birthDate"
-                      type="date"
-                      value={newPatient.birthDate}
-                      onChange={(e) => setNewPatient({...newPatient, birthDate: e.target.value})}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="bloodType">Tipo Sanguíneo</Label>
-                    <Select onValueChange={(value) => setNewPatient({...newPatient, bloodType: value})}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="A+">A+</SelectItem>
-                        <SelectItem value="A-">A-</SelectItem>
-                        <SelectItem value="B+">B+</SelectItem>
-                        <SelectItem value="B-">B-</SelectItem>
-                        <SelectItem value="AB+">AB+</SelectItem>
-                        <SelectItem value="AB-">AB-</SelectItem>
-                        <SelectItem value="O+">O+</SelectItem>
-                        <SelectItem value="O-">O-</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="insurance">Tipo de Atendimento</Label>
-                    <Select onValueChange={(value) => setNewPatient({...newPatient, insurance: value})}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="particular">Particular</SelectItem>
-                        <SelectItem value="convenio">Convênio</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="address">Endereço</Label>
+                  <Label htmlFor="name">Nome Completo</Label>
                   <Input
-                    id="address"
-                    value={newPatient.address}
-                    onChange={(e) => setNewPatient({...newPatient, address: e.target.value})}
-                    placeholder="Rua, número, bairro, cidade, estado"
+                    id="name"
+                    value={newPatient.name}
+                    onChange={(e) => setNewPatient({...newPatient, name: e.target.value})}
+                    placeholder="Nome do paciente"
                   />
                 </div>
-                
                 <div className="grid gap-2">
-                  <Label htmlFor="allergies">Alergias</Label>
-                  <Textarea
-                    id="allergies"
-                    value={newPatient.allergies}
-                    onChange={(e) => setNewPatient({...newPatient, allergies: e.target.value})}
-                    placeholder="Descreva alergias conhecidas"
-                  />
-                </div>
-                
-                <div className="grid gap-2">
-                  <Label htmlFor="emergencyContact">Contato de Emergência</Label>
+                  <Label htmlFor="cpf">CPF</Label>
                   <Input
-                    id="emergencyContact"
-                    value={newPatient.emergencyContact}
-                    onChange={(e) => setNewPatient({...newPatient, emergencyContact: e.target.value})}
-                    placeholder="Nome - Telefone"
+                    id="cpf"
+                    value={newPatient.cpf}
+                    onChange={(e) => setNewPatient({...newPatient, cpf: e.target.value})}
+                    placeholder="000.000.000-00"
                   />
                 </div>
-              </TabsContent>
+              </div>
               
-              <TabsContent value="anamnese" className="space-y-4">
-                <div className="grid gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="subjetivo">S - Subjetivo (Queixas do paciente)</Label>
-                    <Textarea
-                      id="subjetivo"
-                      value={newPatient.anamnese.subjetivo}
-                      onChange={(e) => setNewPatient({
-                        ...newPatient, 
-                        anamnese: {...newPatient.anamnese, subjetivo: e.target.value}
-                      })}
-                      placeholder="O que o paciente relata, sintomas, queixas..."
-                      rows={3}
-                    />
-                  </div>
-                  
-                  <div className="grid gap-2">
-                    <Label htmlFor="objetivo">O - Objetivo (Dados observáveis)</Label>
-                    <Textarea
-                      id="objetivo"
-                      value={newPatient.anamnese.objetivo}
-                      onChange={(e) => setNewPatient({
-                        ...newPatient, 
-                        anamnese: {...newPatient.anamnese, objetivo: e.target.value}
-                      })}
-                      placeholder="Sinais vitais, exame físico, resultados de exames..."
-                      rows={3}
-                    />
-                  </div>
-                  
-                  <div className="grid gap-2">
-                    <Label htmlFor="avaliacao">A - Avaliação (Diagnóstico/Impressão clínica)</Label>
-                    <Textarea
-                      id="avaliacao"
-                      value={newPatient.anamnese.avaliacao}
-                      onChange={(e) => setNewPatient({
-                        ...newPatient, 
-                        anamnese: {...newPatient.anamnese, avaliacao: e.target.value}
-                      })}
-                      placeholder="Hipóteses diagnósticas, avaliação clínica..."
-                      rows={3}
-                    />
-                  </div>
-                  
-                  <div className="grid gap-2">
-                    <Label htmlFor="plano">P - Plano (Conduta/Tratamento)</Label>
-                    <Textarea
-                      id="plano"
-                      value={newPatient.anamnese.plano}
-                      onChange={(e) => setNewPatient({
-                        ...newPatient, 
-                        anamnese: {...newPatient.anamnese, plano: e.target.value}
-                      })}
-                      placeholder="Medicações, exames solicitados, retornos, orientações..."
-                      rows={3}
-                    />
-                  </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="phone">Telefone</Label>
+                  <Input
+                    id="phone"
+                    value={newPatient.phone}
+                    onChange={(e) => setNewPatient({...newPatient, phone: e.target.value})}
+                    placeholder="(11) 99999-9999"
+                  />
                 </div>
-              </TabsContent>
-            </Tabs>
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={newPatient.email}
+                    onChange={(e) => setNewPatient({...newPatient, email: e.target.value})}
+                    placeholder="email@exemplo.com"
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-3 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="birthDate">Data de Nascimento</Label>
+                  <Input
+                    id="birthDate"
+                    type="date"
+                    value={newPatient.birthDate}
+                    onChange={(e) => setNewPatient({...newPatient, birthDate: e.target.value})}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="bloodType">Tipo Sanguíneo</Label>
+                  <Select onValueChange={(value) => setNewPatient({...newPatient, bloodType: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="A+">A+</SelectItem>
+                      <SelectItem value="A-">A-</SelectItem>
+                      <SelectItem value="B+">B+</SelectItem>
+                      <SelectItem value="B-">B-</SelectItem>
+                      <SelectItem value="AB+">AB+</SelectItem>
+                      <SelectItem value="AB-">AB-</SelectItem>
+                      <SelectItem value="O+">O+</SelectItem>
+                      <SelectItem value="O-">O-</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="insurance">Tipo de Atendimento</Label>
+                  <Select onValueChange={(value) => setNewPatient({...newPatient, insurance: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="particular">Particular</SelectItem>
+                      <SelectItem value="convenio">Convênio</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="address">Endereço</Label>
+                <Input
+                  id="address"
+                  value={newPatient.address}
+                  onChange={(e) => setNewPatient({...newPatient, address: e.target.value})}
+                  placeholder="Rua, número, bairro, cidade, estado"
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="allergies">Alergias</Label>
+                <Textarea
+                  id="allergies"
+                  value={newPatient.allergies}
+                  onChange={(e) => setNewPatient({...newPatient, allergies: e.target.value})}
+                  placeholder="Descreva alergias conhecidas"
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="comorbidities">Comorbidades</Label>
+                <Textarea
+                  id="comorbidities"
+                  value={newPatient.comorbidities}
+                  onChange={(e) => setNewPatient({...newPatient, comorbidities: e.target.value})}
+                  placeholder="Doenças crônicas, condições médicas"
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="continuousMedications">Medicações de Uso Contínuo</Label>
+                <Textarea
+                  id="continuousMedications"
+                  value={newPatient.continuousMedications}
+                  onChange={(e) => setNewPatient({...newPatient, continuousMedications: e.target.value})}
+                  placeholder="Medicamentos em uso regular"
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="previousExams">Exames Prévios</Label>
+                <Textarea
+                  id="previousExams"
+                  value={newPatient.previousExams}
+                  onChange={(e) => setNewPatient({...newPatient, previousExams: e.target.value})}
+                  placeholder="Exames realizados e resultados"
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="emergencyContact">Contato de Emergência</Label>
+                <Input
+                  id="emergencyContact"
+                  value={newPatient.emergencyContact}
+                  onChange={(e) => setNewPatient({...newPatient, emergencyContact: e.target.value})}
+                  placeholder="Nome - Telefone"
+                />
+              </div>
+            </div>
             
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
@@ -516,6 +466,33 @@ const PatientManagement = () => {
                   onChange={(e) => setSelectedPatient({...selectedPatient, address: e.target.value})}
                 />
               </div>
+              <div className="grid gap-2">
+                <Label htmlFor="edit-comorbidities">Comorbidades</Label>
+                <Textarea
+                  id="edit-comorbidities"
+                  value={selectedPatient.comorbidities}
+                  onChange={(e) => setSelectedPatient({...selectedPatient, comorbidities: e.target.value})}
+                  placeholder="Doenças crônicas, condições médicas"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="edit-continuousMedications">Medicações de Uso Contínuo</Label>
+                <Textarea
+                  id="edit-continuousMedications"
+                  value={selectedPatient.continuousMedications}
+                  onChange={(e) => setSelectedPatient({...selectedPatient, continuousMedications: e.target.value})}
+                  placeholder="Medicamentos em uso regular"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="edit-previousExams">Exames Prévios</Label>
+                <Textarea
+                  id="edit-previousExams"
+                  value={selectedPatient.previousExams}
+                  onChange={(e) => setSelectedPatient({...selectedPatient, previousExams: e.target.value})}
+                  placeholder="Exames realizados e resultados"
+                />
+              </div>
             </div>
           )}
           <DialogFooter>
@@ -531,32 +508,32 @@ const PatientManagement = () => {
       <Dialog open={isHistoryDialogOpen} onOpenChange={setIsHistoryDialogOpen}>
         <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Histórico do Paciente</DialogTitle>
+            <DialogTitle>Prontuário do Paciente</DialogTitle>
             <DialogDescription>
-              {selectedPatient?.name} - Anamnese e histórico médico
+              {selectedPatient?.name} - Informações médicas
             </DialogDescription>
           </DialogHeader>
           {selectedPatient && (
             <div className="space-y-6">
-              {/* Última Anamnese */}
+              {/* Informações Básicas do Prontuário */}
               <div>
-                <h3 className="text-lg font-semibold mb-3">Última Anamnese (SOAP)</h3>
+                <h3 className="text-lg font-semibold mb-3">Informações do Prontuário</h3>
                 <div className="grid gap-4">
                   <div className="p-3 bg-blue-50 rounded-lg">
-                    <h4 className="font-medium text-blue-900">S - Subjetivo</h4>
-                    <p className="text-blue-800">{selectedPatient.anamnese?.subjetivo || 'Não informado'}</p>
+                    <h4 className="font-medium text-blue-900">Comorbidades</h4>
+                    <p className="text-blue-800">{selectedPatient.comorbidities || 'Nenhuma'}</p>
                   </div>
                   <div className="p-3 bg-green-50 rounded-lg">
-                    <h4 className="font-medium text-green-900">O - Objetivo</h4>
-                    <p className="text-green-800">{selectedPatient.anamnese?.objetivo || 'Não informado'}</p>
+                    <h4 className="font-medium text-green-900">Medicações de Uso Contínuo</h4>
+                    <p className="text-green-800">{selectedPatient.continuousMedications || 'Nenhuma'}</p>
                   </div>
                   <div className="p-3 bg-yellow-50 rounded-lg">
-                    <h4 className="font-medium text-yellow-900">A - Avaliação</h4>
-                    <p className="text-yellow-800">{selectedPatient.anamnese?.avaliacao || 'Não informado'}</p>
+                    <h4 className="font-medium text-yellow-900">Alergias</h4>
+                    <p className="text-yellow-800">{selectedPatient.allergies || 'Nenhuma'}</p>
                   </div>
                   <div className="p-3 bg-purple-50 rounded-lg">
-                    <h4 className="font-medium text-purple-900">P - Plano</h4>
-                    <p className="text-purple-800">{selectedPatient.anamnese?.plano || 'Não informado'}</p>
+                    <h4 className="font-medium text-purple-900">Exames Prévios</h4>
+                    <p className="text-purple-800">{selectedPatient.previousExams || 'Nenhum'}</p>
                   </div>
                 </div>
               </div>

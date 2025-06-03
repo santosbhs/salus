@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { Calendar, Users, Clock, TrendingUp, Activity, AlertCircle } from 'lucide-react';
+import { Calendar, Users, Clock, TrendingUp, Activity, AlertCircle, UserPlus, FileText } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-const Dashboard = () => {
+const Dashboard = ({ onNavigate }) => {
   const stats = [
     {
       title: 'Pacientes Cadastrados',
@@ -64,6 +64,43 @@ const Dashboard = () => {
         </p>
       </div>
 
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('novo-atendimento')}>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center text-lg">
+              <FileText className="mr-2 h-5 w-5 text-blue-600" />
+              Novo Atendimento
+            </CardTitle>
+            <CardDescription>
+              Inicie uma nova consulta com anamnese SOAP
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+              Iniciar Atendimento
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('patients')}>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center text-lg">
+              <UserPlus className="mr-2 h-5 w-5 text-green-600" />
+              Novo Paciente
+            </CardTitle>
+            <CardDescription>
+              Cadastre um novo paciente no sistema
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" className="w-full">
+              Cadastrar Paciente
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => {
@@ -120,7 +157,7 @@ const Dashboard = () => {
                 </div>
               ))}
             </div>
-            <Button className="w-full mt-4" variant="outline">
+            <Button className="w-full mt-4" variant="outline" onClick={() => onNavigate('appointments')}>
               Ver Todos os Agendamentos
             </Button>
           </CardContent>
