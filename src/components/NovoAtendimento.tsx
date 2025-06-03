@@ -22,6 +22,7 @@ const NovoAtendimento = () => {
   const [activeDocument, setActiveDocument] = useState('anamnese');
   const [medicalCertificate, setMedicalCertificate] = useState('');
   const [examRequests, setExamRequests] = useState('');
+  const [examesPrevios, setExamesPrevios] = useState('');
 
   // Mock de pacientes (em produção viria do banco)
   const patients = [
@@ -169,6 +170,7 @@ const NovoAtendimento = () => {
       anamnese,
       medicalCertificate,
       examRequests,
+      examesPrevios,
       timestamp: new Date().toISOString()
     });
     
@@ -181,6 +183,7 @@ const NovoAtendimento = () => {
     });
     setMedicalCertificate('');
     setExamRequests('');
+    setExamesPrevios('');
     setSelectedPatient(null);
     setActiveDocument('anamnese');
     
@@ -387,10 +390,6 @@ const NovoAtendimento = () => {
                   <h4 className="font-medium text-blue-900 text-sm">Medicações de Uso Contínuo</h4>
                   <p className="text-blue-800 text-sm">{selectedPatient.continuousMedications}</p>
                 </div>
-                <div className="p-3 bg-green-50 rounded-lg">
-                  <h4 className="font-medium text-green-900 text-sm">Exames Prévios</h4>
-                  <p className="text-green-800 text-sm">{selectedPatient.previousExams}</p>
-                </div>
               </div>
 
               <div className="mt-4 flex justify-end">
@@ -414,8 +413,9 @@ const NovoAtendimento = () => {
             </CardHeader>
             <CardContent>
               <Tabs value={activeDocument} onValueChange={setActiveDocument}>
-                <TabsList className="grid w-full grid-cols-4">
+                <TabsList className="grid w-full grid-cols-5">
                   <TabsTrigger value="anamnese">Anamnese SOAP</TabsTrigger>
+                  <TabsTrigger value="exames-previos">Exames Prévios</TabsTrigger>
                   <TabsTrigger value="atestado">Atestado Médico</TabsTrigger>
                   <TabsTrigger value="exames">Solicitação de Exames</TabsTrigger>
                   <TabsTrigger value="receita">Receita Médica</TabsTrigger>
@@ -478,6 +478,25 @@ const NovoAtendimento = () => {
                         className="resize-none"
                       />
                     </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="exames-previos" className="space-y-4 mt-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="exames-previos" className="text-base font-medium">
+                      Exames Prévios do Paciente
+                    </Label>
+                    <Textarea
+                      id="exames-previos"
+                      value={examesPrevios}
+                      onChange={(e) => setExamesPrevios(e.target.value)}
+                      placeholder="Registre aqui os exames anteriores do paciente, resultados relevantes e datas:&#10;&#10;• Hemograma completo (15/05/2024) - Hemoglobina: 14,2 g/dL&#10;• Glicemia de jejum (10/05/2024) - 95 mg/dL&#10;• ECG (01/05/2024) - Ritmo sinusal normal&#10;• Radiografia de tórax (20/04/2024) - Sem alterações&#10;&#10;Observações: [comentários sobre os resultados]"
+                      rows={12}
+                      className="resize-none"
+                    />
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <p><strong>Dica:</strong> Inclua sempre as datas dos exames e resultados relevantes para o atendimento atual.</p>
                   </div>
                 </TabsContent>
 
