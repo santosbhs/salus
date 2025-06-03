@@ -63,33 +63,61 @@ const Login = () => {
     setLoading(true);
     
     try {
-      // First try to sign up the user (in case they don't exist yet)
-      await supabase.auth.signUp({
+      console.log(`Tentando login de teste para: ${email}`);
+      
+      // Primeiro, tenta fazer login direto
+      const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
         email,
         password: 'teste123',
       });
 
-      // Then sign in
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password: 'teste123',
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      if (data.user) {
+      // Se o login funcionar, ótimo!
+      if (loginData.user && !loginError) {
         toast({
           title: `Login ${planName} realizado!`,
           description: "Redirecionando para o dashboard...",
         });
         navigate('/');
+        return;
+      }
+
+      // Se deu erro de usuário não encontrado ou email não confirmado, tenta criar
+      if (loginError && (loginError.message.includes('Invalid login credentials') || loginError.message.includes('Email not confirmed'))) {
+        console.log('Usuário não existe, criando...');
+        
+        const { data: signupData, error: signupError } = await supabase.auth.signUp({
+          email,
+          password: 'teste123',
+          options: {
+            emailRedirectTo: `${window.location.origin}/`
+          }
+        });
+
+        if (signupError) {
+          throw signupError;
+        }
+
+        // Para usuários de teste, vamos tentar confirmar automaticamente
+        if (signupData.user && !signupData.user.email_confirmed_at) {
+          toast({
+            title: `Conta ${planName} criada!`,
+            description: "Faça login novamente com as credenciais de teste.",
+          });
+        } else if (signupData.user) {
+          toast({
+            title: `Login ${planName} realizado!`,
+            description: "Redirecionando para o dashboard...",
+          });
+          navigate('/');
+        }
+      } else {
+        throw loginError;
       }
     } catch (error: any) {
+      console.error('Erro no login de teste:', error);
       toast({
         title: "Erro no login de teste",
-        description: error.message,
+        description: error.message || "Tente novamente",
         variant: "destructive",
       });
     } finally {
@@ -211,6 +239,9 @@ const Login = () => {
                   Plano Enterprise (admin.enterprise@teste.com)
                 </Button>
               </div>
+              <p className="text-xs text-gray-500 mt-2 text-center">
+                Senha para todos: teste123
+              </p>
             </div>
 
             <div className="text-center space-y-4">
