@@ -31,7 +31,7 @@ export const ModernHero = () => {
 
           {/* Main Headline */}
           <h2 className="text-6xl md:text-7xl font-black text-white mb-8 leading-tight">
-            Revoluciona a gestão
+            Revolucione a gestão
             <span className="block bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
               da sua Clínica
             </span>
@@ -62,7 +62,7 @@ export const ModernHero = () => {
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
-              <span>Cadastro de cartão</span>
+              <span>Sem compromisso</span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>

@@ -6,18 +6,22 @@ import Dashboard from '@/components/Dashboard';
 import BasicDashboard from '@/components/BasicDashboard';
 import ProfessionalDashboard from '@/components/ProfessionalDashboard';
 import EnterpriseDashboard from '@/components/EnterpriseDashboard';
+import Triagem from '@/components/Triagem';
+import NovoAtendimento from '@/components/NovoAtendimento';
+import PatientManagement from '@/components/PatientManagement';
+import ProfessionalManagement from '@/components/ProfessionalManagement';
+import AppointmentScheduling from '@/components/AppointmentScheduling';
 import { Badge } from '@/components/ui/badge';
 
 const DashboardPage = () => {
   const [currentView, setCurrentView] = useState('default');
-  const [selectedPlan, setSelectedPlan] = useState('professional'); // Simular plano ativo
+  const [selectedPlan, setSelectedPlan] = useState('professional');
 
   const handleNavigate = (view: string) => {
     setCurrentView(view);
   };
 
   const handleLogout = () => {
-    // Implementar logout
     console.log('Logout');
   };
 
@@ -48,6 +52,24 @@ const DashboardPage = () => {
   };
 
   const renderDashboard = () => {
+    // Renderizar componentes específicos quando navegado
+    if (currentView === 'triagem') {
+      return <Triagem onBack={() => setCurrentView('default')} />;
+    }
+    if (currentView === 'novo-atendimento') {
+      return <NovoAtendimento onBack={() => setCurrentView('default')} />;
+    }
+    if (currentView === 'patients') {
+      return <PatientManagement onBack={() => setCurrentView('default')} />;
+    }
+    if (currentView === 'professionals') {
+      return <ProfessionalManagement onBack={() => setCurrentView('default')} />;
+    }
+    if (currentView === 'appointments') {
+      return <AppointmentScheduling onBack={() => setCurrentView('default')} />;
+    }
+
+    // Renderizar dashboard baseado no plano
     if (selectedPlan === 'basic') {
       return <BasicDashboard onNavigate={handleNavigate} />;
     } else if (selectedPlan === 'professional') {

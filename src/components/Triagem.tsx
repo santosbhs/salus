@@ -1,363 +1,256 @@
 
 import React, { useState } from 'react';
-import { Search, UserCheck, Heart, Thermometer, Save, AlertTriangle, Activity } from 'lucide-react';
+import { ArrowLeft, User, Heart, Thermometer, Activity, AlertTriangle, Clock, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
-const Triagem = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedPatient, setSelectedPatient] = useState(null);
-  const [triagem, setTriagem] = useState({
-    queixaPrincipal: '',
-    pressaoArterial: '',
-    frequenciaCardiaca: '',
+const Triagem = ({ onBack }) => {
+  const [paciente, setPaciente] = useState('');
+  const [queixaPrincipal, setQueixaPrincipal] = useState('');
+  const [sinaisVitais, setSinaisVitais] = useState({
+    pressao: '',
     temperatura: '',
-    saturacaoO2: '',
-    peso: '',
-    altura: '',
-    dor: '',
-    prioridadeManchesterCor: '',
-    prioridadeManchesterTexto: '',
-    observacoes: ''
+    frequenciaCardiaca: '',
+    saturacao: ''
   });
+  const [classificacao, setClassificacao] = useState('');
 
-  // Mock de pacientes
-  const patients = [
-    {
-      id: 1,
-      name: 'Maria Silva',
-      cpf: '123.456.789-00',
-      phone: '(11) 99999-9999',
-      birthDate: '1985-03-15'
-    },
-    {
-      id: 2,
-      name: 'Pedro Costa',
-      cpf: '987.654.321-00',
-      phone: '(11) 77777-7777',
-      birthDate: '1990-07-22'
-    }
+  const classificacoesManchester = [
+    { nivel: 'vermelho', nome: 'Emergência', tempo: 'Imediato', cor: 'bg-red-500' },
+    { nivel: 'laranja', nome: 'Muito Urgente', tempo: '10 min', cor: 'bg-orange-500' },
+    { nivel: 'amarelo', nome: 'Urgente', tempo: '60 min', cor: 'bg-yellow-500' },
+    { nivel: 'verde', nome: 'Pouco Urgente', tempo: '120 min', cor: 'bg-green-500' },
+    { nivel: 'azul', nome: 'Não Urgente', tempo: '240 min', cor: 'bg-blue-500' }
   ];
 
-  // Escala de Manchester
-  const manchesterScale = [
-    { cor: 'vermelho', texto: 'Emergência - Atendimento imediato', bgColor: 'bg-red-500', textColor: 'text-white' },
-    { cor: 'laranja', texto: 'Muito urgente - 10 minutos', bgColor: 'bg-orange-500', textColor: 'text-white' },
-    { cor: 'amarelo', texto: 'Urgente - 60 minutos', bgColor: 'bg-yellow-500', textColor: 'text-black' },
-    { cor: 'verde', texto: 'Pouco urgente - 120 minutos', bgColor: 'bg-green-500', textColor: 'text-white' },
-    { cor: 'azul', texto: 'Não urgente - 240 minutos', bgColor: 'bg-blue-500', textColor: 'text-white' }
-  ];
-
-  const filteredPatients = patients.filter(patient =>
-    patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    patient.cpf.includes(searchTerm) ||
-    patient.phone.includes(searchTerm)
-  );
-
-  const selectPatient = (patient) => {
-    setSelectedPatient(patient);
-    setSearchTerm('');
-  };
-
-  const handleSaveTriagem = () => {
-    if (!selectedPatient) return;
-    
-    console.log('Salvando triagem:', {
-      patientId: selectedPatient.id,
-      triagem,
-      timestamp: new Date().toISOString()
-    });
-    
-    // Reset form
-    setTriagem({
-      queixaPrincipal: '',
-      pressaoArterial: '',
-      frequenciaCardiaca: '',
-      temperatura: '',
-      saturacaoO2: '',
-      peso: '',
-      altura: '',
-      dor: '',
-      prioridadeManchesterCor: '',
-      prioridadeManchesterTexto: '',
-      observacoes: ''
-    });
-    setSelectedPatient(null);
-    
-    alert('Triagem realizada com sucesso!');
-  };
-
-  const getInitials = (name) => {
-    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-  };
-
-  const calculateAge = (birthDate) => {
-    const today = new Date();
-    const birth = new Date(birthDate);
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--;
-    }
-    return age;
-  };
-
-  const getSelectedManchesterScale = () => {
-    return manchesterScale.find(scale => scale.cor === triagem.prioridadeManchesterCor);
+  const handleSalvar = () => {
+    console.log('Triagem salva:', { paciente, queixaPrincipal, sinaisVitais, classificacao });
+    // Aqui você implementaria a lógica para salvar a triagem
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold">Triagem de Enfermagem</h2>
-        <p className="text-gray-600">Avaliação inicial e classificação de risco - Protocolo de Manchester</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-red-50 p-6">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center mb-8">
+          <Button 
+            variant="ghost" 
+            onClick={onBack}
+            className="mr-4 hover:bg-red-50"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 bg-gradient-to-r from-red-600 to-red-700 rounded-xl flex items-center justify-center">
+              <AlertTriangle className="text-white h-7 w-7" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Sistema de Triagem</h1>
+              <p className="text-gray-600">Protocolo de Manchester</p>
+            </div>
+          </div>
+        </div>
 
-      {!selectedPatient ? (
-        <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Search className="mr-2 h-5 w-5" />
-                Localizar Paciente para Triagem
-              </CardTitle>
-              <CardDescription>
-                Digite o nome, CPF ou telefone do paciente
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  placeholder="Buscar paciente..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Formulário Principal */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Dados do Paciente */}
+            <Card className="shadow-lg border-red-200">
+              <CardHeader>
+                <CardTitle className="flex items-center text-red-800">
+                  <User className="mr-2 h-5 w-5" />
+                  Dados do Paciente
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="paciente">Nome do Paciente</Label>
+                  <Input
+                    id="paciente"
+                    value={paciente}
+                    onChange={(e) => setPaciente(e.target.value)}
+                    placeholder="Digite o nome completo do paciente"
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="queixa">Queixa Principal</Label>
+                  <Textarea
+                    id="queixa"
+                    value={queixaPrincipal}
+                    onChange={(e) => setQueixaPrincipal(e.target.value)}
+                    placeholder="Descreva a queixa principal do paciente"
+                    className="mt-1"
+                    rows={3}
+                  />
+                </div>
+              </CardContent>
+            </Card>
 
-              {searchTerm && (
-                <div className="space-y-2 max-h-60 overflow-y-auto">
-                  {filteredPatients.map((patient) => (
+            {/* Sinais Vitais */}
+            <Card className="shadow-lg border-red-200">
+              <CardHeader>
+                <CardTitle className="flex items-center text-red-800">
+                  <Activity className="mr-2 h-5 w-5" />
+                  Sinais Vitais
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="pressao">Pressão Arterial</Label>
+                    <Input
+                      id="pressao"
+                      value={sinaisVitais.pressao}
+                      onChange={(e) => setSinaisVitais({...sinaisVitais, pressao: e.target.value})}
+                      placeholder="120/80"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="temperatura">Temperatura (°C)</Label>
+                    <Input
+                      id="temperatura"
+                      value={sinaisVitais.temperatura}
+                      onChange={(e) => setSinaisVitais({...sinaisVitais, temperatura: e.target.value})}
+                      placeholder="36.5"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="fc">Frequência Cardíaca</Label>
+                    <Input
+                      id="fc"
+                      value={sinaisVitais.frequenciaCardiaca}
+                      onChange={(e) => setSinaisVitais({...sinaisVitais, frequenciaCardiaca: e.target.value})}
+                      placeholder="80 bpm"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="saturacao">Saturação O2 (%)</Label>
+                    <Input
+                      id="saturacao"
+                      value={sinaisVitais.saturacao}
+                      onChange={(e) => setSinaisVitais({...sinaisVitais, saturacao: e.target.value})}
+                      placeholder="98%"
+                      className="mt-1"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Classificação */}
+            <Card className="shadow-lg border-red-200">
+              <CardHeader>
+                <CardTitle className="flex items-center text-red-800">
+                  <AlertTriangle className="mr-2 h-5 w-5" />
+                  Classificação de Risco
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {classificacoesManchester.map((nivel, index) => (
                     <div
-                      key={patient.id}
-                      className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                      onClick={() => selectPatient(patient)}
+                      key={index}
+                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        classificacao === nivel.nivel
+                          ? 'border-red-500 bg-red-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                      onClick={() => setClassificacao(nivel.nivel)}
                     >
-                      <div className="flex items-center space-x-3">
-                        <Avatar className="h-10 w-10">
-                          <AvatarFallback className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-                            {getInitials(patient.name)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium">{patient.name}</p>
-                          <div className="flex items-center space-x-2 text-sm text-gray-600">
-                            <span>CPF: {patient.cpf}</span>
-                            <span>•</span>
-                            <span>{patient.phone}</span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className={`w-6 h-6 ${nivel.cor} rounded-full`}></div>
+                          <div>
+                            <p className="font-semibold text-gray-900">{nivel.nome}</p>
+                            <p className="text-sm text-gray-600">Tempo máximo: {nivel.tempo}</p>
                           </div>
                         </div>
+                        <Clock className="h-5 w-5 text-gray-400" />
                       </div>
-                      <Button size="sm" variant="outline">
-                        <UserCheck className="h-4 w-4 mr-2" />
-                        Iniciar Triagem
-                      </Button>
                     </div>
                   ))}
-                  {filteredPatients.length === 0 && (
-                    <p className="text-gray-500 text-center py-4">
-                      Nenhum paciente encontrado
-                    </p>
-                  )}
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Activity className="mr-2 h-5 w-5" />
-                  Triagem - {selectedPatient.name}
-                </div>
-                <Button variant="outline" onClick={() => setSelectedPatient(null)}>
-                  Trocar Paciente
-                </Button>
-              </CardTitle>
-              <CardDescription>
-                Idade: {calculateAge(selectedPatient.birthDate)} anos • {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label className="text-base font-medium">Queixa Principal</Label>
-                  <Textarea
-                    value={triagem.queixaPrincipal}
-                    onChange={(e) => setTriagem({...triagem, queixaPrincipal: e.target.value})}
-                    placeholder="Descreva a queixa principal do paciente..."
-                    rows={3}
-                  />
-                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label className="flex items-center">
-                      <Heart className="mr-2 h-4 w-4" />
-                      Pressão Arterial
-                    </Label>
-                    <Input
-                      value={triagem.pressaoArterial}
-                      onChange={(e) => setTriagem({...triagem, pressaoArterial: e.target.value})}
-                      placeholder="Ex: 120x80 mmHg"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label className="flex items-center">
-                      <Activity className="mr-2 h-4 w-4" />
-                      Frequência Cardíaca
-                    </Label>
-                    <Input
-                      value={triagem.frequenciaCardiaca}
-                      onChange={(e) => setTriagem({...triagem, frequenciaCardiaca: e.target.value})}
-                      placeholder="Ex: 80 bpm"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label className="flex items-center">
-                      <Thermometer className="mr-2 h-4 w-4" />
-                      Temperatura
-                    </Label>
-                    <Input
-                      value={triagem.temperatura}
-                      onChange={(e) => setTriagem({...triagem, temperatura: e.target.value})}
-                      placeholder="Ex: 36.5°C"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="space-y-2">
-                    <Label>Saturação O2</Label>
-                    <Input
-                      value={triagem.saturacaoO2}
-                      onChange={(e) => setTriagem({...triagem, saturacaoO2: e.target.value})}
-                      placeholder="Ex: 98%"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label>Peso</Label>
-                    <Input
-                      value={triagem.peso}
-                      onChange={(e) => setTriagem({...triagem, peso: e.target.value})}
-                      placeholder="Ex: 70 kg"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label>Altura</Label>
-                    <Input
-                      value={triagem.altura}
-                      onChange={(e) => setTriagem({...triagem, altura: e.target.value})}
-                      placeholder="Ex: 1.70 m"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label>Escala da Dor (0-10)</Label>
-                    <Select onValueChange={(value) => setTriagem({...triagem, dor: value})}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[0,1,2,3,4,5,6,7,8,9,10].map(nivel => (
-                          <SelectItem key={nivel} value={nivel.toString()}>
-                            {nivel} {nivel === 0 ? '(Sem dor)' : nivel <= 3 ? '(Leve)' : nivel <= 6 ? '(Moderada)' : '(Intensa)'}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-base font-medium flex items-center">
-                    <AlertTriangle className="mr-2 h-4 w-4" />
-                    Classificação de Risco - Protocolo de Manchester
-                  </Label>
-                  <Select onValueChange={(value) => {
-                    const selected = manchesterScale.find(scale => scale.cor === value);
-                    setTriagem({
-                      ...triagem, 
-                      prioridadeManchesterCor: value,
-                      prioridadeManchesterTexto: selected?.texto || ''
-                    });
-                  }}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione a prioridade" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {manchesterScale.map(scale => (
-                        <SelectItem key={scale.cor} value={scale.cor}>
-                          <div className="flex items-center space-x-2">
-                            <div className={`w-4 h-4 rounded ${scale.bgColor}`}></div>
-                            <span>{scale.texto}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  
-                  {triagem.prioridadeManchesterCor && (
-                    <div className="mt-2">
-                      <Badge className={`${getSelectedManchesterScale()?.bgColor} ${getSelectedManchesterScale()?.textColor}`}>
-                        {getSelectedManchesterScale()?.texto}
-                      </Badge>
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Observações Adicionais</Label>
-                  <Textarea
-                    value={triagem.observacoes}
-                    onChange={(e) => setTriagem({...triagem, observacoes: e.target.value})}
-                    placeholder="Observações gerais da enfermagem..."
-                    rows={3}
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end space-x-3 pt-6 border-t">
-                <Button variant="outline" onClick={() => setSelectedPatient(null)}>
-                  Cancelar
-                </Button>
+          {/* Painel Lateral */}
+          <div className="space-y-6">
+            {/* Ações */}
+            <Card className="shadow-lg border-red-200">
+              <CardHeader>
+                <CardTitle className="text-red-800">Ações</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
                 <Button 
-                  onClick={handleSaveTriagem}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                  disabled={!triagem.queixaPrincipal || !triagem.prioridadeManchesterCor}
+                  className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800"
+                  onClick={handleSalvar}
                 >
                   <Save className="mr-2 h-4 w-4" />
-                  Finalizar Triagem
+                  Salvar Triagem
                 </Button>
-              </div>
-            </CardContent>
-          </Card>
+                <Button variant="outline" className="w-full">
+                  Imprimir Protocolo
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Status Atual */}
+            {classificacao && (
+              <Card className="shadow-lg border-red-200">
+                <CardHeader>
+                  <CardTitle className="text-red-800">Classificação Atual</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {classificacoesManchester
+                    .filter(nivel => nivel.nivel === classificacao)
+                    .map((nivel, index) => (
+                      <div key={index} className="text-center">
+                        <div className={`w-16 h-16 ${nivel.cor} rounded-full mx-auto mb-4 flex items-center justify-center`}>
+                          <AlertTriangle className="h-8 w-8 text-white" />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900">{nivel.nome}</h3>
+                        <p className="text-gray-600">Atendimento em até {nivel.tempo}</p>
+                      </div>
+                    ))}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Últimas Triagens */}
+            <Card className="shadow-lg border-red-200">
+              <CardHeader>
+                <CardTitle className="text-red-800">Últimas Triagens</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-2 bg-red-50 rounded">
+                    <span className="text-sm">João Silva</span>
+                    <Badge className="bg-red-500">Emergência</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-yellow-50 rounded">
+                    <span className="text-sm">Maria Santos</span>
+                    <Badge className="bg-yellow-500 text-black">Urgente</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-green-50 rounded">
+                    <span className="text-sm">Pedro Costa</span>
+                    <Badge className="bg-green-500">Pouco Urgente</Badge>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

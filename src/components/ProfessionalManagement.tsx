@@ -1,479 +1,261 @@
+
 import React, { useState } from 'react';
-import { User, Plus, Edit, Trash2, UserCheck, Clock } from 'lucide-react';
+import { ArrowLeft, Users, Search, Plus, Edit, Eye, Phone, Mail, Stethoscope } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { useToast } from '@/hooks/use-toast';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-const ProfessionalManagement = () => {
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [selectedProfessional, setSelectedProfessional] = useState(null);
-  const { toast } = useToast();
-
-  const [professionals, setProfessionals] = useState([
+const ProfessionalManagement = ({ onBack }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [professionals] = useState([
     {
       id: 1,
-      name: 'Dr. João Silva',
-      registroTipo: 'CRM',
-      registroNumero: 'CRM/SP 123456',
-      specialty: 'Clínico Geral',
-      phone: '(11) 99999-8888',
-      email: 'joao.silva@flashclinic.com',
+      nome: 'Dr. João Silva',
+      especialidade: 'Cardiologia',
+      crm: '12345-SP',
+      telefone: '(11) 99999-9999',
+      email: 'joao@clinica.com',
       status: 'Ativo',
-      availableHours: ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30']
+      consultasHoje: 8
     },
     {
       id: 2,
-      name: 'Dra. Maria Santos',
-      registroTipo: 'CRM',
-      registroNumero: 'CRM/SP 789012',
-      specialty: 'Cardiologista',
-      phone: '(11) 77777-6666',
-      email: 'maria.santos@flashclinic.com',
+      nome: 'Dra. Maria Santos',
+      especialidade: 'Pediatria',
+      crm: '54321-SP',
+      telefone: '(11) 88888-8888',
+      email: 'maria@clinica.com',
       status: 'Ativo',
-      availableHours: ['09:00', '09:30', '10:00', '10:30', '14:00', '14:30', '15:00', '15:30']
+      consultasHoje: 12
+    },
+    {
+      id: 3,
+      nome: 'Dr. Carlos Oliveira',
+      especialidade: 'Ortopedia',
+      crm: '67890-SP',
+      telefone: '(11) 77777-7777',
+      email: 'carlos@clinica.com',
+      status: 'Ativo',
+      consultasHoje: 5
     }
   ]);
 
-  const [newProfessional, setNewProfessional] = useState({
-    name: '',
-    registroTipo: '',
-    registroNumero: '',
-    specialty: '',
-    phone: '',
-    email: '',
-    availableHours: []
-  });
-
-  const registroTipos = [
-    { value: 'CRM', label: 'CRM - Médico' },
-    { value: 'CRO', label: 'CRO - Dentista' },
-    { value: 'CRN', label: 'CRN - Nutricionista' },
-    { value: 'CREFITO', label: 'CREFITO - Fisioterapeuta' },
-    { value: 'COFFITO', label: 'COFFITO - Terapeuta Ocupacional' },
-    { value: 'CRP', label: 'CRP - Psicólogo' },
-    { value: 'COREN', label: 'COREN - Enfermeiro' },
-    { value: 'CRF', label: 'CRF - Farmacêutico' },
-    { value: 'CREFONO', label: 'CREFONO - Fonoaudiólogo' }
-  ];
-
-  const specialties = [
-    'Clínico Geral',
-    'Cardiologista',
-    'Dermatologista',
-    'Ginecologista',
-    'Pediatra',
-    'Ortopedista',
-    'Oftalmologista',
-    'Neurologista',
-    'Psiquiatra',
-    'Endocrinologista',
-    'Dentista',
-    'Nutricionista',
-    'Fisioterapeuta',
-    'Psicólogo',
-    'Enfermeiro',
-    'Terapeuta Ocupacional',
-    'Fonoaudiólogo'
-  ];
-
-  const timeSlots = [
-    '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
-    '11:00', '11:30', '14:00', '14:30', '15:00', '15:30',
-    '16:00', '16:30', '17:00', '17:30', '18:00', '18:30'
-  ];
-
-  const handleAddProfessional = () => {
-    if (!newProfessional.name || !newProfessional.registroTipo || !newProfessional.registroNumero || !newProfessional.specialty) {
-      toast({
-        title: "Campos obrigatórios",
-        description: "Por favor, preencha todos os campos obrigatórios.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    const professional = {
-      id: professionals.length + 1,
-      ...newProfessional,
-      status: 'Ativo'
-    };
-
-    setProfessionals([...professionals, professional]);
-    setNewProfessional({
-      name: '',
-      registroTipo: '',
-      registroNumero: '',
-      specialty: '',
-      phone: '',
-      email: '',
-      availableHours: []
-    });
-    setIsAddDialogOpen(false);
-
-    toast({
-      title: "Profissional cadastrado!",
-      description: `${newProfessional.name} foi adicionado com sucesso.`,
-    });
-  };
-
-  const handleEditProfessional = () => {
-    setProfessionals(professionals.map(p => p.id === selectedProfessional.id ? selectedProfessional : p));
-    setIsEditDialogOpen(false);
-    setSelectedProfessional(null);
-    
-    toast({
-      title: "Profissional atualizado!",
-      description: "As informações do profissional foram atualizadas com sucesso.",
-    });
-  };
-
-  const handleDeleteProfessional = (id) => {
-    setProfessionals(professionals.filter(p => p.id !== id));
-    toast({
-      title: "Profissional removido",
-      description: "O profissional foi removido com sucesso.",
-    });
-  };
-
-  const toggleStatus = (id) => {
-    setProfessionals(professionals.map(p => 
-      p.id === id ? { ...p, status: p.status === 'Ativo' ? 'Inativo' : 'Ativo' } : p
-    ));
-  };
-
-  const openEditDialog = (professional) => {
-    setSelectedProfessional({...professional});
-    setIsEditDialogOpen(true);
-  };
-
-  const getInitials = (name) => {
-    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-  };
-
-  const handleHourToggle = (hour, isNew = false) => {
-    if (isNew) {
-      const updatedHours = newProfessional.availableHours.includes(hour)
-        ? newProfessional.availableHours.filter(h => h !== hour)
-        : [...newProfessional.availableHours, hour];
-      setNewProfessional({...newProfessional, availableHours: updatedHours});
-    } else {
-      const updatedHours = selectedProfessional.availableHours.includes(hour)
-        ? selectedProfessional.availableHours.filter(h => h !== hour)
-        : [...selectedProfessional.availableHours, hour];
-      setSelectedProfessional({...selectedProfessional, availableHours: updatedHours});
-    }
-  };
+  const filteredProfessionals = professionals.filter(prof =>
+    prof.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    prof.especialidade.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    prof.crm.includes(searchTerm)
+  );
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold">Profissionais</h2>
-          <p className="text-gray-600">Gerencie os profissionais da clínica</p>
-        </div>
-        
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-              <Plus className="mr-2 h-4 w-4" />
-              Adicionar Profissional
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center">
+            <Button 
+              variant="ghost" 
+              onClick={onBack}
+              className="mr-4 hover:bg-emerald-50"
+            >
+              <ArrowLeft className="h-5 w-5" />
             </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Novo Profissional</DialogTitle>
-              <DialogDescription>
-                Cadastre um novo profissional na clínica.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="name">Nome Completo *</Label>
-                  <Input
-                    id="name"
-                    value={newProfessional.name}
-                    onChange={(e) => setNewProfessional({...newProfessional, name: e.target.value})}
-                    placeholder="Dr. João Silva"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="registroTipo">Tipo de Registro *</Label>
-                  <Select onValueChange={(value) => setNewProfessional({...newProfessional, registroTipo: value, registroNumero: ''})}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione o tipo" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {registroTipos.map((tipo) => (
-                        <SelectItem key={tipo.value} value={tipo.value}>{tipo.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl flex items-center justify-center">
+                <Users className="text-white h-7 w-7" />
               </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="registroNumero">Número do Registro *</Label>
-                <Input
-                  id="registroNumero"
-                  value={newProfessional.registroNumero}
-                  onChange={(e) => setNewProfessional({...newProfessional, registroNumero: e.target.value})}
-                  placeholder={
-                    newProfessional.registroTipo === 'CRM' ? 'CRM/SP 123456' :
-                    newProfessional.registroTipo === 'CRO' ? 'CRO/SP 12345' :
-                    newProfessional.registroTipo === 'CRN' ? 'CRN/SP 1234' :
-                    newProfessional.registroTipo === 'CREFITO' ? 'CREFITO-3/123456-F' :
-                    newProfessional.registroTipo === 'CRP' ? 'CRP 06/123456' :
-                    newProfessional.registroTipo === 'COREN' ? 'COREN-SP 123456' :
-                    'Digite o número do registro'
-                  }
-                />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="specialty">Especialidade *</Label>
-                  <Select onValueChange={(value) => setNewProfessional({...newProfessional, specialty: value})}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {specialties.map((specialty) => (
-                        <SelectItem key={specialty} value={specialty}>{specialty}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="phone">Telefone</Label>
-                  <Input
-                    id="phone"
-                    value={newProfessional.phone}
-                    onChange={(e) => setNewProfessional({...newProfessional, phone: e.target.value})}
-                    placeholder="(11) 99999-9999"
-                  />
-                </div>
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={newProfessional.email}
-                  onChange={(e) => setNewProfessional({...newProfessional, email: e.target.value})}
-                  placeholder="profissional@flashclinic.com"
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <Label>Horários Disponíveis</Label>
-                <div className="grid grid-cols-4 gap-2 max-h-40 overflow-y-auto p-2 border rounded">
-                  {timeSlots.map((hour) => (
-                    <div key={hour} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`hour-${hour}`}
-                        checked={newProfessional.availableHours.includes(hour)}
-                        onCheckedChange={() => handleHourToggle(hour, true)}
-                      />
-                      <Label htmlFor={`hour-${hour}`} className="text-sm">{hour}</Label>
-                    </div>
-                  ))}
-                </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Gestão de Profissionais</h1>
+                <p className="text-gray-600">{professionals.length} profissionais cadastrados</p>
               </div>
             </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                Cancelar
-              </Button>
-              <Button onClick={handleAddProfessional}>Cadastrar</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
+          </div>
 
-      {/* Professionals List */}
-      <div className="grid gap-4">
-        {professionals.map((professional) => (
-          <Card key={professional.id} className="hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <Avatar className="h-12 w-12">
-                    <AvatarFallback className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-                      {getInitials(professional.name)}
-                    </AvatarFallback>
-                  </Avatar>
-                  
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800">
+                <Plus className="mr-2 h-4 w-4" />
+                Novo Profissional
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Cadastrar Novo Profissional</DialogTitle>
+                <DialogDescription>
+                  Preencha os dados do profissional para cadastrá-lo no sistema
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h3 className="font-semibold text-lg">{professional.name}</h3>
-                    <div className="flex items-center space-x-4 text-sm text-gray-600">
-                      <span>{professional.registroNumero}</span>
-                      <span>•</span>
-                      <span>{professional.specialty}</span>
-                      {professional.phone && (
-                        <>
-                          <span>•</span>
-                          <span>{professional.phone}</span>
-                        </>
-                      )}
+                    <Label htmlFor="nome">Nome Completo</Label>
+                    <Input id="nome" placeholder="Nome do profissional" className="mt-1" />
+                  </div>
+                  <div>
+                    <Label htmlFor="crm">CRM</Label>
+                    <Input id="crm" placeholder="12345-SP" className="mt-1" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="especialidade">Especialidade</Label>
+                    <Select>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Selecione a especialidade" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="cardiologia">Cardiologia</SelectItem>
+                        <SelectItem value="pediatria">Pediatria</SelectItem>
+                        <SelectItem value="ortopedia">Ortopedia</SelectItem>
+                        <SelectItem value="dermatologia">Dermatologia</SelectItem>
+                        <SelectItem value="ginecologia">Ginecologia</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="telefone">Telefone</Label>
+                    <Input id="telefone" placeholder="(11) 99999-9999" className="mt-1" />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="email">E-mail</Label>
+                  <Input id="email" type="email" placeholder="email@clinica.com" className="mt-1" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="horario_inicio">Horário Início</Label>
+                    <Input id="horario_inicio" type="time" defaultValue="08:00" className="mt-1" />
+                  </div>
+                  <div>
+                    <Label htmlFor="horario_fim">Horário Fim</Label>
+                    <Input id="horario_fim" type="time" defaultValue="18:00" className="mt-1" />
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline">Cancelar</Button>
+                <Button className="bg-gradient-to-r from-emerald-600 to-emerald-700">
+                  Cadastrar Profissional
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {/* Filtros e Busca */}
+        <Card className="mb-6 shadow-lg border-emerald-200">
+          <CardContent className="pt-6">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Buscar profissional por nome, especialidade ou CRM..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Select defaultValue="todas">
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Especialidade" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="todas">Todas as especialidades</SelectItem>
+                    <SelectItem value="cardiologia">Cardiologia</SelectItem>
+                    <SelectItem value="pediatria">Pediatria</SelectItem>
+                    <SelectItem value="ortopedia">Ortopedia</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select defaultValue="ativo">
+                  <SelectTrigger className="w-32">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ativo">Ativos</SelectItem>
+                    <SelectItem value="inativo">Inativos</SelectItem>
+                    <SelectItem value="todos">Todos</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Lista de Profissionais */}
+        <div className="grid gap-4">
+          {filteredProfessionals.map((professional) => (
+            <Card key={professional.id} className="shadow-lg hover:shadow-xl transition-all duration-300 border-emerald-200">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-r from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center">
+                      <Stethoscope className="h-6 w-6 text-emerald-700" />
                     </div>
-                    <div className="flex items-center space-x-2 mt-2">
-                      <Badge variant={professional.status === 'Ativo' ? 'default' : 'secondary'}>
-                        {professional.status}
-                      </Badge>
-                      <Badge variant="outline">
-                        <Clock className="h-3 w-3 mr-1" />
-                        {professional.availableHours.length} horários
-                      </Badge>
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900">{professional.nome}</h3>
+                      <p className="text-gray-600">{professional.especialidade} • CRM: {professional.crm}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-6">
+                    <div className="text-right">
+                      <div className="flex items-center text-gray-600 mb-1">
+                        <Phone className="h-4 w-4 mr-1" />
+                        <span className="text-sm">{professional.telefone}</span>
+                      </div>
+                      <div className="flex items-center text-gray-600">
+                        <Mail className="h-4 w-4 mr-1" />
+                        <span className="text-sm">{professional.email}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="text-center bg-emerald-50 rounded-lg p-3">
+                      <p className="text-sm text-gray-600">Consultas hoje</p>
+                      <p className="text-2xl font-bold text-emerald-700">{professional.consultasHoje}</p>
+                    </div>
+                    
+                    <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-200">
+                      {professional.status}
+                    </Badge>
+                    
+                    <div className="flex space-x-2">
+                      <Button variant="outline" size="sm">
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800" size="sm">
+                        Ver Agenda
+                      </Button>
                     </div>
                   </div>
                 </div>
-                
-                <div className="flex space-x-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => toggleStatus(professional.id)}
-                  >
-                    <UserCheck className="h-4 w-4" />
-                  </Button>
-                  
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => openEditDialog(professional)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleDeleteProfessional(professional.id)}
-                    className="text-red-600 hover:text-red-700"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {filteredProfessionals.length === 0 && (
+          <Card className="shadow-lg border-emerald-200">
+            <CardContent className="text-center py-12">
+              <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Nenhum profissional encontrado
+              </h3>
+              <p className="text-gray-600">
+                Tente ajustar os filtros ou cadastre um novo profissional
+              </p>
             </CardContent>
           </Card>
-        ))}
+        )}
       </div>
-
-      {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Editar Profissional</DialogTitle>
-            <DialogDescription>
-              Atualize as informações do profissional.
-            </DialogDescription>
-          </DialogHeader>
-          {selectedProfessional && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="edit-name">Nome Completo</Label>
-                  <Input
-                    id="edit-name"
-                    value={selectedProfessional.name}
-                    onChange={(e) => setSelectedProfessional({...selectedProfessional, name: e.target.value})}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="edit-registroTipo">Tipo de Registro</Label>
-                  <Select onValueChange={(value) => setSelectedProfessional({...selectedProfessional, registroTipo: value})}>
-                    <SelectTrigger>
-                      <SelectValue placeholder={selectedProfessional.registroTipo} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {registroTipos.map((tipo) => (
-                        <SelectItem key={tipo.value} value={tipo.value}>{tipo.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="edit-registroNumero">Número do Registro</Label>
-                <Input
-                  id="edit-registroNumero"
-                  value={selectedProfessional.registroNumero}
-                  onChange={(e) => setSelectedProfessional({...selectedProfessional, registroNumero: e.target.value})}
-                />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="edit-specialty">Especialidade</Label>
-                  <Select onValueChange={(value) => setSelectedProfessional({...selectedProfessional, specialty: value})}>
-                    <SelectTrigger>
-                      <SelectValue placeholder={selectedProfessional.specialty} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {specialties.map((specialty) => (
-                        <SelectItem key={specialty} value={specialty}>{specialty}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="edit-phone">Telefone</Label>
-                  <Input
-                    id="edit-phone"
-                    value={selectedProfessional.phone}
-                    onChange={(e) => setSelectedProfessional({...selectedProfessional, phone: e.target.value})}
-                  />
-                </div>
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="edit-email">Email</Label>
-                <Input
-                  id="edit-email"
-                  type="email"
-                  value={selectedProfessional.email}
-                  onChange={(e) => setSelectedProfessional({...selectedProfessional, email: e.target.value})}
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <Label>Horários Disponíveis</Label>
-                <div className="grid grid-cols-4 gap-2 max-h-40 overflow-y-auto p-2 border rounded">
-                  {timeSlots.map((hour) => (
-                    <div key={hour} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`edit-hour-${hour}`}
-                        checked={selectedProfessional.availableHours.includes(hour)}
-                        onCheckedChange={() => handleHourToggle(hour, false)}
-                      />
-                      <Label htmlFor={`edit-hour-${hour}`} className="text-sm">{hour}</Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-              Cancelar
-            </Button>
-            <Button onClick={handleEditProfessional}>Salvar</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
