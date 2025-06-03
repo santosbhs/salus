@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Check, Zap, CreditCard, Shield, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -65,22 +64,22 @@ const Subscription = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-lg flex items-center justify-center">
                 <Zap className="text-white h-6 w-6" />
               </div>
               <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Salus</h1>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">Salus</h1>
                 <p className="text-xs text-gray-600">Saúde e inovação</p>
               </div>
             </div>
             <Link to="/login">
-              <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
+              <Button variant="outline" className="border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white">
                 Já sou assinante
               </Button>
             </Link>
@@ -106,11 +105,11 @@ const Subscription = () => {
             <Card 
               key={plan.id}
               className={`relative hover:shadow-xl transition-all duration-300 ${
-                plan.popular ? 'ring-2 ring-blue-500 scale-105' : 'hover:scale-105'
+                plan.popular ? 'ring-2 ring-teal-500 scale-105' : 'hover:scale-105'
               }`}
             >
               {plan.popular && (
-                <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-teal-600 to-emerald-600 text-white">
                   Mais Popular
                 </Badge>
               )}
@@ -123,7 +122,7 @@ const Subscription = () => {
                   {plan.description}
                 </CardDescription>
                 <div className="mt-4">
-                  <span className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{plan.price}</span>
+                  <span className="text-4xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">{plan.price}</span>
                   <span className="text-gray-600">{plan.period}</span>
                 </div>
               </CardHeader>
@@ -142,8 +141,8 @@ const Subscription = () => {
                   onClick={() => handleSubscribe(plan.id)}
                   className={`w-full ${
                     plan.popular 
-                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white' 
-                      : 'border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white'
+                      ? 'bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white' 
+                      : 'border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white'
                   }`}
                   variant={plan.popular ? 'default' : 'outline'}
                 >
@@ -163,7 +162,7 @@ const Subscription = () => {
           
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Clock className="text-white h-6 w-6" />
               </div>
               <h4 className="font-semibold text-gray-900 mb-2">Rapidez</h4>
@@ -173,7 +172,7 @@ const Subscription = () => {
             </div>
 
             <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Shield className="text-white h-6 w-6" />
               </div>
               <h4 className="font-semibold text-gray-900 mb-2">Segurança</h4>
@@ -183,7 +182,7 @@ const Subscription = () => {
             </div>
 
             <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Zap className="text-white h-6 w-6" />
               </div>
               <h4 className="font-semibold text-gray-900 mb-2">Inovação</h4>
@@ -198,7 +197,7 @@ const Subscription = () => {
         <div className="text-center mt-12">
           <p className="text-gray-600 mb-4">
             Já é assinante? 
-            <Link to="/login" className="text-blue-600 font-medium hover:underline ml-1">
+            <Link to="/login" className="text-teal-600 font-medium hover:underline ml-1">
               Faça login aqui
             </Link>
           </p>

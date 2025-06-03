@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Lock, Mail, Eye, EyeOff, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -29,16 +28,16 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex items-center justify-center mb-8">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+            <div className="w-12 h-12 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-lg flex items-center justify-center">
               <Zap className="text-white h-7 w-7" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Salus</h1>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">Salus</h1>
               <p className="text-sm text-gray-600">Saúde e inovação</p>
             </div>
           </div>
@@ -98,14 +97,14 @@ const Login = () => {
 
               <Button 
                 type="submit" 
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                className="w-full bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white"
               >
                 Entrar na Plataforma
               </Button>
             </form>
 
             <div className="text-center space-y-4">
-              <Link to="/forgot-password" className="text-sm text-gray-600 hover:text-blue-600">
+              <Link to="/forgot-password" className="text-sm text-gray-600 hover:text-teal-600">
                 Esqueci minha senha
               </Link>
               
@@ -114,7 +113,7 @@ const Login = () => {
                   Ainda não é assinante?
                 </p>
                 <Link to="/subscription">
-                  <Button variant="outline" className="w-full border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
+                  <Button variant="outline" className="w-full border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white">
                     Assinar Salus
                   </Button>
                 </Link>
