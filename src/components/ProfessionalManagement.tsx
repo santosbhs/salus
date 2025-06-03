@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { User, Plus, Edit, Trash2, UserCheck, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -22,7 +21,8 @@ const ProfessionalManagement = () => {
     {
       id: 1,
       name: 'Dr. João Silva',
-      crm: 'CRM/SP 123456',
+      registroTipo: 'CRM',
+      registroNumero: 'CRM/SP 123456',
       specialty: 'Clínico Geral',
       phone: '(11) 99999-8888',
       email: 'joao.silva@flashclinic.com',
@@ -32,7 +32,8 @@ const ProfessionalManagement = () => {
     {
       id: 2,
       name: 'Dra. Maria Santos',
-      crm: 'CRM/SP 789012',
+      registroTipo: 'CRM',
+      registroNumero: 'CRM/SP 789012',
       specialty: 'Cardiologista',
       phone: '(11) 77777-6666',
       email: 'maria.santos@flashclinic.com',
@@ -43,12 +44,25 @@ const ProfessionalManagement = () => {
 
   const [newProfessional, setNewProfessional] = useState({
     name: '',
-    crm: '',
+    registroTipo: '',
+    registroNumero: '',
     specialty: '',
     phone: '',
     email: '',
     availableHours: []
   });
+
+  const registroTipos = [
+    { value: 'CRM', label: 'CRM - Médico' },
+    { value: 'CRO', label: 'CRO - Dentista' },
+    { value: 'CRN', label: 'CRN - Nutricionista' },
+    { value: 'CREFITO', label: 'CREFITO - Fisioterapeuta' },
+    { value: 'COFFITO', label: 'COFFITO - Terapeuta Ocupacional' },
+    { value: 'CRP', label: 'CRP - Psicólogo' },
+    { value: 'COREN', label: 'COREN - Enfermeiro' },
+    { value: 'CRF', label: 'CRF - Farmacêutico' },
+    { value: 'CREFONO', label: 'CREFONO - Fonoaudiólogo' }
+  ];
 
   const specialties = [
     'Clínico Geral',
@@ -60,7 +74,14 @@ const ProfessionalManagement = () => {
     'Oftalmologista',
     'Neurologista',
     'Psiquiatra',
-    'Endocrinologista'
+    'Endocrinologista',
+    'Dentista',
+    'Nutricionista',
+    'Fisioterapeuta',
+    'Psicólogo',
+    'Enfermeiro',
+    'Terapeuta Ocupacional',
+    'Fonoaudiólogo'
   ];
 
   const timeSlots = [
@@ -70,7 +91,7 @@ const ProfessionalManagement = () => {
   ];
 
   const handleAddProfessional = () => {
-    if (!newProfessional.name || !newProfessional.crm || !newProfessional.specialty) {
+    if (!newProfessional.name || !newProfessional.registroTipo || !newProfessional.registroNumero || !newProfessional.specialty) {
       toast({
         title: "Campos obrigatórios",
         description: "Por favor, preencha todos os campos obrigatórios.",
@@ -88,7 +109,8 @@ const ProfessionalManagement = () => {
     setProfessionals([...professionals, professional]);
     setNewProfessional({
       name: '',
-      crm: '',
+      registroTipo: '',
+      registroNumero: '',
       specialty: '',
       phone: '',
       email: '',
@@ -185,14 +207,36 @@ const ProfessionalManagement = () => {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="crm">CRM *</Label>
-                  <Input
-                    id="crm"
-                    value={newProfessional.crm}
-                    onChange={(e) => setNewProfessional({...newProfessional, crm: e.target.value})}
-                    placeholder="CRM/SP 123456"
-                  />
+                  <Label htmlFor="registroTipo">Tipo de Registro *</Label>
+                  <Select onValueChange={(value) => setNewProfessional({...newProfessional, registroTipo: value, registroNumero: ''})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {registroTipos.map((tipo) => (
+                        <SelectItem key={tipo.value} value={tipo.value}>{tipo.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="registroNumero">Número do Registro *</Label>
+                <Input
+                  id="registroNumero"
+                  value={newProfessional.registroNumero}
+                  onChange={(e) => setNewProfessional({...newProfessional, registroNumero: e.target.value})}
+                  placeholder={
+                    newProfessional.registroTipo === 'CRM' ? 'CRM/SP 123456' :
+                    newProfessional.registroTipo === 'CRO' ? 'CRO/SP 12345' :
+                    newProfessional.registroTipo === 'CRN' ? 'CRN/SP 1234' :
+                    newProfessional.registroTipo === 'CREFITO' ? 'CREFITO-3/123456-F' :
+                    newProfessional.registroTipo === 'CRP' ? 'CRP 06/123456' :
+                    newProfessional.registroTipo === 'COREN' ? 'COREN-SP 123456' :
+                    'Digite o número do registro'
+                  }
+                />
               </div>
               
               <div className="grid grid-cols-2 gap-4">
@@ -273,7 +317,7 @@ const ProfessionalManagement = () => {
                   <div>
                     <h3 className="font-semibold text-lg">{professional.name}</h3>
                     <div className="flex items-center space-x-4 text-sm text-gray-600">
-                      <span>{professional.crm}</span>
+                      <span>{professional.registroNumero}</span>
                       <span>•</span>
                       <span>{professional.specialty}</span>
                       {professional.phone && (
@@ -348,13 +392,27 @@ const ProfessionalManagement = () => {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="edit-crm">CRM</Label>
-                  <Input
-                    id="edit-crm"
-                    value={selectedProfessional.crm}
-                    onChange={(e) => setSelectedProfessional({...selectedProfessional, crm: e.target.value})}
-                  />
+                  <Label htmlFor="edit-registroTipo">Tipo de Registro</Label>
+                  <Select onValueChange={(value) => setSelectedProfessional({...selectedProfessional, registroTipo: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={selectedProfessional.registroTipo} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {registroTipos.map((tipo) => (
+                        <SelectItem key={tipo.value} value={tipo.value}>{tipo.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="edit-registroNumero">Número do Registro</Label>
+                <Input
+                  id="edit-registroNumero"
+                  value={selectedProfessional.registroNumero}
+                  onChange={(e) => setSelectedProfessional({...selectedProfessional, registroNumero: e.target.value})}
+                />
               </div>
               
               <div className="grid grid-cols-2 gap-4">
