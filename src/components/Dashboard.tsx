@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Calendar, Users, Clock, TrendingUp, Activity, AlertCircle, UserPlus, FileText, Zap, Stethoscope } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,15 +12,15 @@ const Dashboard = ({ onNavigate }) => {
       value: '1,234',
       change: '+12%',
       icon: Users,
-      color: 'text-teal-600',
-      bgColor: 'bg-teal-50',
+      color: 'text-green-700',
+      bgColor: 'bg-green-50',
     },
     {
       title: 'Agendamentos Hoje',
       value: '24',
       change: '+5%',
       icon: Calendar,
-      color: 'text-emerald-600',
+      color: 'text-emerald-700',
       bgColor: 'bg-emerald-50',
     },
     {
@@ -35,8 +36,8 @@ const Dashboard = ({ onNavigate }) => {
       value: '85%',
       change: '+3%',
       icon: TrendingUp,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50',
+      color: 'text-emerald-600',
+      bgColor: 'bg-emerald-50',
     },
   ];
 
@@ -67,12 +68,12 @@ const Dashboard = ({ onNavigate }) => {
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-teal-600 to-emerald-600 rounded-lg p-6 text-white">
+      <div className="bg-gradient-to-r from-green-700 to-emerald-700 rounded-lg p-6 text-white">
         <div className="flex items-center mb-4">
           <Zap className="h-8 w-8 text-white mr-3" />
           <h2 className="text-2xl font-bold">Bem-vindo ao Salus</h2>
         </div>
-        <p className="text-teal-100">
+        <p className="text-green-100">
           Saúde e inovação em suas mãos!
         </p>
       </div>
@@ -99,7 +100,7 @@ const Dashboard = ({ onNavigate }) => {
         <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('novo-atendimento')}>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
-              <FileText className="mr-2 h-5 w-5 text-teal-600" />
+              <FileText className="mr-2 h-5 w-5 text-green-700" />
               Novo Atendimento
             </CardTitle>
             <CardDescription>
@@ -107,7 +108,7 @@ const Dashboard = ({ onNavigate }) => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700">
+            <Button className="w-full bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-800 hover:to-emerald-800">
               Iniciar Atendimento
             </Button>
           </CardContent>
@@ -124,7 +125,7 @@ const Dashboard = ({ onNavigate }) => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full border-teal-600 text-teal-600 hover:bg-teal-600 hover:text-white">
+            <Button variant="outline" className="w-full border-green-700 text-green-700 hover:bg-green-700 hover:text-white">
               Cadastrar Paciente
             </Button>
           </CardContent>
@@ -133,7 +134,7 @@ const Dashboard = ({ onNavigate }) => {
         <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('professionals')}>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
-              <Users className="mr-2 h-5 w-5 text-emerald-600" />
+              <Users className="mr-2 h-5 w-5 text-emerald-700" />
               Profissionais
             </CardTitle>
             <CardDescription>
@@ -141,7 +142,7 @@ const Dashboard = ({ onNavigate }) => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white">
+            <Button variant="outline" className="w-full border-emerald-700 text-emerald-700 hover:bg-emerald-700 hover:text-white">
               Gerenciar Profissionais
             </Button>
           </CardContent>
@@ -190,7 +191,7 @@ const Dashboard = ({ onNavigate }) => {
               {upcomingAppointments.map((appointment, index) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-center space-x-3">
-                    <div className="text-sm font-medium text-teal-600">
+                    <div className="text-sm font-medium text-green-700">
                       {appointment.time}
                     </div>
                     <div>
@@ -209,7 +210,7 @@ const Dashboard = ({ onNavigate }) => {
                 </div>
               ))}
             </div>
-            <Button className="w-full mt-4 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700" onClick={() => onNavigate('appointments')}>
+            <Button className="w-full mt-4 bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-800 hover:to-emerald-800" onClick={() => onNavigate('appointments')}>
               Ver Todos os Agendamentos
             </Button>
           </CardContent>
@@ -238,7 +239,7 @@ const Dashboard = ({ onNavigate }) => {
                 </div>
               ))}
             </div>
-            <Button className="w-full mt-4 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700">
+            <Button className="w-full mt-4 bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-800 hover:to-emerald-800">
               Ver Todas as Notificações
             </Button>
           </CardContent>

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Calendar, Users, Clock, FileText, Menu, Bell, Search, ExternalLink, Stethoscope, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -33,7 +34,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="flex items-center justify-between px-6 py-4">
@@ -47,10 +48,10 @@ const Index = () => {
               <Menu className="h-5 w-5" />
             </Button>
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-green-700 to-emerald-700 rounded-lg flex items-center justify-center">
                 <Zap className="text-white font-bold text-sm h-5 w-5" />
               </div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
+              <h1 className="text-xl font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">
                 Salus
               </h1>
             </div>
@@ -58,7 +59,7 @@ const Index = () => {
           
           <div className="flex items-center space-x-4">
             <Link to="/agendar">
-              <Button variant="outline" size="sm" className="border-teal-300 text-teal-700 hover:bg-teal-50">
+              <Button variant="outline" size="sm" className="border-green-600 text-green-700 hover:bg-green-50">
                 <ExternalLink className="h-4 w-4 mr-2" />
                 Página do Cliente
               </Button>
@@ -73,7 +74,7 @@ const Index = () => {
             <Button variant="ghost" size="sm">
               <Bell className="h-5 w-5" />
             </Button>
-            <div className="w-8 h-8 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full flex items-center justify-center">
               <span className="text-sm font-medium text-white">DR</span>
             </div>
           </div>
@@ -94,8 +95,8 @@ const Index = () => {
                   variant={activeTab === item.id ? 'default' : 'ghost'}
                   className={`w-full justify-start ${
                     activeTab === item.id 
-                      ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white hover:from-teal-700 hover:to-emerald-700' 
-                      : 'hover:bg-teal-50 hover:text-teal-700'
+                      ? 'bg-gradient-to-r from-green-700 to-emerald-700 text-white hover:from-green-800 hover:to-emerald-800' 
+                      : 'hover:bg-green-50 hover:text-green-700'
                   }`}
                   onClick={() => handleNavigate(item.id)}
                 >
