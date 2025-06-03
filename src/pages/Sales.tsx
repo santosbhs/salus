@@ -1,9 +1,10 @@
 
 import React from 'react';
-import { Check, Star, Users, Shield, Clock, TrendingUp, Calendar, FileText, Heart, Award, Zap, ChevronRight } from 'lucide-react';
+import { Check, Star, Users, Shield, Clock, TrendingUp, Calendar, FileText, Heart, Award, Zap, ChevronRight, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Link } from 'react-router-dom';
 
 const Sales = () => {
@@ -11,32 +12,38 @@ const Sales = () => {
     {
       icon: Calendar,
       title: "Agendamento Inteligente",
-      description: "Sistema automatizado de agendamento com confirmação por SMS e WhatsApp"
+      description: "Sistema automatizado de agendamento com confirmação por SMS e WhatsApp",
+      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=500&h=300&fit=crop"
     },
     {
       icon: FileText,
       title: "Prontuário Digital",
-      description: "Histórico médico completo, prescrições digitais e laudos integrados"
+      description: "Histórico médico completo, prescrições digitais e laudos integrados",
+      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=500&h=300&fit=crop"
     },
     {
       icon: Users,
       title: "Gestão de Pacientes",
-      description: "Cadastro completo com foto, documentos e histórico de consultas"
+      description: "Cadastro completo com foto, documentos e histórico de consultas",
+      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500&h=300&fit=crop"
     },
     {
       icon: TrendingUp,
       title: "Relatórios Gerenciais",
-      description: "Dashboard completo com métricas de performance e faturamento"
+      description: "Dashboard completo com métricas de performance e faturamento",
+      image: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=500&h=300&fit=crop"
     },
     {
       icon: Shield,
       title: "Segurança LGPD",
-      description: "Dados criptografados e conformidade total com a Lei Geral de Proteção de Dados"
+      description: "Dados criptografados e conformidade total com a Lei Geral de Proteção de Dados",
+      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=500&h=300&fit=crop"
     },
     {
       icon: Heart,
       title: "Telemedicina",
-      description: "Consultas online integradas com prescrição digital"
+      description: "Consultas online integradas com prescrição digital",
+      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=500&h=300&fit=crop"
     }
   ];
 
@@ -98,19 +105,22 @@ const Sales = () => {
       name: "Dr. João Silva",
       specialty: "Cardiologista",
       rating: 5,
-      comment: "O Salus revolucionou minha clínica. Reduzi o tempo administrativo em 70% e meus pacientes adoram o agendamento online."
+      comment: "O Salus revolucionou minha clínica. Reduzi o tempo administrativo em 70% e meus pacientes adoram o agendamento online.",
+      avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100&h=100&fit=crop&crop=face"
     },
     {
       name: "Dra. Maria Santos",
       specialty: "Pediatra",
       rating: 5,
-      comment: "Segurança dos dados e facilidade de uso excepcionais. Recomendo para todos os colegas médicos."
+      comment: "Segurança dos dados e facilidade de uso excepcionais. Recomendo para todos os colegas médicos.",
+      avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop&crop=face"
     },
     {
       name: "Dr. Carlos Oliveira",
       specialty: "Ortopedista",
       rating: 5,
-      comment: "Interface intuitiva e suporte técnico fantástico. Minha produtividade aumentou significativamente."
+      comment: "Interface intuitiva e suporte técnico fantástico. Minha produtividade aumentou significativamente.",
+      avatar: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=100&h=100&fit=crop&crop=face"
     }
   ];
 
@@ -143,68 +153,97 @@ const Sales = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto text-center max-w-4xl">
-          <Badge className="mb-6 bg-green-100 text-green-800 border-green-200">
-            🚀 Novo: Telemedicina integrada
-          </Badge>
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">
-            Modernize sua clínica com tecnologia de ponta
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-            O sistema de gestão clínica mais completo do Brasil. Aumente sua produtividade, 
-            melhore a experiência dos pacientes e potencialize seus resultados.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Link to="/subscription">
-              <Button size="lg" className="bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-800 hover:to-emerald-800 text-lg px-8 py-6">
-                Começar Teste Grátis <ChevronRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-            <Button size="lg" variant="outline" className="border-green-700 text-green-700 hover:bg-green-700 hover:text-white text-lg px-8 py-6">
-              Ver Demonstração
-            </Button>
-          </div>
-          <div className="flex items-center justify-center space-x-8 text-sm text-gray-500">
-            <div className="flex items-center">
-              <Check className="h-4 w-4 text-green-600 mr-2" />
-              30 dias grátis
+      {/* Hero Section with Image */}
+      <section className="py-20 px-4 overflow-hidden">
+        <div className="container mx-auto max-w-7xl">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="max-w-xl">
+              <Badge className="mb-6 bg-green-100 text-green-800 border-green-200">
+                🚀 Novo: Telemedicina integrada
+              </Badge>
+              <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent leading-tight">
+                Modernize sua clínica com tecnologia de ponta
+              </h1>
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                O sistema de gestão clínica mais completo do Brasil. Aumente sua produtividade, 
+                melhore a experiência dos pacientes e potencialize seus resultados.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 mb-12">
+                <Link to="/subscription">
+                  <Button size="lg" className="bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-800 hover:to-emerald-800 text-lg px-8 py-6">
+                    Começar Teste Grátis <ChevronRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+                <Button size="lg" variant="outline" className="border-green-700 text-green-700 hover:bg-green-700 hover:text-white text-lg px-8 py-6">
+                  <Play className="mr-2 h-5 w-5" />
+                  Ver Demonstração
+                </Button>
+              </div>
+              <div className="flex items-center space-x-8 text-sm text-gray-500">
+                <div className="flex items-center">
+                  <Check className="h-4 w-4 text-green-600 mr-2" />
+                  30 dias grátis
+                </div>
+                <div className="flex items-center">
+                  <Check className="h-4 w-4 text-green-600 mr-2" />
+                  Sem compromisso
+                </div>
+                <div className="flex items-center">
+                  <Check className="h-4 w-4 text-green-600 mr-2" />
+                  Suporte incluído
+                </div>
+              </div>
             </div>
-            <div className="flex items-center">
-              <Check className="h-4 w-4 text-green-600 mr-2" />
-              Sem compromisso
-            </div>
-            <div className="flex items-center">
-              <Check className="h-4 w-4 text-green-600 mr-2" />
-              Suporte incluído
+            <div className="relative">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                <AspectRatio ratio={16/10}>
+                  <img 
+                    src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=800&h=500&fit=crop" 
+                    alt="Sistema Salus em uso" 
+                    className="object-cover w-full h-full"
+                  />
+                </AspectRatio>
+                <div className="absolute inset-0 bg-gradient-to-t from-green-900/20 to-transparent"></div>
+              </div>
+              <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-gradient-to-r from-green-700 to-emerald-700 rounded-full opacity-20 blur-3xl"></div>
+              <div className="absolute -top-6 -right-6 w-32 h-32 bg-gradient-to-r from-emerald-700 to-green-700 rounded-full opacity-20 blur-3xl"></div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Features Section with Images */}
       <section className="py-20 px-4 bg-white">
-        <div className="container mx-auto max-w-6xl">
+        <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
               Tudo que sua clínica precisa em um só lugar
             </h2>
-            <p className="text-xl text-gray-600">
-              Funcionalidades completas para revolucionar sua gestão médica
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Funcionalidades completas para revolucionar sua gestão médica com interface moderna e intuitiva
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow border-0 shadow-md">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-gradient-to-r from-green-700 to-emerald-700 rounded-lg flex items-center justify-center mb-4">
-                    <feature.icon className="h-6 w-6 text-white" />
+              <Card key={index} className="group hover:shadow-xl transition-all duration-300 border-0 shadow-md overflow-hidden">
+                <div className="relative">
+                  <AspectRatio ratio={16/9}>
+                    <img 
+                      src={feature.image} 
+                      alt={feature.title}
+                      className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </AspectRatio>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                  <div className="absolute top-4 left-4 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                    <feature.icon className="h-6 w-6 text-green-700" />
                   </div>
+                </div>
+                <CardHeader className="pb-2">
                   <CardTitle className="text-xl">{feature.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-gray-600 text-base">
+                  <CardDescription className="text-gray-600 text-base leading-relaxed">
                     {feature.description}
                   </CardDescription>
                 </CardContent>
@@ -214,24 +253,50 @@ const Sales = () => {
         </div>
       </section>
 
+      {/* Platform Preview */}
+      <section className="py-20 px-4 bg-gradient-to-r from-gray-50 to-green-50">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Interface moderna e intuitiva
+            </h2>
+            <p className="text-xl text-gray-600">
+              Desenvolvido pensando na experiência do usuário
+            </p>
+          </div>
+          <div className="relative">
+            <div className="rounded-2xl overflow-hidden shadow-2xl">
+              <AspectRatio ratio={16/9}>
+                <img 
+                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=675&fit=crop" 
+                  alt="Dashboard do Sistema Salus" 
+                  className="object-cover w-full h-full"
+                />
+              </AspectRatio>
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-green-900/10 to-transparent rounded-2xl"></div>
+          </div>
+        </div>
+      </section>
+
       {/* Stats Section */}
       <section className="py-16 px-4 bg-gradient-to-r from-green-700 to-emerald-700 text-white">
         <div className="container mx-auto max-w-4xl">
           <div className="grid md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-4xl font-bold mb-2">10k+</div>
+            <div className="group">
+              <div className="text-4xl font-bold mb-2 group-hover:scale-110 transition-transform">10k+</div>
               <div className="text-green-100">Médicos ativos</div>
             </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">500k+</div>
+            <div className="group">
+              <div className="text-4xl font-bold mb-2 group-hover:scale-110 transition-transform">500k+</div>
               <div className="text-green-100">Pacientes atendidos</div>
             </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">99.9%</div>
+            <div className="group">
+              <div className="text-4xl font-bold mb-2 group-hover:scale-110 transition-transform">99.9%</div>
               <div className="text-green-100">Uptime garantido</div>
             </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">24/7</div>
+            <div className="group">
+              <div className="text-4xl font-bold mb-2 group-hover:scale-110 transition-transform">24/7</div>
               <div className="text-green-100">Suporte técnico</div>
             </div>
           </div>
@@ -251,7 +316,7 @@ const Sales = () => {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {plans.map((plan, index) => (
-              <Card key={index} className={`relative hover:shadow-xl transition-all ${plan.color} ${plan.popular ? 'ring-2 ring-green-500 scale-105' : ''}`}>
+              <Card key={index} className={`relative hover:shadow-xl transition-all duration-300 ${plan.color} ${plan.popular ? 'ring-2 ring-green-500 scale-105' : ''}`}>
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                     <Badge className="bg-green-600 text-white">
@@ -272,8 +337,8 @@ const Sales = () => {
                   <ul className="space-y-3">
                     {plan.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-center">
-                        <Check className="h-5 w-5 text-green-600 mr-3" />
-                        <span>{feature}</span>
+                        <Check className="h-5 w-5 text-green-600 mr-3 flex-shrink-0" />
+                        <span className="text-sm">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -294,7 +359,7 @@ const Sales = () => {
         </div>
       </section>
 
-      {/* Testimonials Section */}
+      {/* Testimonials Section with Avatars */}
       <section className="py-20 px-4 bg-gray-50">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
@@ -307,18 +372,29 @@ const Sales = () => {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <Card key={index} className="border-0 shadow-lg">
+              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
                 <CardHeader>
-                  <div className="flex items-center space-x-1 mb-4">
+                  <div className="flex items-center space-x-4 mb-4">
+                    <div className="w-12 h-12 rounded-full overflow-hidden">
+                      <img 
+                        src={testimonial.avatar} 
+                        alt={testimonial.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg">{testimonial.name}</CardTitle>
+                      <CardDescription>{testimonial.specialty}</CardDescription>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-1">
                     {[...Array(testimonial.rating)].map((_, i) => (
                       <Star key={i} className="h-5 w-5 text-yellow-500 fill-current" />
                     ))}
                   </div>
-                  <CardTitle className="text-lg">{testimonial.name}</CardTitle>
-                  <CardDescription>{testimonial.specialty}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 italic">"{testimonial.comment}"</p>
+                  <p className="text-gray-600 italic leading-relaxed">"{testimonial.comment}"</p>
                 </CardContent>
               </Card>
             ))}
@@ -326,13 +402,21 @@ const Sales = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-green-700 to-emerald-700 text-white">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-4xl font-bold mb-6">
+      {/* CTA Section with Background Image */}
+      <section className="py-20 px-4 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <img 
+            src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=1200&h=600&fit=crop" 
+            alt="Clínica moderna"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-green-900/90 to-emerald-900/90"></div>
+        </div>
+        <div className="container mx-auto max-w-4xl text-center relative z-10 text-white">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Pronto para revolucionar sua clínica?
           </h2>
-          <p className="text-xl mb-8 text-green-100">
+          <p className="text-xl mb-8 text-green-100 max-w-2xl mx-auto leading-relaxed">
             Junte-se a milhares de profissionais que já transformaram sua prática médica com o Salus
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -345,7 +429,7 @@ const Sales = () => {
               Falar com Especialista
             </Button>
           </div>
-          <p className="mt-6 text-green-100">
+          <p className="mt-6 text-green-100 text-sm">
             💳 Sem cartão de crédito • ⚡ Ativação imediata • 🛡️ Dados 100% seguros
           </p>
         </div>
@@ -362,35 +446,35 @@ const Sales = () => {
                 </div>
                 <span className="text-xl font-bold">Salus</span>
               </div>
-              <p className="text-gray-400">
+              <p className="text-gray-400 leading-relaxed">
                 Modernizando a gestão médica com tecnologia de ponta e segurança total.
               </p>
             </div>
             <div>
               <h3 className="font-semibold mb-4">Produto</h3>
               <ul className="space-y-2 text-gray-400">
-                <li>Funcionalidades</li>
-                <li>Preços</li>
-                <li>Integrações</li>
-                <li>Segurança</li>
+                <li className="hover:text-white transition-colors cursor-pointer">Funcionalidades</li>
+                <li className="hover:text-white transition-colors cursor-pointer">Preços</li>
+                <li className="hover:text-white transition-colors cursor-pointer">Integrações</li>
+                <li className="hover:text-white transition-colors cursor-pointer">Segurança</li>
               </ul>
             </div>
             <div>
               <h3 className="font-semibold mb-4">Suporte</h3>
               <ul className="space-y-2 text-gray-400">
-                <li>Central de Ajuda</li>
-                <li>Documentação</li>
-                <li>Treinamentos</li>
-                <li>Contato</li>
+                <li className="hover:text-white transition-colors cursor-pointer">Central de Ajuda</li>
+                <li className="hover:text-white transition-colors cursor-pointer">Documentação</li>
+                <li className="hover:text-white transition-colors cursor-pointer">Treinamentos</li>
+                <li className="hover:text-white transition-colors cursor-pointer">Contato</li>
               </ul>
             </div>
             <div>
               <h3 className="font-semibold mb-4">Empresa</h3>
               <ul className="space-y-2 text-gray-400">
-                <li>Sobre nós</li>
-                <li>Blog</li>
-                <li>Carreiras</li>
-                <li>Privacidade</li>
+                <li className="hover:text-white transition-colors cursor-pointer">Sobre nós</li>
+                <li className="hover:text-white transition-colors cursor-pointer">Blog</li>
+                <li className="hover:text-white transition-colors cursor-pointer">Carreiras</li>
+                <li className="hover:text-white transition-colors cursor-pointer">Privacidade</li>
               </ul>
             </div>
           </div>
