@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Calendar, Users, Clock, FileText, Menu, Bell, Search, ExternalLink, Stethoscope } from 'lucide-react';
+import { Calendar, Users, Clock, FileText, Menu, Bell, Search, ExternalLink, Stethoscope, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -32,7 +32,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="flex items-center justify-between px-6 py-4">
@@ -46,10 +46,10 @@ const Index = () => {
               <Menu className="h-5 w-5" />
             </Button>
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">⚡</span>
+              <div className="w-8 h-8 bg-gradient-to-r from-black to-gray-800 rounded-lg flex items-center justify-center">
+                <Zap className="text-white font-bold text-sm h-5 w-5" />
               </div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-xl font-bold text-black">
                 Flash Clinic
               </h1>
             </div>
@@ -57,7 +57,7 @@ const Index = () => {
           
           <div className="flex items-center space-x-4">
             <Link to="/agendar">
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="border-gray-300 text-gray-700 hover:bg-gray-100">
                 <ExternalLink className="h-4 w-4 mr-2" />
                 Página do Cliente
               </Button>
@@ -91,7 +91,11 @@ const Index = () => {
                 <Button
                   key={item.id}
                   variant={activeTab === item.id ? 'default' : 'ghost'}
-                  className="w-full justify-start"
+                  className={`w-full justify-start ${
+                    activeTab === item.id 
+                      ? 'bg-gradient-to-r from-black to-gray-800 text-white hover:from-gray-800 hover:to-black' 
+                      : 'hover:bg-gray-100'
+                  }`}
                   onClick={() => handleNavigate(item.id)}
                 >
                   <Icon className="mr-2 h-4 w-4" />

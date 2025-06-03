@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Calendar, Users, Clock, TrendingUp, Activity, AlertCircle, UserPlus, FileText } from 'lucide-react';
+import { Calendar, Users, Clock, TrendingUp, Activity, AlertCircle, UserPlus, FileText, Zap } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,32 +11,32 @@ const Dashboard = ({ onNavigate }) => {
       value: '1,234',
       change: '+12%',
       icon: Users,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-100',
+      color: 'text-black',
+      bgColor: 'bg-gray-100',
     },
     {
       title: 'Agendamentos Hoje',
       value: '24',
       change: '+5%',
       icon: Calendar,
-      color: 'text-green-600',
-      bgColor: 'bg-green-100',
+      color: 'text-gray-800',
+      bgColor: 'bg-gray-100',
     },
     {
       title: 'Consultas Realizadas',
       value: '18',
       change: '+8%',
       icon: Activity,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100',
+      color: 'text-black',
+      bgColor: 'bg-gray-100',
     },
     {
       title: 'Taxa de Ocupação',
       value: '85%',
       change: '+3%',
       icon: TrendingUp,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-100',
+      color: 'text-gray-800',
+      bgColor: 'bg-gray-100',
     },
   ];
 
@@ -57,9 +56,12 @@ const Dashboard = ({ onNavigate }) => {
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6 text-white">
-        <h2 className="text-2xl font-bold mb-2">Bem-vindo ao Flash Clinic</h2>
-        <p className="text-blue-100">
+      <div className="bg-gradient-to-r from-black to-gray-800 rounded-lg p-6 text-white">
+        <div className="flex items-center mb-4">
+          <Zap className="h-8 w-8 text-white mr-3" />
+          <h2 className="text-2xl font-bold">Bem-vindo ao Flash Clinic</h2>
+        </div>
+        <p className="text-gray-200">
           Seus atendimentos em um flash!
         </p>
       </div>
@@ -69,7 +71,7 @@ const Dashboard = ({ onNavigate }) => {
         <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('novo-atendimento')}>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
-              <FileText className="mr-2 h-5 w-5 text-blue-600" />
+              <FileText className="mr-2 h-5 w-5 text-black" />
               Novo Atendimento
             </CardTitle>
             <CardDescription>
@@ -77,7 +79,7 @@ const Dashboard = ({ onNavigate }) => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+            <Button className="w-full bg-gradient-to-r from-black to-gray-800 hover:from-gray-800 hover:to-black">
               Iniciar Atendimento
             </Button>
           </CardContent>
@@ -86,7 +88,7 @@ const Dashboard = ({ onNavigate }) => {
         <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('patients')}>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
-              <UserPlus className="mr-2 h-5 w-5 text-green-600" />
+              <UserPlus className="mr-2 h-5 w-5 text-gray-800" />
               Novo Paciente
             </CardTitle>
             <CardDescription>
@@ -94,7 +96,7 @@ const Dashboard = ({ onNavigate }) => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full border-black text-black hover:bg-black hover:text-white">
               Cadastrar Paciente
             </Button>
           </CardContent>
@@ -103,7 +105,7 @@ const Dashboard = ({ onNavigate }) => {
         <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('professionals')}>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
-              <Users className="mr-2 h-5 w-5 text-purple-600" />
+              <Users className="mr-2 h-5 w-5 text-black" />
               Profissionais
             </CardTitle>
             <CardDescription>
@@ -111,7 +113,7 @@ const Dashboard = ({ onNavigate }) => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full border-black text-black hover:bg-black hover:text-white">
               Gerenciar Profissionais
             </Button>
           </CardContent>
@@ -134,7 +136,7 @@ const Dashboard = ({ onNavigate }) => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stat.value}</div>
-                <p className="text-xs text-green-600 font-medium">
+                <p className="text-xs text-gray-600 font-medium">
                   {stat.change} em relação ao mês passado
                 </p>
               </CardContent>
@@ -160,7 +162,7 @@ const Dashboard = ({ onNavigate }) => {
               {upcomingAppointments.map((appointment, index) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-center space-x-3">
-                    <div className="text-sm font-medium text-blue-600">
+                    <div className="text-sm font-medium text-black">
                       {appointment.time}
                     </div>
                     <div>
@@ -174,7 +176,7 @@ const Dashboard = ({ onNavigate }) => {
                 </div>
               ))}
             </div>
-            <Button className="w-full mt-4" variant="outline" onClick={() => onNavigate('appointments')}>
+            <Button className="w-full mt-4 bg-gradient-to-r from-black to-gray-800 hover:from-gray-800 hover:to-black" onClick={() => onNavigate('appointments')}>
               Ver Todos os Agendamentos
             </Button>
           </CardContent>
@@ -203,7 +205,7 @@ const Dashboard = ({ onNavigate }) => {
                 </div>
               ))}
             </div>
-            <Button className="w-full mt-4" variant="outline">
+            <Button className="w-full mt-4 bg-gradient-to-r from-black to-gray-800 hover:from-gray-800 hover:to-black">
               Ver Todas as Notificações
             </Button>
           </CardContent>
