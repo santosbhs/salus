@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Plus, Trash2, Pill, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,8 +12,8 @@ const MedicalPrescription = ({ onSave, patientName }) => {
   const [medications, setMedications] = useState([]);
   const [observations, setObservations] = useState('');
 
-  // Medicações mais comuns no Brasil com doses usuais
-  const commonMedications = [
+  // Lista completa de medicamentos com doses usuais para autocomplete
+  const allMedications = [
     { name: 'Dipirona', doses: ['500mg', '1g'], frequency: ['6/6h', '8/8h'], duration: ['5 dias', '7 dias'] },
     { name: 'Paracetamol', doses: ['500mg', '750mg'], frequency: ['6/6h', '8/8h'], duration: ['3 dias', '5 dias'] },
     { name: 'Ibuprofeno', doses: ['400mg', '600mg'], frequency: ['8/8h', '12/12h'], duration: ['3 dias', '5 dias'] },
@@ -27,7 +28,16 @@ const MedicalPrescription = ({ onSave, patientName }) => {
     { name: 'Atenolol', doses: ['25mg', '50mg'], frequency: ['24/24h'], duration: ['Uso contínuo'] },
     { name: 'Prednisona', doses: ['5mg', '20mg', '40mg'], frequency: ['24/24h', '12/12h'], duration: ['5 dias', '7 dias'] },
     { name: 'Cetoconazol', doses: ['200mg'], frequency: ['24/24h'], duration: ['7 dias', '14 dias'] },
-    { name: 'Bromoprida', doses: ['10mg'], frequency: ['8/8h'], duration: ['3 dias', '5 dias'] }
+    { name: 'Bromoprida', doses: ['10mg'], frequency: ['8/8h'], duration: ['3 dias', '5 dias'] },
+    { name: 'Ácido Acetilsalicílico', doses: ['100mg', '500mg'], frequency: ['24/24h', '6/6h'], duration: ['Uso contínuo', '3 dias'] },
+    { name: 'Diclofenaco', doses: ['50mg', '75mg'], frequency: ['8/8h', '12/12h'], duration: ['3 dias', '5 dias'] },
+    { name: 'Nimesulida', doses: ['100mg'], frequency: ['12/12h'], duration: ['3 dias', '5 dias'] },
+    { name: 'Cefalexina', doses: ['500mg'], frequency: ['6/6h'], duration: ['7 dias', '10 dias'] },
+    { name: 'Clindamicina', doses: ['300mg', '600mg'], frequency: ['8/8h'], duration: ['7 dias', '10 dias'] },
+    { name: 'Furosemida', doses: ['40mg'], frequency: ['24/24h'], duration: ['Uso contínuo'] },
+    { name: 'Anlodipino', doses: ['5mg', '10mg'], frequency: ['24/24h'], duration: ['Uso contínuo'] },
+    { name: 'Dexametasona', doses: ['4mg', '8mg'], frequency: ['24/24h'], duration: ['3 dias', '5 dias'] },
+    { name: 'Ranitidina', doses: ['150mg'], frequency: ['12/12h'], duration: ['14 dias', '30 dias'] }
   ];
 
   const addMedication = () => {
@@ -37,7 +47,8 @@ const MedicalPrescription = ({ onSave, patientName }) => {
       dose: '',
       frequency: '',
       duration: '',
-      instructions: ''
+      instructions: '',
+      suggestions: []
     }]);
   };
 
@@ -51,15 +62,33 @@ const MedicalPrescription = ({ onSave, patientName }) => {
     ));
   };
 
-  const selectCommonMedication = (id, medicationName) => {
-    const medication = commonMedications.find(med => med.name === medicationName);
-    if (medication) {
-      updateMedication(id, 'name', medication.name);
-      // Auto-preenche com a primeira dose e frequência comum
-      updateMedication(id, 'dose', medication.doses[0]);
-      updateMedication(id, 'frequency', medication.frequency[0]);
-      updateMedication(id, 'duration', medication.duration[0]);
-    }
+  const handleMedicationNameChange = (id, value) => {
+    const suggestions = value.length > 0 
+      ? allMedications.filter(med => 
+          med.name.toLowerCase().includes(value.toLowerCase())
+        ).slice(0, 5)
+      : [];
+
+    setMedications(medications.map(med => 
+      med.id === id 
+        ? { ...med, name: value, suggestions } 
+        : med
+    ));
+  };
+
+  const selectSuggestion = (id, selectedMed) => {
+    setMedications(medications.map(med => 
+      med.id === id 
+        ? { 
+            ...med, 
+            name: selectedMed.name,
+            dose: selectedMed.doses[0],
+            frequency: selectedMed.frequency[0],
+            duration: selectedMed.duration[0],
+            suggestions: []
+          } 
+        : med
+    ));
   };
 
   const handleSave = () => {
@@ -195,23 +224,31 @@ const MedicalPrescription = ({ onSave, patientName }) => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
+                <div className="space-y-2 relative">
                   <Label>Medicamento</Label>
-                  <Select onValueChange={(value) => selectCommonMedication(medication.id, value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione um medicamento comum" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {commonMedications.map((med) => (
-                        <SelectItem key={med.name} value={med.name}>{med.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
                   <Input
                     value={medication.name}
-                    onChange={(e) => updateMedication(medication.id, 'name', e.target.value)}
-                    placeholder="Ou digite o nome do medicamento"
+                    onChange={(e) => handleMedicationNameChange(medication.id, e.target.value)}
+                    placeholder="Digite o nome do medicamento"
                   />
+                  
+                  {/* Sugestões automáticas */}
+                  {medication.suggestions && medication.suggestions.length > 0 && (
+                    <div className="absolute top-full left-0 right-0 z-50 bg-white border border-gray-200 rounded-md shadow-lg mt-1 max-h-40 overflow-y-auto">
+                      {medication.suggestions.map((suggestion, idx) => (
+                        <div
+                          key={idx}
+                          className="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm border-b border-gray-100 last:border-b-0"
+                          onClick={() => selectSuggestion(medication.id, suggestion)}
+                        >
+                          <div className="font-medium text-blue-700">{suggestion.name}</div>
+                          <div className="text-xs text-gray-600">
+                            Doses: {suggestion.doses.join(', ')} | Frequência: {suggestion.frequency.join(', ')}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2">
