@@ -38,8 +38,8 @@ const Login = () => {
               <Zap className="text-white h-7 w-7" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Flash Clinics</h1>
-              <p className="text-sm text-gray-600">Seus atendimentos em um flash!</p>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Salus</h1>
+              <p className="text-sm text-gray-600">Saúde e inovação</p>
             </div>
           </div>
         </div>
@@ -115,7 +115,7 @@ const Login = () => {
                 </p>
                 <Link to="/subscription">
                   <Button variant="outline" className="w-full border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
-                    Assinar Flash Clinics
+                    Assinar Salus
                   </Button>
                 </Link>
               </div>
@@ -125,7 +125,7 @@ const Login = () => {
 
         <div className="mt-6 text-center">
           <p className="text-xs text-gray-500">
-            © 2024 Flash Clinics. Todos os direitos reservados.
+            © 2024 Salus - SalusHub.com. Todos os direitos reservados.
           </p>
         </div>
       </div>

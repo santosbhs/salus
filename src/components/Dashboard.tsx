@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Calendar, Users, Clock, TrendingUp, Activity, AlertCircle, UserPlus, FileText, Zap, Stethoscope } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -70,10 +71,10 @@ const Dashboard = ({ onNavigate }) => {
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6 text-white">
         <div className="flex items-center mb-4">
           <Zap className="h-8 w-8 text-white mr-3" />
-          <h2 className="text-2xl font-bold">Bem-vindo ao Flash Clinics</h2>
+          <h2 className="text-2xl font-bold">Bem-vindo ao Salus</h2>
         </div>
         <p className="text-blue-100">
-          Seus atendimentos em um flash!
+          Saúde e inovação em suas mãos!
         </p>
       </div>
 

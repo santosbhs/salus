@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Calendar, Users, Clock, FileText, Menu, Bell, Search, ExternalLink, Stethoscope, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -51,7 +52,7 @@ const Index = () => {
                 <Zap className="text-white font-bold text-sm h-5 w-5" />
               </div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Flash Clinics
+                Salus
               </h1>
             </div>
           </div>
