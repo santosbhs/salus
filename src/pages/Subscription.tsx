@@ -1,13 +1,18 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Check, Zap, CreditCard, Shield, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const Subscription = () => {
   const [selectedPlan, setSelectedPlan] = useState('professional');
+  const [loading, setLoading] = useState(false);
+  const [subscriptionStatus, setSubscriptionStatus] = useState(null);
+  const { toast } = useToast();
 
   const plans = [
     {
@@ -59,9 +64,115 @@ const Subscription = () => {
     }
   ];
 
-  const handleSubscribe = (planId: string) => {
-    console.log(`Subscribing to plan: ${planId}`);
-    // Aqui você implementaria a integração com o sistema de pagamento
+  useEffect(() => {
+    checkSubscriptionStatus();
+  }, []);
+
+  const checkSubscriptionStatus = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { data, error } = await supabase.functions.invoke('check-subscription', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) {
+        console.error('Error checking subscription:', error);
+        return;
+      }
+
+      setSubscriptionStatus(data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const handleSubscribe = async (planId: string) => {
+    try {
+      setLoading(true);
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          title: "Faça login primeiro",
+          description: "Você precisa estar logado para iniciar o teste grátis.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Check if user has already used trial
+      if (subscriptionStatus?.has_used_trial && !subscriptionStatus?.subscribed) {
+        toast({
+          title: "Teste já utilizado",
+          description: "Você já utilizou seu período de teste gratuito.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('create-trial-checkout', {
+        body: { planId },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error creating checkout:', error);
+      toast({
+        title: "Erro ao processar",
+        description: error.message || "Ocorreu um erro ao processar sua solicitação.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { data, error } = await supabase.functions.invoke('customer-portal', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error opening customer portal:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível abrir o painel de gerenciamento.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const getTrialDaysLeft = () => {
+    if (!subscriptionStatus?.trial_ends_at) return 0;
+    const trialEnd = new Date(subscriptionStatus.trial_ends_at);
+    const now = new Date();
+    const diffTime = trialEnd.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return Math.max(0, diffDays);
   };
 
   return (
@@ -89,15 +200,57 @@ const Subscription = () => {
       </header>
 
       <div className="max-w-7xl mx-auto px-6 py-12">
+        {/* Trial Status Banner */}
+        {subscriptionStatus?.is_trial_active && (
+          <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-blue-900">
+                  🎉 Teste Gratuito Ativo!
+                </h3>
+                <p className="text-blue-700">
+                  Você tem {getTrialDaysLeft()} dias restantes do seu teste gratuito.
+                </p>
+              </div>
+              <Button onClick={handleManageSubscription} variant="outline">
+                Gerenciar Assinatura
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Subscription Status Banner */}
+        {subscriptionStatus?.subscribed && (
+          <div className="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-green-900">
+                  ✅ Assinatura Ativa
+                </h3>
+                <p className="text-green-700">
+                  Plano {subscriptionStatus.subscription_tier} ativo
+                </p>
+              </div>
+              <Button onClick={handleManageSubscription} variant="outline">
+                Gerenciar Assinatura
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* Hero Section */}
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Escolha seu plano
+            Experimente 7 dias grátis
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Modernize sua clínica com a plataforma mais inovadora do mercado. 
-            Saúde e inovação em suas mãos!
+            Teste nossa plataforma sem compromisso. Cancele a qualquer momento durante ou após o período de teste.
           </p>
+          <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg inline-block">
+            <p className="text-sm text-yellow-800">
+              ⚡ <strong>7 dias gratuitos</strong> → Cobrança automática após o período de teste
+            </p>
+          </div>
         </div>
 
         {/* Plans Grid */}
@@ -123,6 +276,7 @@ const Subscription = () => {
                   {plan.description}
                 </CardDescription>
                 <div className="mt-4">
+                  <div className="text-sm text-gray-500 mb-1">7 dias grátis, depois:</div>
                   <span className="text-4xl font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">{plan.price}</span>
                   <span className="text-gray-600">{plan.period}</span>
                 </div>
@@ -140,6 +294,7 @@ const Subscription = () => {
 
                 <Button 
                   onClick={() => handleSubscribe(plan.id)}
+                  disabled={loading || (subscriptionStatus?.has_used_trial && !subscriptionStatus?.subscribed)}
                   className={`w-full ${
                     plan.popular 
                       ? 'bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-800 hover:to-emerald-800 text-white' 
@@ -148,7 +303,10 @@ const Subscription = () => {
                   variant={plan.popular ? 'default' : 'outline'}
                 >
                   <CreditCard className="mr-2 h-4 w-4" />
-                  Assinar {plan.name}
+                  {subscriptionStatus?.has_used_trial && !subscriptionStatus?.subscribed 
+                    ? 'Teste já utilizado'
+                    : `Começar teste grátis`
+                  }
                 </Button>
               </CardContent>
             </Card>
@@ -166,9 +324,9 @@ const Subscription = () => {
               <div className="w-12 h-12 bg-gradient-to-r from-green-700 to-emerald-700 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Clock className="text-white h-6 w-6" />
               </div>
-              <h4 className="font-semibold text-gray-900 mb-2">Rapidez</h4>
+              <h4 className="font-semibold text-gray-900 mb-2">Teste Sem Riscos</h4>
               <p className="text-gray-600">
-                Anamnese SOAP otimizada para máxima eficiência no atendimento
+                7 dias completamente grátis. Cancele a qualquer momento sem cobranças.
               </p>
             </div>
 
@@ -191,6 +349,16 @@ const Subscription = () => {
                 Tecnologia de ponta para modernizar sua prática médica
               </p>
             </div>
+          </div>
+
+          <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+            <h4 className="font-semibold text-gray-900 mb-2">Como funciona o teste gratuito:</h4>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li>• Acesso completo por 7 dias sem cobrança</li>
+              <li>• Após 7 dias, cobrança automática do plano escolhido</li>
+              <li>• Cancele a qualquer momento durante ou após o teste</li>
+              <li>• Sem taxas de cancelamento ou penalidades</li>
+            </ul>
           </div>
         </div>
 
