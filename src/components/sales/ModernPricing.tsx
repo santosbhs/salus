@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Check, Crown, Rocket, Star } from 'lucide-react';
+import { Check, Star, Rocket, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,37 +9,37 @@ import { Link } from 'react-router-dom';
 export const ModernPricing = () => {
   const plans = [
     {
-      name: "Starter",
+      name: "Básico",
       price: "R$ 97",
       period: "/mês",
-      description: "Perfeito para consultórios individuais",
+      description: "Ideal para consultórios pequenos",
       icon: Star,
       features: [
-        "Até 500 pacientes",
-        "Agendamento online",
-        "Prontuário digital",
-        "Prescrições eletrônicas",
-        "Suporte por email",
-        "Backup automático"
+        "Até 50 pacientes",
+        "1 profissional",
+        "Agenda básica",
+        "Prontuário eletrônico",
+        "Anamnese SOAP",
+        "Suporte por email"
       ],
       popular: false,
-      gradient: "from-slate-600 to-slate-700",
+      gradient: "from-gray-600 to-gray-700",
       bgColor: "bg-white"
     },
     {
-      name: "Professional",
+      name: "Profissional",
       price: "R$ 197",
       period: "/mês",
-      description: "Ideal para clínicas e múltiplos profissionais",
+      description: "Perfeito para clínicas em crescimento",
       icon: Rocket,
       features: [
-        "Até 2.000 pacientes",
-        "Usuários ilimitados",
-        "Relatórios avançados com IA",
+        "Até 200 pacientes",
+        "Até 5 profissionais",
+        "Agenda avançada",
+        "Prontuário completo",
+        "Relatórios detalhados",
         "Integração WhatsApp",
-        "API personalizada",
-        "Suporte prioritário",
-        "Branding personalizado"
+        "Suporte prioritário"
       ],
       popular: true,
       gradient: "from-green-600 to-emerald-600",
@@ -49,84 +49,78 @@ export const ModernPricing = () => {
       name: "Enterprise",
       price: "R$ 397",
       period: "/mês",
-      description: "Solução completa para hospitais e redes",
+      description: "Solução completa para grandes clínicas",
       icon: Crown,
       features: [
         "Pacientes ilimitados",
-        "Multi-tenant architecture",
-        "IA avançada para diagnósticos",
-        "Integração TISS completa",
-        "Auditoria e compliance",
-        "Suporte 24/7",
-        "Gerente de conta dedicado"
+        "Profissionais ilimitados",
+        "Funcionalidades avançadas",
+        "API personalizada",
+        "Backup automático",
+        "Treinamento incluído",
+        "Suporte 24/7"
       ],
       popular: false,
-      gradient: "from-purple-600 to-indigo-600",
-      bgColor: "bg-gradient-to-br from-purple-50 to-indigo-50"
+      gradient: "from-blue-600 to-indigo-600",
+      bgColor: "bg-gradient-to-br from-blue-50 to-indigo-50"
     }
   ];
 
   return (
-    <section className="py-24 px-6 bg-gradient-to-br from-slate-50 via-white to-green-50 relative overflow-hidden">
-      {/* Background pattern */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-      
-      <div className="container mx-auto max-w-7xl relative z-10">
-        <div className="text-center mb-20">
-          <h2 className="text-5xl font-bold text-slate-900 mb-6">
-            Planos que <span className="bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">Escalam</span>
+    <section className="py-20 px-6 bg-gray-50">
+      <div className="container mx-auto max-w-7xl">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            Planos que Crescem com Você
           </h2>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-            Escolha o plano perfeito para o tamanho da sua operação médica
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Escolha o plano ideal para o tamanho da sua clínica
           </p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {plans.map((plan, index) => (
-            <Card key={index} className={`relative ${plan.bgColor} border-2 ${plan.popular ? 'border-green-500 scale-105 shadow-2xl' : 'border-slate-200 hover:border-slate-300'} transition-all duration-500 transform hover:-translate-y-2 overflow-hidden`}>
+            <Card key={index} className={`relative ${plan.bgColor} border-2 ${plan.popular ? 'border-green-500 scale-105 shadow-xl' : 'border-gray-200 hover:border-gray-300'} transition-all duration-300 hover:shadow-lg`}>
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <Badge className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-2 text-sm font-semibold shadow-lg">
-                    <Crown className="w-4 h-4 mr-2" />
+                  <Badge className="bg-green-600 text-white px-4 py-2 text-sm font-semibold">
                     Mais Popular
                   </Badge>
                 </div>
               )}
 
-              <CardHeader className="text-center pb-8 pt-8">
-                <div className={`w-16 h-16 bg-gradient-to-r ${plan.gradient} rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg`}>
+              <CardHeader className="text-center pb-6">
+                <div className={`w-16 h-16 bg-gradient-to-r ${plan.gradient} rounded-xl flex items-center justify-center mx-auto mb-4`}>
                   <plan.icon className="h-8 w-8 text-white" />
                 </div>
-                <CardTitle className="text-2xl font-bold text-slate-900">{plan.name}</CardTitle>
+                <CardTitle className="text-2xl font-bold text-gray-900">{plan.name}</CardTitle>
                 <div className="mt-4">
-                  <span className={`text-5xl font-bold bg-gradient-to-r ${plan.gradient} bg-clip-text text-transparent`}>
-                    {plan.price}
-                  </span>
-                  <span className="text-slate-500 text-lg">{plan.period}</span>
+                  <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                  <span className="text-gray-600 text-lg">{plan.period}</span>
                 </div>
-                <CardDescription className="text-slate-600 mt-2 text-base">
+                <CardDescription className="text-gray-600 mt-2">
                   {plan.description}
                 </CardDescription>
               </CardHeader>
 
               <CardContent className="space-y-6">
-                <ul className="space-y-4">
+                <ul className="space-y-3">
                   {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center space-x-3 text-slate-700">
-                      <div className={`w-6 h-6 bg-gradient-to-r ${plan.gradient} rounded-full flex items-center justify-center flex-shrink-0`}>
-                        <Check className="h-4 w-4 text-white" />
+                    <li key={featureIndex} className="flex items-center space-x-3 text-gray-700">
+                      <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Check className="h-3 w-3 text-white" />
                       </div>
-                      <span className="text-base">{feature}</span>
+                      <span>{feature}</span>
                     </li>
                   ))}
                 </ul>
 
                 <Link to="/subscription" className="block w-full">
                   <Button 
-                    className={`w-full mt-8 py-4 text-lg font-semibold rounded-xl transform hover:scale-105 transition-all duration-300 ${
+                    className={`w-full py-3 text-lg font-semibold rounded-lg transition-all duration-300 ${
                       plan.popular 
-                        ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-xl hover:shadow-green-500/25' 
-                        : 'bg-slate-900 hover:bg-slate-800 text-white shadow-lg'
+                        ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl' 
+                        : 'bg-gray-900 hover:bg-gray-800 text-white'
                     }`}
                   >
                     Começar Agora
@@ -137,15 +131,10 @@ export const ModernPricing = () => {
           ))}
         </div>
 
-        {/* Trust indicators */}
-        <div className="text-center mt-16">
-          <p className="text-slate-500 mb-4">Empresas que confiam em nossa tecnologia</p>
-          <div className="flex justify-center items-center space-x-8 opacity-50">
-            <div className="text-2xl font-bold text-slate-400">HOSPITAL+</div>
-            <div className="text-2xl font-bold text-slate-400">CLINICA PRO</div>
-            <div className="text-2xl font-bold text-slate-400">MEDTECH</div>
-            <div className="text-2xl font-bold text-slate-400">SAÚDE 360</div>
-          </div>
+        <div className="text-center mt-12">
+          <p className="text-gray-600">
+            Todos os planos incluem 7 dias de teste gratuito • Cancele a qualquer momento
+          </p>
         </div>
       </div>
     </section>
