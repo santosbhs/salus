@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search, UserCheck, FileText, Clock, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { MedicalPrescription } from '@/components/ui/medical-prescription';
 
 const NovoAtendimento = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,6 +19,9 @@ const NovoAtendimento = () => {
     avaliacao: '',
     plano: ''
   });
+  const [activeDocument, setActiveDocument] = useState('anamnese');
+  const [medicalCertificate, setMedicalCertificate] = useState('');
+  const [examRequests, setExamRequests] = useState('');
 
   // Mock de pacientes (em produção viria do banco)
   const patients = [
@@ -67,6 +71,8 @@ const NovoAtendimento = () => {
     console.log('Salvando atendimento:', {
       patientId: selectedPatient.id,
       anamnese,
+      medicalCertificate,
+      examRequests,
       timestamp: new Date().toISOString()
     });
     
@@ -77,7 +83,10 @@ const NovoAtendimento = () => {
       avaliacao: '',
       plano: ''
     });
+    setMedicalCertificate('');
+    setExamRequests('');
     setSelectedPatient(null);
+    setActiveDocument('anamnese');
     
     alert('Atendimento salvo com sucesso!');
   };
@@ -232,77 +241,130 @@ const NovoAtendimento = () => {
             </CardContent>
           </Card>
 
-          {/* Anamnese SOAP */}
+          {/* Documentos do Atendimento */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Clock className="mr-2 h-5 w-5" />
-                Anamnese SOAP
+                Documentos do Atendimento
               </CardTitle>
               <CardDescription>
                 Registro do atendimento atual - {new Date().toLocaleDateString('pt-BR')} às {new Date().toLocaleTimeString('pt-BR')}
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="subjetivo" className="text-base font-medium">
-                    S - Subjetivo (Queixas do paciente)
-                  </Label>
-                  <Textarea
-                    id="subjetivo"
-                    value={anamnese.subjetivo}
-                    onChange={(e) => setAnamnese({...anamnese, subjetivo: e.target.value})}
-                    placeholder="O que o paciente relata, sintomas, queixas, história da doença atual..."
-                    rows={4}
-                    className="resize-none"
-                  />
-                </div>
+            <CardContent>
+              <Tabs value={activeDocument} onValueChange={setActiveDocument}>
+                <TabsList className="grid w-full grid-cols-4">
+                  <TabsTrigger value="anamnese">Anamnese SOAP</TabsTrigger>
+                  <TabsTrigger value="atestado">Atestado Médico</TabsTrigger>
+                  <TabsTrigger value="exames">Solicitação de Exames</TabsTrigger>
+                  <TabsTrigger value="receita">Receita Médica</TabsTrigger>
+                </TabsList>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="objetivo" className="text-base font-medium">
-                    O - Objetivo (Dados observáveis)
-                  </Label>
-                  <Textarea
-                    id="objetivo"
-                    value={anamnese.objetivo}
-                    onChange={(e) => setAnamnese({...anamnese, objetivo: e.target.value})}
-                    placeholder="Sinais vitais, exame físico, resultados de exames, dados mensuráveis..."
-                    rows={4}
-                    className="resize-none"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="avaliacao" className="text-base font-medium">
-                    A - Avaliação (Diagnóstico/Impressão clínica)
-                  </Label>
-                  <Textarea
-                    id="avaliacao"
-                    value={anamnese.avaliacao}
-                    onChange={(e) => setAnamnese({...anamnese, avaliacao: e.target.value})}
-                    placeholder="Hipóteses diagnósticas, avaliação clínica, CID se aplicável..."
-                    rows={3}
-                    className="resize-none"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="plano" className="text-base font-medium">
-                    P - Plano (Conduta/Tratamento)
-                  </Label>
-                  <Textarea
-                    id="plano"
-                    value={anamnese.plano}
-                    onChange={(e) => setAnamnese({...anamnese, plano: e.target.value})}
-                    placeholder="Medicações prescritas, exames solicitados, retornos agendados, orientações..."
-                    rows={4}
-                    className="resize-none"
-                  />
-                </div>
-              </div>
+                <TabsContent value="anamnese" className="space-y-6 mt-6">
+                  <div className="grid gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="subjetivo" className="text-base font-medium">
+                        S - Subjetivo (Queixas do paciente)
+                      </Label>
+                      <Textarea
+                        id="subjetivo"
+                        value={anamnese.subjetivo}
+                        onChange={(e) => setAnamnese({...anamnese, subjetivo: e.target.value})}
+                        placeholder="O que o paciente relata, sintomas, queixas, história da doença atual..."
+                        rows={4}
+                        className="resize-none"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="objetivo" className="text-base font-medium">
+                        O - Objetivo (Dados observáveis)
+                      </Label>
+                      <Textarea
+                        id="objetivo"
+                        value={anamnese.objetivo}
+                        onChange={(e) => setAnamnese({...anamnese, objetivo: e.target.value})}
+                        placeholder="Sinais vitais, exame físico, resultados de exames, dados mensuráveis..."
+                        rows={4}
+                        className="resize-none"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="avaliacao" className="text-base font-medium">
+                        A - Avaliação (Diagnóstico/Impressão clínica)
+                      </Label>
+                      <Textarea
+                        id="avaliacao"
+                        value={anamnese.avaliacao}
+                        onChange={(e) => setAnamnese({...anamnese, avaliacao: e.target.value})}
+                        placeholder="Hipóteses diagnósticas, avaliação clínica, CID se aplicável..."
+                        rows={3}
+                        className="resize-none"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="plano" className="text-base font-medium">
+                        P - Plano (Conduta/Tratamento)
+                      </Label>
+                      <Textarea
+                        id="plano"
+                        value={anamnese.plano}
+                        onChange={(e) => setAnamnese({...anamnese, plano: e.target.value})}
+                        placeholder="Medicações prescritas, exames solicitados, retornos agendados, orientações..."
+                        rows={4}
+                        className="resize-none"
+                      />
+                    </div>
+                  </div>
+                </TabsContent>
 
-              <div className="flex justify-end space-x-3 pt-4 border-t">
+                <TabsContent value="atestado" className="space-y-4 mt-6">
+                  <div className="space-y-2">
+                    <Label className="text-base font-medium">Atestado Médico</Label>
+                    <Textarea
+                      value={medicalCertificate}
+                      onChange={(e) => setMedicalCertificate(e.target.value)}
+                      placeholder="Atesto para os devidos fins que o(a) paciente [nome] esteve sob meus cuidados médicos no dia [data], necessitando de afastamento de suas atividades por [período] em decorrência de [motivo/CID]."
+                      rows={8}
+                      className="resize-none"
+                    />
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <p><strong>Dica:</strong> Inclua sempre o período de afastamento, motivo e CID quando aplicável.</p>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="exames" className="space-y-4 mt-6">
+                  <div className="space-y-2">
+                    <Label className="text-base font-medium">Solicitação de Exames</Label>
+                    <Textarea
+                      value={examRequests}
+                      onChange={(e) => setExamRequests(e.target.value)}
+                      placeholder="Solicito os seguintes exames para o(a) paciente [nome]:&#10;&#10;• Hemograma completo&#10;• Glicemia de jejum&#10;• Ureia e creatinina&#10;• EAS (Urina I)&#10;• ECG&#10;&#10;Hipótese diagnóstica: [CID]&#10;Observações: [informações relevantes]"
+                      rows={10}
+                      className="resize-none"
+                    />
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <p><strong>Dica:</strong> Sempre inclua a hipótese diagnóstica e justificativa clínica.</p>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="receita" className="mt-6">
+                  <MedicalPrescription 
+                    patientName={selectedPatient.name}
+                    onSave={(prescription) => {
+                      console.log('Receita salva:', prescription);
+                      alert('Receita médica gerada com sucesso!');
+                    }}
+                  />
+                </TabsContent>
+              </Tabs>
+
+              <div className="flex justify-end space-x-3 pt-6 border-t mt-6">
                 <Button 
                   variant="outline" 
                   onClick={() => setSelectedPatient(null)}

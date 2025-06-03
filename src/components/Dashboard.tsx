@@ -60,12 +60,12 @@ const Dashboard = ({ onNavigate }) => {
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6 text-white">
         <h2 className="text-2xl font-bold mb-2">Bem-vindo ao Flash Clinic</h2>
         <p className="text-blue-100">
-          Gerencie sua clínica de forma eficiente e moderna
+          Seus atendimentos em um flash!
         </p>
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('novo-atendimento')}>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
@@ -96,6 +96,23 @@ const Dashboard = ({ onNavigate }) => {
           <CardContent>
             <Button variant="outline" className="w-full">
               Cadastrar Paciente
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('professionals')}>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center text-lg">
+              <User className="mr-2 h-5 w-5 text-purple-600" />
+              Profissionais
+            </CardTitle>
+            <CardDescription>
+              Gerencie os profissionais da clínica
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" className="w-full">
+              Gerenciar Profissionais
             </Button>
           </CardContent>
         </Card>

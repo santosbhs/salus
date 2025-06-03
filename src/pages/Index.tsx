@@ -20,6 +20,7 @@ const Index = () => {
     { id: 'dashboard', name: 'Dashboard', icon: Calendar },
     { id: 'novo-atendimento', name: 'Novo Atendimento', icon: Stethoscope },
     { id: 'patients', name: 'Pacientes', icon: Users },
+    { id: 'professionals', name: 'Profissionais', icon: User },
     { id: 'appointments', name: 'Agendamentos', icon: Clock },
     { id: 'history', name: 'Histórico', icon: FileText },
   ];
@@ -45,7 +46,7 @@ const Index = () => {
             </Button>
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">F</span>
+                <span className="text-white font-bold text-sm">⚡</span>
               </div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Flash Clinic
@@ -106,6 +107,7 @@ const Index = () => {
             {activeTab === 'dashboard' && <Dashboard onNavigate={handleNavigate} />}
             {activeTab === 'novo-atendimento' && <NovoAtendimento />}
             {activeTab === 'patients' && <PatientManagement />}
+            {activeTab === 'professionals' && <ProfessionalManagement />}
             {activeTab === 'appointments' && <AppointmentScheduling />}
             {activeTab === 'history' && <MedicalHistory />}
           </div>
