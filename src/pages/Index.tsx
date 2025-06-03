@@ -32,7 +32,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="flex items-center justify-between px-6 py-4">
@@ -46,10 +46,10 @@ const Index = () => {
               <Menu className="h-5 w-5" />
             </Button>
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-black to-gray-800 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                 <Zap className="text-white font-bold text-sm h-5 w-5" />
               </div>
-              <h1 className="text-xl font-bold text-black">
+              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Flash Clinic
               </h1>
             </div>
@@ -57,7 +57,7 @@ const Index = () => {
           
           <div className="flex items-center space-x-4">
             <Link to="/agendar">
-              <Button variant="outline" size="sm" className="border-gray-300 text-gray-700 hover:bg-gray-100">
+              <Button variant="outline" size="sm" className="border-blue-300 text-blue-700 hover:bg-blue-50">
                 <ExternalLink className="h-4 w-4 mr-2" />
                 Página do Cliente
               </Button>
@@ -72,8 +72,8 @@ const Index = () => {
             <Button variant="ghost" size="sm">
               <Bell className="h-5 w-5" />
             </Button>
-            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-              <span className="text-sm font-medium">DR</span>
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+              <span className="text-sm font-medium text-white">DR</span>
             </div>
           </div>
         </div>
@@ -93,8 +93,8 @@ const Index = () => {
                   variant={activeTab === item.id ? 'default' : 'ghost'}
                   className={`w-full justify-start ${
                     activeTab === item.id 
-                      ? 'bg-gradient-to-r from-black to-gray-800 text-white hover:from-gray-800 hover:to-black' 
-                      : 'hover:bg-gray-100'
+                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700' 
+                      : 'hover:bg-blue-50 hover:text-blue-700'
                   }`}
                   onClick={() => handleNavigate(item.id)}
                 >

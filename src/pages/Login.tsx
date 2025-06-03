@@ -29,16 +29,16 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex items-center justify-center mb-8">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-r from-black to-gray-800 rounded-lg flex items-center justify-center">
+            <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
               <Zap className="text-white h-7 w-7" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-black">Flash Clinic</h1>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Flash Clinic</h1>
               <p className="text-sm text-gray-600">Seus atendimentos em um flash!</p>
             </div>
           </div>
@@ -98,14 +98,14 @@ const Login = () => {
 
               <Button 
                 type="submit" 
-                className="w-full bg-gradient-to-r from-black to-gray-800 hover:from-gray-800 hover:to-black text-white"
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
               >
                 Entrar na Plataforma
               </Button>
             </form>
 
             <div className="text-center space-y-4">
-              <Link to="/forgot-password" className="text-sm text-gray-600 hover:text-black">
+              <Link to="/forgot-password" className="text-sm text-gray-600 hover:text-blue-600">
                 Esqueci minha senha
               </Link>
               
@@ -114,7 +114,7 @@ const Login = () => {
                   Ainda não é assinante?
                 </p>
                 <Link to="/subscription">
-                  <Button variant="outline" className="w-full border-black text-black hover:bg-black hover:text-white">
+                  <Button variant="outline" className="w-full border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
                     Assinar Flash Clinic
                   </Button>
                 </Link>
