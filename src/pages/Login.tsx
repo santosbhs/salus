@@ -155,30 +155,6 @@ const Login = () => {
               </Button>
             </form>
 
-            {/* Test Users Information */}
-            <div className="border-t pt-4">
-              <p className="text-sm text-gray-600 mb-3 text-center font-medium">
-                Contas de teste disponíveis:
-              </p>
-              <div className="space-y-2 text-xs text-gray-500">
-                <div className="bg-green-50 p-2 rounded border-l-2 border-green-500">
-                  <div className="font-medium text-green-700">Plano Básico</div>
-                  <div>Email: admin.basico@teste.com</div>
-                  <div>Senha: teste123</div>
-                </div>
-                <div className="bg-blue-50 p-2 rounded border-l-2 border-blue-500">
-                  <div className="font-medium text-blue-700">Plano Profissional</div>
-                  <div>Email: admin.profissional@teste.com</div>
-                  <div>Senha: teste123</div>
-                </div>
-                <div className="bg-purple-50 p-2 rounded border-l-2 border-purple-500">
-                  <div className="font-medium text-purple-700">Plano Enterprise</div>
-                  <div>Email: admin.enterprise@teste.com</div>
-                  <div>Senha: teste123</div>
-                </div>
-              </div>
-            </div>
-
             <div className="text-center space-y-4">
               <Link to="/forgot-password" className="text-sm text-gray-600 hover:text-green-700">
                 Esqueci minha senha
