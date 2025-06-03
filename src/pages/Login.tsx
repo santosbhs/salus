@@ -1,23 +1,54 @@
 
 import React, { useState } from 'react';
-import { Lock, Mail, Eye, EyeOff, Zap } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff, Zap, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Aqui você implementaria a lógica de autenticação
-    console.log('Login attempt:', formData);
+    setLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data.user) {
+        toast({
+          title: "Login realizado com sucesso!",
+          description: "Redirecionando para o dashboard...",
+        });
+        navigate('/');
+      }
+    } catch (error: any) {
+      toast({
+        title: "Erro no login",
+        description: error.message || "Credenciais inválidas",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,6 +57,44 @@ const Login = () => {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleTestLogin = async (email: string, planName: string) => {
+    setLoading(true);
+    
+    try {
+      // First try to sign up the user (in case they don't exist yet)
+      await supabase.auth.signUp({
+        email,
+        password: 'teste123',
+      });
+
+      // Then sign in
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password: 'teste123',
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data.user) {
+        toast({
+          title: `Login ${planName} realizado!`,
+          description: "Redirecionando para o dashboard...",
+        });
+        navigate('/');
+      }
+    } catch (error: any) {
+      toast({
+        title: "Erro no login de teste",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -99,10 +168,50 @@ const Login = () => {
               <Button 
                 type="submit" 
                 className="w-full bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-800 hover:to-emerald-800 text-white"
+                disabled={loading}
               >
-                Entrar na Plataforma
+                {loading ? "Entrando..." : "Entrar na Plataforma"}
               </Button>
             </form>
+
+            {/* Test Users Section */}
+            <div className="border-t pt-4">
+              <p className="text-sm text-gray-600 mb-3 text-center">
+                Acesso de teste aos planos:
+              </p>
+              <div className="space-y-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-start text-xs border-green-200 text-green-700 hover:bg-green-50"
+                  onClick={() => handleTestLogin('admin.basico@teste.com', 'Básico')}
+                  disabled={loading}
+                >
+                  <User className="mr-2 h-3 w-3" />
+                  Plano Básico (admin.basico@teste.com)
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-start text-xs border-blue-200 text-blue-700 hover:bg-blue-50"
+                  onClick={() => handleTestLogin('admin.profissional@teste.com', 'Profissional')}
+                  disabled={loading}
+                >
+                  <User className="mr-2 h-3 w-3" />
+                  Plano Profissional (admin.profissional@teste.com)
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-start text-xs border-purple-200 text-purple-700 hover:bg-purple-50"
+                  onClick={() => handleTestLogin('admin.enterprise@teste.com', 'Enterprise')}
+                  disabled={loading}
+                >
+                  <User className="mr-2 h-3 w-3" />
+                  Plano Enterprise (admin.enterprise@teste.com)
+                </Button>
+              </div>
+            </div>
 
             <div className="text-center space-y-4">
               <Link to="/forgot-password" className="text-sm text-gray-600 hover:text-green-700">

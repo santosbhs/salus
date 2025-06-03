@@ -37,6 +37,48 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { userId: user.id, email: user.email });
 
+    // Check if this is a test user first
+    const testUsers = ['admin.basico@teste.com', 'admin.profissional@teste.com', 'admin.enterprise@teste.com'];
+    const isTestUser = testUsers.includes(user.email);
+    
+    if (isTestUser) {
+      logStep("Test user detected", { email: user.email });
+      
+      // Get subscriber info for test user
+      const { data: subscriber } = await supabaseClient
+        .from("subscribers")
+        .select("*")
+        .eq("email", user.email)
+        .single();
+
+      if (subscriber) {
+        // Update user_id if not set
+        if (!subscriber.user_id) {
+          await supabaseClient.from("subscribers").update({
+            user_id: user.id,
+            updated_at: new Date().toISOString(),
+          }).eq("email", user.email);
+        }
+
+        logStep("Test user subscription found", { 
+          tier: subscriber.subscription_tier, 
+          subscribed: subscriber.subscribed 
+        });
+
+        return new Response(JSON.stringify({
+          subscribed: subscriber.subscribed,
+          is_trial_active: subscriber.is_trial_active,
+          trial_ends_at: subscriber.trial_ends_at,
+          subscription_tier: subscriber.subscription_tier,
+          subscription_end: subscriber.subscription_end,
+          has_used_trial: subscriber.has_used_trial
+        }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+    }
+
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { apiVersion: "2023-10-16" });
 
     // Get current subscriber info
