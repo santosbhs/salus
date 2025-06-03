@@ -1,11 +1,16 @@
 
 import React from 'react';
-import { ArrowRight, Shield, Zap, Star } from 'lucide-react';
+import { ArrowRight, Shield, Zap, Star, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 
 export const ModernHero = () => {
+  const handleDemoClick = () => {
+    // Simula abertura de demo - pode ser substituído por modal ou link externo
+    window.open('https://demo.salus.com', '_blank');
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-green-50 to-emerald-100">
       {/* Grid pattern background */}
@@ -61,7 +66,13 @@ export const ModernHero = () => {
                 <ArrowRight className="ml-3 h-6 w-6" />
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="border-2 border-slate-300 text-slate-700 hover:bg-slate-50 px-12 py-6 text-lg font-semibold rounded-xl hover:border-green-500 hover:text-green-700 transition-all duration-300">
+            <Button 
+              size="lg" 
+              variant="outline" 
+              onClick={handleDemoClick}
+              className="border-2 border-slate-300 text-slate-700 hover:bg-slate-50 px-12 py-6 text-lg font-semibold rounded-xl hover:border-green-500 hover:text-green-700 transition-all duration-300"
+            >
+              <Play className="mr-3 h-6 w-6" />
               Ver Demonstração
             </Button>
           </div>
