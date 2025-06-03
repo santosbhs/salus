@@ -85,8 +85,7 @@ serve(async (req) => {
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
-      customer_email: customerId ? undefined : (userEmail || undefined), // Don't pass empty string
-      customer_creation: customerId ? undefined : "always",
+      customer_email: customerId ? undefined : undefined, // Let Stripe collect email if no customer
       line_items: [
         {
           price_data: {
