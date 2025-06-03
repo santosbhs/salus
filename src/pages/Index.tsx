@@ -11,6 +11,7 @@ import PatientManagement from '@/components/PatientManagement';
 import AppointmentScheduling from '@/components/AppointmentScheduling';
 import MedicalHistory from '@/components/MedicalHistory';
 import NovoAtendimento from '@/components/NovoAtendimento';
+import ProfessionalManagement from '@/components/ProfessionalManagement';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -20,7 +21,7 @@ const Index = () => {
     { id: 'dashboard', name: 'Dashboard', icon: Calendar },
     { id: 'novo-atendimento', name: 'Novo Atendimento', icon: Stethoscope },
     { id: 'patients', name: 'Pacientes', icon: Users },
-    { id: 'professionals', name: 'Profissionais', icon: User },
+    { id: 'professionals', name: 'Profissionais', icon: Users },
     { id: 'appointments', name: 'Agendamentos', icon: Clock },
     { id: 'history', name: 'Histórico', icon: FileText },
   ];

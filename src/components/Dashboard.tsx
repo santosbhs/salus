@@ -103,7 +103,7 @@ const Dashboard = ({ onNavigate }) => {
         <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('professionals')}>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
-              <User className="mr-2 h-5 w-5 text-purple-600" />
+              <Users className="mr-2 h-5 w-5 text-purple-600" />
               Profissionais
             </CardTitle>
             <CardDescription>

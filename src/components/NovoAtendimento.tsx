@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { MedicalPrescription } from '@/components/ui/medical-prescription';
+import MedicalPrescription from '@/components/MedicalPrescription';
 
 const NovoAtendimento = () => {
   const [searchTerm, setSearchTerm] = useState('');
