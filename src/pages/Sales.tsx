@@ -39,7 +39,7 @@ const Sales = () => {
         "Até 2.000 pacientes",
         "Múltiplos usuários",
         "Relatórios avançados",
-        "Telemedicina incluída",
+        "Controle de receitas",
         "Integração WhatsApp",
         "Suporte prioritário",
         "Customização da marca"
@@ -67,17 +67,17 @@ const Sales = () => {
   ];
 
   return (
-    <div className="min-h-screen salus-green-bg">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
       {/* Header com marca Salus em destaque */}
       <header className="bg-white/95 backdrop-blur-sm border-b-2 border-green-200 sticky top-0 z-50 animate-gentle-fade-in shadow-lg">
         <div className="container mx-auto px-4 py-6 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="w-14 h-14 salus-green-bg rounded-xl flex items-center justify-center animate-gentle-spin shadow-xl">
-              <Zap className="text-white h-8 w-8" />
+            <div className="w-16 h-16 salus-green-bg rounded-xl flex items-center justify-center animate-gentle-spin shadow-xl">
+              <Zap className="text-white h-9 w-9" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold salus-green-text">Salus</h1>
-              <p className="text-lg text-green-700 font-medium">Saúde e Inovação</p>
+              <h1 className="text-4xl font-bold salus-green-text">Salus</h1>
+              <p className="text-xl text-green-700 font-medium">Saúde e Inovação</p>
             </div>
           </div>
           <div className="flex items-center space-x-6">
@@ -167,24 +167,24 @@ const Sales = () => {
       <SalesCTA />
 
       {/* Footer com mais verde */}
-      <footer className="salus-green-bg text-white py-16 px-4 relative overflow-hidden">
+      <footer className="bg-gradient-to-r from-green-600 to-emerald-600 text-white py-16 px-4 relative overflow-hidden">
         {/* Elementos animados do footer mais suaves */}
         <div className="absolute inset-0">
-          <div className="absolute top-10 left-20 w-3 h-24 bg-white/10 rotate-12 animate-gentle-pulse"></div>
-          <div className="absolute bottom-10 right-20 w-4 h-20 bg-white/10 -rotate-12 animate-gentle-float"></div>
-          <div className="absolute top-1/2 left-1/3 w-3 h-3 bg-white/20 rotate-45 animate-gentle-bounce"></div>
+          <div className="absolute top-10 left-20 w-3 h-24 bg-white/20 rotate-12 animate-gentle-pulse"></div>
+          <div className="absolute bottom-10 right-20 w-4 h-20 bg-white/20 -rotate-12 animate-gentle-float"></div>
+          <div className="absolute top-1/2 left-1/3 w-3 h-3 bg-white/30 rotate-45 animate-gentle-bounce"></div>
         </div>
         
         <div className="container mx-auto max-w-6xl relative z-10">
           <div className="grid md:grid-cols-4 gap-10">
             <div className="animate-gentle-fade-in">
               <div className="flex items-center space-x-4 mb-6">
-                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center animate-gentle-spin">
-                  <Zap className="text-white h-7 w-7" />
+                <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center animate-gentle-spin">
+                  <Zap className="text-white h-8 w-8" />
                 </div>
                 <div>
-                  <span className="text-2xl font-bold">Salus</span>
-                  <p className="text-green-100 text-sm">Saúde e Inovação</p>
+                  <span className="text-3xl font-bold">Salus</span>
+                  <p className="text-green-100 text-base">Saúde e Inovação</p>
                 </div>
               </div>
               <p className="text-green-100 leading-relaxed text-lg">
