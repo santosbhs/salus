@@ -30,34 +30,45 @@ serve(async (req) => {
     const { planId } = await req.json();
     logStep("Plan ID received", { planId });
 
+    // Verificar se há autenticação (opcional)
+    let user = null;
+    let userEmail = null;
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("No authorization header provided");
+    
+    if (authHeader) {
+      const token = authHeader.replace("Bearer ", "");
+      const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
+      if (!userError && userData.user) {
+        user = userData.user;
+        userEmail = user.email;
+        logStep("User authenticated", { userId: user.id, email: userEmail });
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError) throw new Error(`Authentication error: ${userError.message}`);
-    const user = userData.user;
-    if (!user?.email) throw new Error("User not authenticated or email not available");
-    logStep("User authenticated", { userId: user.id, email: user.email });
+        // Check if user has already used trial
+        const { data: existingSubscriber } = await supabaseClient
+          .from("subscribers")
+          .select("has_used_trial")
+          .eq("email", userEmail)
+          .single();
 
-    // Check if user has already used trial
-    const { data: existingSubscriber } = await supabaseClient
-      .from("subscribers")
-      .select("has_used_trial")
-      .eq("email", user.email)
-      .single();
+        if (existingSubscriber?.has_used_trial) {
+          throw new Error("Trial already used. Please choose a paid plan.");
+        }
+      }
+    }
 
-    if (existingSubscriber?.has_used_trial) {
-      throw new Error("Trial already used. Please choose a paid plan.");
+    if (!user) {
+      logStep("No authenticated user - allowing guest checkout");
     }
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { apiVersion: "2023-10-16" });
 
-    // Check for existing customer
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+    // Check for existing customer only if we have an email
     let customerId;
-    if (customers.data.length > 0) {
-      customerId = customers.data[0].id;
+    if (userEmail) {
+      const customers = await stripe.customers.list({ email: userEmail, limit: 1 });
+      if (customers.data.length > 0) {
+        customerId = customers.data[0].id;
+      }
     }
 
     // Define pricing based on planId
@@ -74,7 +85,8 @@ serve(async (req) => {
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
-      customer_email: customerId ? undefined : user.email,
+      customer_email: customerId ? undefined : userEmail,
+      customer_creation: customerId ? undefined : "always",
       line_items: [
         {
           price_data: {
@@ -98,21 +110,23 @@ serve(async (req) => {
       allow_promotion_codes: true,
     });
 
-    // Update subscriber record with trial start
-    const trialStartDate = new Date();
-    const trialEndDate = new Date(trialStartDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+    // Update subscriber record with trial start only if we have a user
+    if (user && userEmail) {
+      const trialStartDate = new Date();
+      const trialEndDate = new Date(trialStartDate.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-    await supabaseClient.from("subscribers").upsert({
-      email: user.email,
-      user_id: user.id,
-      stripe_customer_id: customerId || null,
-      trial_started_at: trialStartDate.toISOString(),
-      trial_ends_at: trialEndDate.toISOString(),
-      is_trial_active: true,
-      has_used_trial: true,
-      subscription_tier: planId,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: 'email' });
+      await supabaseClient.from("subscribers").upsert({
+        email: userEmail,
+        user_id: user.id,
+        stripe_customer_id: customerId || null,
+        trial_started_at: trialStartDate.toISOString(),
+        trial_ends_at: trialEndDate.toISOString(),
+        is_trial_active: true,
+        has_used_trial: true,
+        subscription_tier: planId,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'email' });
+    }
 
     logStep("Trial checkout session created", { sessionId: session.id });
 

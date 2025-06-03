@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Check, Zap, CreditCard, Shield, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -95,17 +94,9 @@ const Subscription = () => {
       setLoading(true);
       
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast({
-          title: "Faça login primeiro",
-          description: "Você precisa estar logado para iniciar o teste grátis.",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Check if user has already used trial
-      if (subscriptionStatus?.has_used_trial && !subscriptionStatus?.subscribed) {
+      
+      // Se há uma sessão ativa, verificar se já usou o trial
+      if (session && subscriptionStatus?.has_used_trial && !subscriptionStatus?.subscribed) {
         toast({
           title: "Teste já utilizado",
           description: "Você já utilizou seu período de teste gratuito.",
@@ -114,11 +105,12 @@ const Subscription = () => {
         return;
       }
 
+      // Chamar a função sem autenticação obrigatória
       const { data, error } = await supabase.functions.invoke('create-trial-checkout', {
         body: { planId },
-        headers: {
+        headers: session ? {
           Authorization: `Bearer ${session.access_token}`,
-        },
+        } : {},
       });
 
       if (error) {
@@ -244,11 +236,11 @@ const Subscription = () => {
             Experimente 7 dias grátis
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Teste nossa plataforma sem compromisso. Cancele a qualquer momento durante ou após o período de teste.
+            Comece sua jornada digital na medicina agora mesmo. Durante o checkout você pode criar sua conta.
           </p>
           <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg inline-block">
             <p className="text-sm text-yellow-800">
-              ⚡ <strong>7 dias gratuitos</strong> → Cobrança automática após o período de teste
+              ⚡ <strong>7 dias gratuitos</strong> → Cadastre-se durante a compra → Cobrança automática após o período de teste
             </p>
           </div>
         </div>
@@ -294,7 +286,7 @@ const Subscription = () => {
 
                 <Button 
                   onClick={() => handleSubscribe(plan.id)}
-                  disabled={loading || (subscriptionStatus?.has_used_trial && !subscriptionStatus?.subscribed)}
+                  disabled={loading}
                   className={`w-full ${
                     plan.popular 
                       ? 'bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-800 hover:to-emerald-800 text-white' 
@@ -303,10 +295,7 @@ const Subscription = () => {
                   variant={plan.popular ? 'default' : 'outline'}
                 >
                   <CreditCard className="mr-2 h-4 w-4" />
-                  {subscriptionStatus?.has_used_trial && !subscriptionStatus?.subscribed 
-                    ? 'Teste já utilizado'
-                    : `Começar teste grátis`
-                  }
+                  Começar teste grátis
                 </Button>
               </CardContent>
             </Card>
@@ -324,9 +313,9 @@ const Subscription = () => {
               <div className="w-12 h-12 bg-gradient-to-r from-green-700 to-emerald-700 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Clock className="text-white h-6 w-6" />
               </div>
-              <h4 className="font-semibold text-gray-900 mb-2">Teste Sem Riscos</h4>
+              <h4 className="font-semibold text-gray-900 mb-2">Cadastro Simplificado</h4>
               <p className="text-gray-600">
-                7 dias completamente grátis. Cancele a qualquer momento sem cobranças.
+                Crie sua conta durante o processo de compra. Rápido e sem complicações.
               </p>
             </div>
 
@@ -344,20 +333,21 @@ const Subscription = () => {
               <div className="w-12 h-12 bg-gradient-to-r from-green-700 to-emerald-700 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Zap className="text-white h-6 w-6" />
               </div>
-              <h4 className="font-semibold text-gray-900 mb-2">Inovação</h4>
+              <h4 className="font-semibold text-gray-900 mb-2">Teste Sem Riscos</h4>
               <p className="text-gray-600">
-                Tecnologia de ponta para modernizar sua prática médica
+                7 dias completamente grátis. Cancele a qualquer momento sem cobranças.
               </p>
             </div>
           </div>
 
           <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-            <h4 className="font-semibold text-gray-900 mb-2">Como funciona o teste gratuito:</h4>
+            <h4 className="font-semibold text-gray-900 mb-2">Como funciona:</h4>
             <ul className="text-sm text-gray-600 space-y-1">
-              <li>• Acesso completo por 7 dias sem cobrança</li>
+              <li>• Escolha seu plano e clique em "Começar teste grátis"</li>
+              <li>• Complete seu cadastro e dados de pagamento no Stripe</li>
+              <li>• Acesso imediato por 7 dias sem cobrança</li>
               <li>• Após 7 dias, cobrança automática do plano escolhido</li>
-              <li>• Cancele a qualquer momento durante ou após o teste</li>
-              <li>• Sem taxas de cancelamento ou penalidades</li>
+              <li>• Cancele a qualquer momento sem penalidades</li>
             </ul>
           </div>
         </div>
