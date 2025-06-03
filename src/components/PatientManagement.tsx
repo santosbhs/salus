@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Search, Plus, Edit, Trash2, Phone, Mail, User, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,7 @@ const PatientManagement = () => {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isHistoryDialogOpen, setIsHistoryDialogOpen] = useState(false);
+  const [isEditHistoryDialogOpen, setIsEditHistoryDialogOpen] = useState(false);
 
   const [patients, setPatients] = useState([
     {
@@ -77,6 +79,13 @@ const PatientManagement = () => {
     previousExams: ''
   });
 
+  const [editingPatientHistory, setEditingPatientHistory] = useState({
+    comorbidities: '',
+    continuousMedications: '',
+    allergies: '',
+    previousExams: ''
+  });
+
   const filteredPatients = patients.filter(patient =>
     patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     patient.cpf.includes(searchTerm) ||
@@ -116,6 +125,16 @@ const PatientManagement = () => {
     setSelectedPatient(null);
   };
 
+  const handleEditPatientHistory = () => {
+    setPatients(patients.map(p => 
+      p.id === selectedPatient.id 
+        ? { ...p, ...editingPatientHistory }
+        : p
+    ));
+    setIsEditHistoryDialogOpen(false);
+    setSelectedPatient({ ...selectedPatient, ...editingPatientHistory });
+  };
+
   const handleDeletePatient = (id) => {
     setPatients(patients.filter(p => p.id !== id));
   };
@@ -128,6 +147,17 @@ const PatientManagement = () => {
   const openHistoryDialog = (patient) => {
     setSelectedPatient(patient);
     setIsHistoryDialogOpen(true);
+  };
+
+  const openEditHistoryDialog = (patient) => {
+    setSelectedPatient(patient);
+    setEditingPatientHistory({
+      comorbidities: patient.comorbidities || '',
+      continuousMedications: patient.continuousMedications || '',
+      allergies: patient.allergies || '',
+      previousExams: patient.previousExams || ''
+    });
+    setIsEditHistoryDialogOpen(true);
   };
 
   const getInitials = (name) => {
@@ -515,9 +545,21 @@ const PatientManagement = () => {
           </DialogHeader>
           {selectedPatient && (
             <div className="space-y-6">
+              {/* Header com botão de editar */}
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold">Informações do Prontuário</h3>
+                <Button
+                  size="sm"
+                  onClick={() => openEditHistoryDialog(selectedPatient)}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  Editar Histórico
+                </Button>
+              </div>
+
               {/* Informações Básicas do Prontuário */}
               <div>
-                <h3 className="text-lg font-semibold mb-3">Informações do Prontuário</h3>
                 <div className="grid gap-4">
                   <div className="p-3 bg-blue-50 rounded-lg">
                     <h4 className="font-medium text-blue-900">Comorbidades</h4>
@@ -532,7 +574,7 @@ const PatientManagement = () => {
                     <p className="text-yellow-800">{selectedPatient.allergies || 'Nenhuma'}</p>
                   </div>
                   <div className="p-3 bg-purple-50 rounded-lg">
-                    <h4 className="font-medium text-purple-900">Exames Prévios</h4>
+                    <h4 className="font-medium text-purple-900">Exames Anteriores</h4>
                     <p className="text-purple-800">{selectedPatient.previousExams || 'Nenhum'}</p>
                   </div>
                 </div>
@@ -565,6 +607,66 @@ const PatientManagement = () => {
           )}
           <DialogFooter>
             <Button onClick={() => setIsHistoryDialogOpen(false)}>Fechar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit History Dialog */}
+      <Dialog open={isEditHistoryDialogOpen} onOpenChange={setIsEditHistoryDialogOpen}>
+        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Editar Histórico Médico</DialogTitle>
+            <DialogDescription>
+              Atualize as informações médicas do paciente {selectedPatient?.name}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="edit-comorbidities">Comorbidades</Label>
+              <Textarea
+                id="edit-comorbidities"
+                value={editingPatientHistory.comorbidities}
+                onChange={(e) => setEditingPatientHistory({...editingPatientHistory, comorbidities: e.target.value})}
+                placeholder="Doenças crônicas, condições médicas"
+                rows={3}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="edit-medications">Medicações de Uso Contínuo</Label>
+              <Textarea
+                id="edit-medications"
+                value={editingPatientHistory.continuousMedications}
+                onChange={(e) => setEditingPatientHistory({...editingPatientHistory, continuousMedications: e.target.value})}
+                placeholder="Medicamentos em uso regular"
+                rows={3}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="edit-allergies">Alergias</Label>
+              <Textarea
+                id="edit-allergies"
+                value={editingPatientHistory.allergies}
+                onChange={(e) => setEditingPatientHistory({...editingPatientHistory, allergies: e.target.value})}
+                placeholder="Alergias conhecidas"
+                rows={2}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="edit-previous-exams">Exames Anteriores</Label>
+              <Textarea
+                id="edit-previous-exams"
+                value={editingPatientHistory.previousExams}
+                onChange={(e) => setEditingPatientHistory({...editingPatientHistory, previousExams: e.target.value})}
+                placeholder="Exames realizados anteriormente pelo paciente (data, tipo de exame, resultado)"
+                rows={4}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditHistoryDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleEditPatientHistory}>Salvar Alterações</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
