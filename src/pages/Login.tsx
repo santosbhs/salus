@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Lock, Mail, Eye, EyeOff, Zap, User } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -57,72 +57,6 @@ const Login = () => {
       ...prev,
       [name]: value
     }));
-  };
-
-  const handleTestLogin = async (email: string, planName: string) => {
-    setLoading(true);
-    
-    try {
-      console.log(`Tentando login de teste para: ${email}`);
-      
-      // Primeiro, tenta fazer login direto
-      const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
-        email,
-        password: 'teste123',
-      });
-
-      // Se o login funcionar, ótimo!
-      if (loginData.user && !loginError) {
-        toast({
-          title: `Login ${planName} realizado!`,
-          description: "Redirecionando para o dashboard...",
-        });
-        navigate('/');
-        return;
-      }
-
-      // Se deu erro de usuário não encontrado ou email não confirmado, tenta criar
-      if (loginError && (loginError.message.includes('Invalid login credentials') || loginError.message.includes('Email not confirmed'))) {
-        console.log('Usuário não existe, criando...');
-        
-        const { data: signupData, error: signupError } = await supabase.auth.signUp({
-          email,
-          password: 'teste123',
-          options: {
-            emailRedirectTo: `${window.location.origin}/`
-          }
-        });
-
-        if (signupError) {
-          throw signupError;
-        }
-
-        // Para usuários de teste, vamos tentar confirmar automaticamente
-        if (signupData.user && !signupData.user.email_confirmed_at) {
-          toast({
-            title: `Conta ${planName} criada!`,
-            description: "Faça login novamente com as credenciais de teste.",
-          });
-        } else if (signupData.user) {
-          toast({
-            title: `Login ${planName} realizado!`,
-            description: "Redirecionando para o dashboard...",
-          });
-          navigate('/');
-        }
-      } else {
-        throw loginError;
-      }
-    } catch (error: any) {
-      console.error('Erro no login de teste:', error);
-      toast({
-        title: "Erro no login de teste",
-        description: error.message || "Tente novamente",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (
@@ -202,46 +136,28 @@ const Login = () => {
               </Button>
             </form>
 
-            {/* Test Users Section */}
+            {/* Test Users Information */}
             <div className="border-t pt-4">
-              <p className="text-sm text-gray-600 mb-3 text-center">
-                Acesso de teste aos planos:
+              <p className="text-sm text-gray-600 mb-3 text-center font-medium">
+                Contas de teste disponíveis:
               </p>
-              <div className="space-y-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full justify-start text-xs border-green-200 text-green-700 hover:bg-green-50"
-                  onClick={() => handleTestLogin('admin.basico@teste.com', 'Básico')}
-                  disabled={loading}
-                >
-                  <User className="mr-2 h-3 w-3" />
-                  Plano Básico (admin.basico@teste.com)
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full justify-start text-xs border-blue-200 text-blue-700 hover:bg-blue-50"
-                  onClick={() => handleTestLogin('admin.profissional@teste.com', 'Profissional')}
-                  disabled={loading}
-                >
-                  <User className="mr-2 h-3 w-3" />
-                  Plano Profissional (admin.profissional@teste.com)
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full justify-start text-xs border-purple-200 text-purple-700 hover:bg-purple-50"
-                  onClick={() => handleTestLogin('admin.enterprise@teste.com', 'Enterprise')}
-                  disabled={loading}
-                >
-                  <User className="mr-2 h-3 w-3" />
-                  Plano Enterprise (admin.enterprise@teste.com)
-                </Button>
+              <div className="space-y-2 text-xs text-gray-500">
+                <div className="bg-green-50 p-2 rounded border-l-2 border-green-500">
+                  <div className="font-medium text-green-700">Plano Básico</div>
+                  <div>Email: admin.basico@teste.com</div>
+                  <div>Senha: teste123</div>
+                </div>
+                <div className="bg-blue-50 p-2 rounded border-l-2 border-blue-500">
+                  <div className="font-medium text-blue-700">Plano Profissional</div>
+                  <div>Email: admin.profissional@teste.com</div>
+                  <div>Senha: teste123</div>
+                </div>
+                <div className="bg-purple-50 p-2 rounded border-l-2 border-purple-500">
+                  <div className="font-medium text-purple-700">Plano Enterprise</div>
+                  <div>Email: admin.enterprise@teste.com</div>
+                  <div>Senha: teste123</div>
+                </div>
               </div>
-              <p className="text-xs text-gray-500 mt-2 text-center">
-                Senha para todos: teste123
-              </p>
             </div>
 
             <div className="text-center space-y-4">
