@@ -92,7 +92,7 @@ serve(async (req) => {
             currency: "brl",
             product_data: { 
               name: selectedPlan.name,
-              description: "7 dias grátis, depois " + (selectedPlan.amount / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "/mês"
+              description: "30 dias grátis, depois " + (selectedPlan.amount / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) + "/mês"
             },
             unit_amount: selectedPlan.amount,
             recurring: { interval: "month" },
@@ -102,7 +102,7 @@ serve(async (req) => {
       ],
       mode: "subscription",
       subscription_data: {
-        trial_period_days: 7,
+        trial_period_days: 30,
       },
       success_url: `${req.headers.get("origin")}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.get("origin")}/subscription`,
@@ -112,7 +112,7 @@ serve(async (req) => {
     // Update subscriber record with trial start only if we have a user
     if (user && userEmail) {
       const trialStartDate = new Date();
-      const trialEndDate = new Date(trialStartDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+      const trialEndDate = new Date(trialStartDate.getTime() + 30 * 24 * 60 * 60 * 1000);
 
       await supabaseClient.from("subscribers").upsert({
         email: userEmail,

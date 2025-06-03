@@ -76,6 +76,11 @@ export const ModernPricing = () => {
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Escolha o plano ideal para o tamanho da sua clínica
           </p>
+          <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg inline-block">
+            <p className="text-sm text-yellow-800">
+              ⚡ <strong>30 dias gratuitos</strong> → Cadastre seu cartão → Cobrança automática após o período de teste
+            </p>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -95,6 +100,7 @@ export const ModernPricing = () => {
                 </div>
                 <CardTitle className="text-2xl font-bold text-gray-900">{plan.name}</CardTitle>
                 <div className="mt-4">
+                  <div className="text-sm text-gray-500 mb-1">30 dias grátis, depois:</div>
                   <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
                   <span className="text-gray-600 text-lg">{plan.period}</span>
                 </div>
@@ -123,7 +129,7 @@ export const ModernPricing = () => {
                         : 'bg-gray-900 hover:bg-gray-800 text-white'
                     }`}
                   >
-                    Começar Agora
+                    Começar Teste Grátis
                   </Button>
                 </Link>
               </CardContent>
@@ -133,7 +139,7 @@ export const ModernPricing = () => {
 
         <div className="text-center mt-12">
           <p className="text-gray-600">
-            Todos os planos incluem 7 dias de teste gratuito • Cancele a qualquer momento
+            Todos os planos incluem 30 dias de teste gratuito • Cartão de crédito obrigatório • Cancele a qualquer momento
           </p>
         </div>
       </div>

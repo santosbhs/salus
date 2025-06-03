@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Check, Zap, CreditCard, Shield, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -21,10 +22,11 @@ const Subscription = () => {
       period: '/mês',
       description: 'Para clínicas pequenas',
       features: [
-        'Até 100 pacientes',
+        'Até 50 pacientes',
+        '1 profissional',
+        'Agenda básica',
+        'Prontuário eletrônico',
         'Anamnese SOAP',
-        'Agendamentos básicos',
-        'Receitas médicas',
         'Suporte por email'
       ],
       popular: false
@@ -36,11 +38,12 @@ const Subscription = () => {
       period: '/mês',
       description: 'Para clínicas em crescimento',
       features: [
-        'Pacientes ilimitados',
-        'Todos os recursos do Básico',
-        'Múltiplos profissionais',
-        'Relatórios avançados',
-        'Integração com laboratórios',
+        'Até 200 pacientes',
+        'Até 5 profissionais',
+        'Agenda avançada',
+        'Prontuário completo',
+        'Relatórios detalhados',
+        'Integração WhatsApp',
         'Suporte prioritário'
       ],
       popular: true
@@ -52,12 +55,13 @@ const Subscription = () => {
       period: '/mês',
       description: 'Para grandes clínicas',
       features: [
-        'Todos os recursos do Profissional',
+        'Pacientes ilimitados',
+        'Profissionais ilimitados',
+        'Funcionalidades avançadas',
         'API personalizada',
         'Backup automático',
         'Treinamento incluído',
-        'Suporte 24/7',
-        'Customizações especiais'
+        'Suporte 24/7'
       ],
       popular: false
     }
@@ -233,14 +237,14 @@ const Subscription = () => {
         {/* Hero Section */}
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Experimente 7 dias grátis
+            Experimente 30 dias grátis
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Comece sua jornada digital na medicina agora mesmo. Durante o checkout você pode criar sua conta.
           </p>
           <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg inline-block">
             <p className="text-sm text-yellow-800">
-              ⚡ <strong>7 dias gratuitos</strong> → Cadastre-se durante a compra → Cobrança automática após o período de teste
+              ⚡ <strong>30 dias gratuitos</strong> → Cadastre-se durante a compra → Cobrança automática após o período de teste
             </p>
           </div>
         </div>
@@ -268,7 +272,7 @@ const Subscription = () => {
                   {plan.description}
                 </CardDescription>
                 <div className="mt-4">
-                  <div className="text-sm text-gray-500 mb-1">7 dias grátis, depois:</div>
+                  <div className="text-sm text-gray-500 mb-1">30 dias grátis, depois:</div>
                   <span className="text-4xl font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">{plan.price}</span>
                   <span className="text-gray-600">{plan.period}</span>
                 </div>
@@ -333,9 +337,9 @@ const Subscription = () => {
               <div className="w-12 h-12 bg-gradient-to-r from-green-700 to-emerald-700 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Zap className="text-white h-6 w-6" />
               </div>
-              <h4 className="font-semibold text-gray-900 mb-2">Teste Sem Riscos</h4>
+              <h4 className="font-semibold text-gray-900 mb-2">Teste Completo</h4>
               <p className="text-gray-600">
-                7 dias completamente grátis. Cancele a qualquer momento sem cobranças.
+                30 dias completamente grátis. Cobrança automática após o período de teste.
               </p>
             </div>
           </div>
@@ -345,8 +349,8 @@ const Subscription = () => {
             <ul className="text-sm text-gray-600 space-y-1">
               <li>• Escolha seu plano e clique em "Começar teste grátis"</li>
               <li>• Complete seu cadastro e dados de pagamento no Stripe</li>
-              <li>• Acesso imediato por 7 dias sem cobrança</li>
-              <li>• Após 7 dias, cobrança automática do plano escolhido</li>
+              <li>• Acesso imediato por 30 dias sem cobrança</li>
+              <li>• Após 30 dias, cobrança automática do plano escolhido</li>
               <li>• Cancele a qualquer momento sem penalidades</li>
             </ul>
           </div>

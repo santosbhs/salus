@@ -33,7 +33,7 @@ export const ModernHero = () => {
           <h2 className="text-6xl md:text-7xl font-black text-white mb-8 leading-tight">
             Revolucione sua
             <span className="block bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
-              Gestão Médica
+              Clínica
             </span>
           </h2>
 
@@ -41,14 +41,14 @@ export const ModernHero = () => {
           <p className="text-2xl text-gray-200 max-w-4xl mx-auto mb-12 leading-relaxed font-light">
             A plataforma mais avançada do Brasil para 
             <strong className="text-green-400"> agenda, prontuário eletrônico e gestão clínica</strong>. 
-            Aumente sua produtividade em até 300% e impressione seus pacientes.
+            Aumente sua produtividade e impressione seus pacientes.
           </p>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
             <Link to="/subscription">
               <Button size="lg" className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-12 py-6 text-xl font-bold rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-300 border-2 border-green-400/50">
-                Começar Gratuitamente
+                Começar Teste Grátis
                 <ArrowRight className="ml-3 h-6 w-6" />
               </Button>
             </Link>
@@ -58,11 +58,11 @@ export const ModernHero = () => {
           <div className="flex items-center justify-center space-x-8 text-green-200 text-lg font-semibold">
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-              <span>7 dias grátis</span>
+              <span>30 dias grátis</span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
-              <span>Sem cartão</span>
+              <span>Cadastro de cartão</span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
