@@ -75,7 +75,7 @@ const Subscription = () => {
                 <Zap className="text-white h-6 w-6" />
               </div>
               <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Flash Clinic</h1>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Flash Clinics</h1>
                 <p className="text-xs text-gray-600">Seus atendimentos em um flash!</p>
               </div>
             </div>
@@ -158,7 +158,7 @@ const Subscription = () => {
         {/* Features Section */}
         <div className="bg-white rounded-lg p-8 shadow-sm">
           <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-            Por que escolher o Flash Clinic?
+            Por que escolher o Flash Clinics?
           </h3>
           
           <div className="grid md:grid-cols-3 gap-8">
