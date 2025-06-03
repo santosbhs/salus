@@ -44,6 +44,14 @@ serve(async (req) => {
     if (isTestUser) {
       logStep("Test user detected", { email: user.email });
       
+      // Confirm test user if not already confirmed
+      if (!user.email_confirmed_at) {
+        logStep("Confirming test user email");
+        await supabaseClient.auth.admin.updateUserById(user.id, {
+          email_confirm: true
+        });
+      }
+      
       // Get subscriber info for test user
       const { data: subscriber } = await supabaseClient
         .from("subscribers")

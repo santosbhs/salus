@@ -19,11 +19,30 @@ const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const confirmTestUser = async (email: string) => {
+    const testUsers = ['admin.basico@teste.com', 'admin.profissional@teste.com', 'admin.enterprise@teste.com'];
+    
+    if (testUsers.includes(email)) {
+      try {
+        await supabase.functions.invoke('confirm-test-users', {
+          body: { email }
+        });
+        console.log(`Test user ${email} confirmed`);
+      } catch (error) {
+        console.log('Error confirming test user:', error);
+        // Continue with login attempt even if confirmation fails
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      // First, try to confirm test user if needed
+      await confirmTestUser(formData.email);
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
