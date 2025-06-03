@@ -9,8 +9,8 @@ const ProfessionalDashboard = ({ onNavigate }) => {
   const professionalStats = [
     {
       title: 'Pacientes Cadastrados',
-      value: '350',
-      limit: '500',
+      value: '145',
+      limit: '200',
       icon: Users,
       color: 'text-blue-700',
       bgColor: 'bg-blue-50',
@@ -42,9 +42,9 @@ const ProfessionalDashboard = ({ onNavigate }) => {
   ];
 
   const professionalFeatures = [
-    'Cadastro de até 500 pacientes',
+    'Cadastro de até 200 pacientes',
     'Sistema de triagem completo',
-    'Múltiplos profissionais',
+    'Múltiplos profissionais (até 5)',
     'Relatórios avançados',
     'Agendamento online',
     'Prescrições médicas',
@@ -53,15 +53,19 @@ const ProfessionalDashboard = ({ onNavigate }) => {
   return (
     <div className="space-y-6">
       {/* Plan Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg p-6 text-white">
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 text-white shadow-xl">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold">Plano Profissional</h2>
-            <p className="text-blue-100">Para clínicas em crescimento</p>
+            <h2 className="text-3xl font-bold mb-2">Plano Profissional</h2>
+            <p className="text-blue-100 text-lg">Para clínicas em crescimento</p>
+            <p className="text-blue-200 text-sm mt-2">Até 200 pacientes • Até 5 profissionais</p>
           </div>
-          <Badge className="bg-white text-blue-700 hover:bg-gray-100">
-            Ativo
-          </Badge>
+          <div className="text-right">
+            <Badge className="bg-white text-blue-700 hover:bg-gray-100 text-lg px-4 py-2">
+              Ativo
+            </Badge>
+            <p className="text-blue-100 text-sm mt-2">R$ 197/mês</p>
+          </div>
         </div>
       </div>
 
@@ -69,25 +73,26 @@ const ProfessionalDashboard = ({ onNavigate }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {professionalStats.map((stat, index) => {
           const Icon = stat.icon;
+          const percentage = (parseInt(stat.value) / parseInt(stat.limit)) * 100;
           return (
-            <Card key={index}>
+            <Card key={index} className="hover:shadow-lg transition-all duration-300 border-blue-200">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-600">
                   {stat.title}
                 </CardTitle>
-                <div className={`p-2 rounded-lg ${stat.bgColor}`}>
-                  <Icon className={`h-4 w-4 ${stat.color}`} />
+                <div className={`p-3 rounded-xl ${stat.bgColor}`}>
+                  <Icon className={`h-5 w-5 ${stat.color}`} />
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
-                <p className="text-xs text-gray-600">
-                  Limite: {stat.limit}
+                <div className="text-3xl font-bold text-gray-900">{stat.value}</div>
+                <p className="text-sm text-gray-600 mb-3">
+                  Limite: {stat.limit} ({percentage.toFixed(0)}% usado)
                 </p>
-                <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                <div className="w-full bg-gray-200 rounded-full h-3">
                   <div 
-                    className="bg-blue-600 h-2 rounded-full" 
-                    style={{ width: `${(parseInt(stat.value) / parseInt(stat.limit)) * 100}%` }}
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-500" 
+                    style={{ width: `${Math.min(percentage, 100)}%` }}
                   ></div>
                 </div>
               </CardContent>
@@ -98,81 +103,90 @@ const ProfessionalDashboard = ({ onNavigate }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Quick Actions */}
-        <Card>
+        <Card className="border-blue-200 shadow-lg">
           <CardHeader>
-            <CardTitle>Ações Rápidas</CardTitle>
-            <CardDescription>Funcionalidades avançadas</CardDescription>
+            <CardTitle className="text-xl text-blue-800">Ações Avançadas</CardTitle>
+            <CardDescription>Funcionalidades do plano profissional</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-4">
             <Button 
-              className="w-full justify-start bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800" 
+              className="w-full justify-start h-14 text-left bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800" 
               onClick={() => onNavigate('triagem')}
             >
-              <Stethoscope className="mr-2 h-4 w-4" />
-              Triagem
+              <Stethoscope className="mr-3 h-5 w-5" />
+              <div>
+                <div className="font-semibold">Triagem</div>
+                <div className="text-sm opacity-90">Classificação de risco</div>
+              </div>
             </Button>
             <Button 
-              className="w-full justify-start" 
+              className="w-full justify-start h-14 text-left" 
               variant="outline"
               onClick={() => onNavigate('novo-atendimento')}
             >
-              <FileText className="mr-2 h-4 w-4" />
-              Novo Atendimento
+              <FileText className="mr-3 h-5 w-5 text-blue-600" />
+              <div>
+                <div className="font-semibold">Novo Atendimento</div>
+                <div className="text-sm text-gray-600">Anamnese SOAP</div>
+              </div>
             </Button>
             <Button 
-              className="w-full justify-start" 
+              className="w-full justify-start h-14 text-left" 
               variant="outline"
               onClick={() => onNavigate('professionals')}
             >
-              <UserPlus className="mr-2 h-4 w-4" />
-              Profissionais
+              <UserPlus className="mr-3 h-5 w-5 text-blue-600" />
+              <div>
+                <div className="font-semibold">Profissionais</div>
+                <div className="text-sm text-gray-600">3/5 cadastrados</div>
+              </div>
             </Button>
           </CardContent>
         </Card>
 
         {/* Analytics */}
-        <Card>
+        <Card className="border-blue-200 shadow-lg">
           <CardHeader>
-            <CardTitle>Relatórios</CardTitle>
+            <CardTitle className="text-xl text-blue-800">Relatórios</CardTitle>
             <CardDescription>Análises disponíveis</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-4">
             <Button 
-              className="w-full justify-start" 
+              className="w-full justify-start h-12" 
               variant="outline"
             >
-              <BarChart3 className="mr-2 h-4 w-4" />
+              <BarChart3 className="mr-3 h-5 w-5 text-blue-600" />
               Relatórios Mensais
             </Button>
             <Button 
-              className="w-full justify-start" 
+              className="w-full justify-start h-12" 
               variant="outline"
             >
-              <Activity className="mr-2 h-4 w-4" />
+              <Activity className="mr-3 h-5 w-5 text-blue-600" />
               Estatísticas
             </Button>
             <Button 
-              className="w-full justify-start" 
+              className="w-full justify-start h-12" 
               variant="outline"
             >
-              <Clock className="mr-2 h-4 w-4" />
+              <Clock className="mr-3 h-5 w-5 text-blue-600" />
               Tempo de Atendimento
             </Button>
           </CardContent>
         </Card>
 
         {/* Plan Features */}
-        <Card>
+        <Card className="border-blue-200 shadow-lg">
           <CardHeader>
-            <CardTitle>Recursos Incluídos</CardTitle>
+            <CardTitle className="text-xl text-blue-800">Recursos Incluídos</CardTitle>
             <CardDescription>Tudo que você tem acesso</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {professionalFeatures.map((feature, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                  <span className="text-sm">{feature}</span>
+                <div key={index} className="flex items-center space-x-3">
+                  <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
+                  <span className="text-sm text-gray-700">{feature}</span>
                 </div>
               ))}
             </div>

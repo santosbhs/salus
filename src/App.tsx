@@ -11,6 +11,7 @@ import Sales from "./pages/Sales";
 import Subscription from "./pages/Subscription";
 import Success from "./pages/Success";
 import NotFound from "./pages/NotFound";
+import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/sales" element={<Sales />} />
           <Route path="/subscription" element={<Subscription />} />
           <Route path="/success" element={<Success />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/agendar" element={<ClientBooking />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

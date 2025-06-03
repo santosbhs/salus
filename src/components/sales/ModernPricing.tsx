@@ -78,7 +78,7 @@ export const ModernPricing = () => {
           </p>
           <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg inline-block">
             <p className="text-sm text-yellow-800">
-              ⚡ <strong>30 dias gratuitos</strong> → Cadastre seu cartão → Cobrança automática após o período de teste
+              ⚡ <strong>30 dias de teste grátis</strong> → Cobrança automática após o período de teste
             </p>
           </div>
         </div>
@@ -139,7 +139,7 @@ export const ModernPricing = () => {
 
         <div className="text-center mt-12">
           <p className="text-gray-600">
-            Todos os planos incluem 30 dias de teste gratuito • Cartão de crédito obrigatório • Cancele a qualquer momento
+            Todos os planos incluem 30 dias de teste gratuito • Cancele a qualquer momento
           </p>
         </div>
       </div>
