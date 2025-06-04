@@ -15,6 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 const Triagem = ({ onBack }) => {
   const [pacienteSelecionado, setPacienteSelecionado] = useState('');
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [loading, setLoading] = useState(true);
   const [queixaPrincipal, setQueixaPrincipal] = useState('');
   const [sintomas, setSintomas] = useState('');
   const [sinaisVitais, setSinaisVitais] = useState({
@@ -33,12 +34,27 @@ const Triagem = ({ onBack }) => {
 
   useEffect(() => {
     const loadPatients = async () => {
-      const data = await getPatients();
-      setPatients(data);
+      console.log('Carregando pacientes para triagem...');
+      setLoading(true);
+      try {
+        const data = await getPatients();
+        console.log('Pacientes carregados para triagem:', data);
+        setPatients(data || []);
+      } catch (error) {
+        console.error('Erro ao carregar pacientes:', error);
+        toast({
+          title: "Erro ao carregar pacientes",
+          description: "Não foi possível carregar a lista de pacientes",
+          variant: "destructive",
+        });
+        setPatients([]);
+      } finally {
+        setLoading(false);
+      }
     };
     
     loadPatients();
-  }, []);
+  }, [getPatients, toast]);
 
   const classificacoesManchester = [
     { nivel: 'vermelho', nome: 'Emergência', tempo: 'Imediato', cor: 'bg-red-500' },
@@ -131,18 +147,32 @@ const Triagem = ({ onBack }) => {
               <CardContent className="space-y-4">
                 <div>
                   <Label htmlFor="paciente">Selecionar Paciente</Label>
-                  <Select value={pacienteSelecionado} onValueChange={setPacienteSelecionado}>
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Selecione um paciente cadastrado" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {patients.map((patient) => (
-                        <SelectItem key={patient.id} value={patient.id}>
-                          {patient.nome} - {patient.idade} anos - {patient.telefone}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {loading ? (
+                    <div className="mt-1 p-2 text-gray-500">Carregando pacientes...</div>
+                  ) : (
+                    <Select value={pacienteSelecionado} onValueChange={setPacienteSelecionado}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder={
+                          patients.length === 0 
+                            ? "Nenhum paciente cadastrado" 
+                            : "Selecione um paciente cadastrado"
+                        } />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {patients.length === 0 ? (
+                          <SelectItem value="no-patients" disabled>
+                            Nenhum paciente cadastrado
+                          </SelectItem>
+                        ) : (
+                          patients.map((patient) => (
+                            <SelectItem key={patient.id} value={patient.id}>
+                              {patient.nome} - {patient.idade} anos - {patient.telefone}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                  )}
                 </div>
                 
                 {pacienteSelecionadoObj && (
@@ -303,7 +333,7 @@ const Triagem = ({ onBack }) => {
                 <Button 
                   className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800"
                   onClick={handleSalvar}
-                  disabled={salvando}
+                  disabled={salvando || patients.length === 0}
                 >
                   <Save className="mr-2 h-4 w-4" />
                   {salvando ? 'Salvando...' : 'Salvar Triagem'}
@@ -340,12 +370,21 @@ const Triagem = ({ onBack }) => {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600">
-                  {patients.length} pacientes disponíveis para triagem
+                  {loading ? 'Carregando...' : `${patients.length} pacientes disponíveis para triagem`}
                 </p>
-                {patients.length === 0 && (
-                  <p className="text-sm text-gray-500 mt-2">
-                    Cadastre pacientes primeiro na gestão de pacientes
-                  </p>
+                {!loading && patients.length === 0 && (
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-500">
+                      Cadastre pacientes primeiro na gestão de pacientes
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      className="mt-2 w-full"
+                      onClick={() => onBack()}
+                    >
+                      Ir para Gestão de Pacientes
+                    </Button>
+                  </div>
                 )}
               </CardContent>
             </Card>

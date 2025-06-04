@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
@@ -50,7 +51,7 @@ export const usePatients = () => {
       console.log('Pacientes encontrados:', data);
       
       // Processar dados para cálculo de idade
-      return data.map(patient => {
+      const processedPatients = data.map(patient => {
         const birthDate = new Date(patient.nascimento);
         const today = new Date();
         let idade = today.getFullYear() - birthDate.getFullYear();
@@ -66,6 +67,9 @@ export const usePatients = () => {
           ultimaConsulta: 'Nunca' // Será atualizado em uma consulta separada
         };
       });
+
+      console.log('Pacientes processados:', processedPatients);
+      return processedPatients;
     } catch (error: any) {
       console.error('Erro ao buscar pacientes:', error);
       toast({
@@ -98,16 +102,16 @@ export const usePatients = () => {
       
       // Preparar dados para inserção - remover campos calculados e adicionar user_id
       const insertData = {
-        nome: patientData.nome,
-        cpf: patientData.cpf,
-        telefone: patientData.telefone,
-        email: patientData.email || null,
+        nome: patientData.nome?.trim(),
+        cpf: patientData.cpf?.trim(),
+        telefone: patientData.telefone?.trim(),
+        email: patientData.email?.trim() || null,
         nascimento: patientData.nascimento,
-        convenio: patientData.convenio || null,
-        endereco: patientData.endereco || null,
+        convenio: patientData.convenio?.trim() || null,
+        endereco: patientData.endereco?.trim() || null,
         genero: patientData.genero || null,
-        responsavel: patientData.responsavel || null,
-        observacoes: patientData.observacoes || null,
+        responsavel: patientData.responsavel?.trim() || null,
+        observacoes: patientData.observacoes?.trim() || null,
         status: patientData.status || 'Ativo',
         user_id: user.id
       };
