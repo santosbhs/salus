@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { ArrowLeft, FileText, User, Stethoscope, Save, Eye, Calendar, FileDocument } from 'lucide-react';
+import { ArrowLeft, FileText, User, Stethoscope, Save, Eye, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -260,7 +259,7 @@ const NovoAtendimento = ({ onBack }) => {
                 <Card className="shadow-lg border-green-200">
                   <CardHeader>
                     <CardTitle className="flex items-center text-green-800">
-                      <FileDocument className="mr-2 h-5 w-5" />
+                      <FileText className="mr-2 h-5 w-5" />
                       Declarações Médicas
                     </CardTitle>
                     <CardDescription>
@@ -302,7 +301,7 @@ const NovoAtendimento = ({ onBack }) => {
                         className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800"
                         disabled={!declaracao.titulo || !declaracao.texto}
                       >
-                        <FileDocument className="mr-2 h-4 w-4" />
+                        <FileText className="mr-2 h-4 w-4" />
                         Imprimir Declaração
                       </Button>
                     </div>
