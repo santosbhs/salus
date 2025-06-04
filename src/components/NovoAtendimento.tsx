@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ArrowLeft, FileText, User, Stethoscope, Save, Eye, Calendar } from 'lucide-react';
+import { ArrowLeft, FileText, User, Stethoscope, Save, Eye, Calendar, FileDocument } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -20,12 +20,16 @@ const NovoAtendimento = ({ onBack }) => {
     avaliacao: '',
     plano: ''
   });
+  const [declaracao, setDeclaracao] = useState({
+    titulo: '',
+    texto: ''
+  });
   const [prescricao, setPrescricao] = useState(null);
   const [atestado, setAtestado] = useState(null);
   const [exames, setExames] = useState(null);
 
   const handleSalvar = () => {
-    console.log('Atendimento salvo:', { paciente, soap, prescricao, atestado, exames });
+    console.log('Atendimento salvo:', { paciente, soap, declaracao, prescricao, atestado, exames });
     // Aqui você implementaria a lógica para salvar o atendimento
   };
 
@@ -42,6 +46,46 @@ const NovoAtendimento = ({ onBack }) => {
   const handleExamSave = (examData) => {
     setExames(examData);
     console.log('Exames salvos:', examData);
+  };
+
+  const handlePrintDeclaration = () => {
+    const printWindow = window.open('', '_blank');
+    const currentDate = new Date().toLocaleDateString('pt-BR');
+    
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>${declaracao.titulo || 'Declaração Médica'}</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+            .header { text-align: center; margin-bottom: 40px; }
+            .content { margin: 20px 0; text-align: justify; }
+            .signature { margin-top: 60px; text-align: center; }
+            .signature-line { border-top: 1px solid #000; width: 300px; margin: 0 auto; padding-top: 5px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h2>${declaracao.titulo || 'DECLARAÇÃO MÉDICA'}</h2>
+          </div>
+          
+          <div class="content">
+            <p>${declaracao.texto}</p>
+          </div>
+          
+          <div class="signature">
+            <p>Local, ${currentDate}</p>
+            <br><br>
+            <div class="signature-line">
+              <p>Assinatura e Carimbo do Médico</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `);
+    
+    printWindow.document.close();
+    printWindow.print();
   };
 
   return (
@@ -76,7 +120,7 @@ const NovoAtendimento = ({ onBack }) => {
                 <TabsTrigger value="prescricao">Receitas</TabsTrigger>
                 <TabsTrigger value="atestado">Atestados</TabsTrigger>
                 <TabsTrigger value="exames">Exames</TabsTrigger>
-                <TabsTrigger value="revisao">Revisão</TabsTrigger>
+                <TabsTrigger value="declaracoes">Declarações</TabsTrigger>
               </TabsList>
 
               {/* Tab Anamnese */}
@@ -117,7 +161,6 @@ const NovoAtendimento = ({ onBack }) => {
                   </CardContent>
                 </Card>
 
-                {/* SOAP */}
                 <Card className="shadow-lg border-green-200">
                   <CardHeader>
                     <CardTitle className="flex items-center text-green-800">
@@ -212,50 +255,57 @@ const NovoAtendimento = ({ onBack }) => {
                 />
               </TabsContent>
 
-              {/* Tab Revisão */}
-              <TabsContent value="revisao" className="space-y-6">
+              {/* Tab Declarações */}
+              <TabsContent value="declaracoes" className="space-y-6">
                 <Card className="shadow-lg border-green-200">
                   <CardHeader>
                     <CardTitle className="flex items-center text-green-800">
-                      <Eye className="mr-2 h-5 w-5" />
-                      Revisão do Atendimento
+                      <FileDocument className="mr-2 h-5 w-5" />
+                      Declarações Médicas
                     </CardTitle>
+                    <CardDescription>
+                      Campo livre para declarações personalizadas
+                    </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2">Subjetivo:</h4>
-                      <p className="text-gray-700">{soap.subjetivo || 'Não informado'}</p>
+                    <div>
+                      <Label htmlFor="titulo-declaracao" className="text-lg font-semibold text-green-800">
+                        Título da Declaração
+                      </Label>
+                      <Input
+                        id="titulo-declaracao"
+                        value={declaracao.titulo}
+                        onChange={(e) => setDeclaracao({...declaracao, titulo: e.target.value})}
+                        placeholder="Ex: Declaração de Comparecimento, Atestado de Saúde..."
+                        className="mt-2"
+                      />
                     </div>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2">Objetivo:</h4>
-                      <p className="text-gray-700">{soap.objetivo || 'Não informado'}</p>
+
+                    <div>
+                      <Label htmlFor="texto-declaracao" className="text-lg font-semibold text-green-800">
+                        Texto da Declaração
+                      </Label>
+                      <p className="text-sm text-gray-600 mb-2">Escreva o conteúdo da declaração</p>
+                      <Textarea
+                        id="texto-declaracao"
+                        value={declaracao.texto}
+                        onChange={(e) => setDeclaracao({...declaracao, texto: e.target.value})}
+                        placeholder="Declaro que o(a) paciente [nome] esteve presente em consulta médica..."
+                        rows={8}
+                        className="mt-2"
+                      />
                     </div>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2">Avaliação:</h4>
-                      <p className="text-gray-700">{soap.avaliacao || 'Não informado'}</p>
+
+                    <div className="flex justify-end">
+                      <Button 
+                        onClick={handlePrintDeclaration}
+                        className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800"
+                        disabled={!declaracao.titulo || !declaracao.texto}
+                      >
+                        <FileDocument className="mr-2 h-4 w-4" />
+                        Imprimir Declaração
+                      </Button>
                     </div>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2">Plano:</h4>
-                      <p className="text-gray-700">{soap.plano || 'Não informado'}</p>
-                    </div>
-                    {prescricao && (
-                      <div className="bg-blue-50 p-4 rounded-lg">
-                        <h4 className="font-semibold text-gray-900 mb-2">Prescrição:</h4>
-                        <p className="text-gray-700">Receita gerada com {prescricao.medications?.length || 0} medicações</p>
-                      </div>
-                    )}
-                    {atestado && (
-                      <div className="bg-green-50 p-4 rounded-lg">
-                        <h4 className="font-semibold text-gray-900 mb-2">Atestado:</h4>
-                        <p className="text-gray-700">Atestado de {atestado.days} dias por {atestado.reason}</p>
-                      </div>
-                    )}
-                    {exames && (
-                      <div className="bg-purple-50 p-4 rounded-lg">
-                        <h4 className="font-semibold text-gray-900 mb-2">Exames Solicitados:</h4>
-                        <p className="text-gray-700">{exames.exams?.length || 0} exames solicitados</p>
-                      </div>
-                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -264,7 +314,6 @@ const NovoAtendimento = ({ onBack }) => {
 
           {/* Painel Lateral */}
           <div className="space-y-6">
-            {/* Ações */}
             <Card className="shadow-lg border-green-200">
               <CardHeader>
                 <CardTitle className="text-green-800">Ações</CardTitle>
@@ -286,7 +335,6 @@ const NovoAtendimento = ({ onBack }) => {
               </CardContent>
             </Card>
 
-            {/* Consultas Anteriores */}
             <Card className="shadow-lg border-green-200">
               <CardHeader>
                 <CardTitle className="text-green-800">Histórico</CardTitle>
@@ -305,7 +353,6 @@ const NovoAtendimento = ({ onBack }) => {
               </CardContent>
             </Card>
 
-            {/* Lembretes */}
             <Card className="shadow-lg border-green-200">
               <CardHeader>
                 <CardTitle className="text-green-800">Lembretes</CardTitle>

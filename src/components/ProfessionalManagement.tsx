@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, Users, Search, Plus, Edit, Eye, Phone, Mail, Stethoscope } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,7 +15,7 @@ const ProfessionalManagement = ({ onBack }) => {
       id: 1,
       nome: 'Dr. João Silva',
       especialidade: 'Cardiologia',
-      crm: '12345-SP',
+      registro: 'CRM 12345-SP',
       telefone: '(11) 99999-9999',
       email: 'joao@clinica.com',
       status: 'Ativo',
@@ -26,7 +25,7 @@ const ProfessionalManagement = ({ onBack }) => {
       id: 2,
       nome: 'Dra. Maria Santos',
       especialidade: 'Pediatria',
-      crm: '54321-SP',
+      registro: 'CRM 54321-SP',
       telefone: '(11) 88888-8888',
       email: 'maria@clinica.com',
       status: 'Ativo',
@@ -36,19 +35,40 @@ const ProfessionalManagement = ({ onBack }) => {
       id: 3,
       nome: 'Dr. Carlos Oliveira',
       especialidade: 'Ortopedia',
-      crm: '67890-SP',
+      registro: 'CRM 67890-SP',
       telefone: '(11) 77777-7777',
       email: 'carlos@clinica.com',
       status: 'Ativo',
       consultasHoje: 5
+    },
+    {
+      id: 4,
+      nome: 'Dra. Ana Costa',
+      especialidade: 'Nutrição',
+      registro: 'CRN 12345-SP',
+      telefone: '(11) 66666-6666',
+      email: 'ana@clinica.com',
+      status: 'Ativo',
+      consultasHoje: 3
     }
   ]);
 
   const filteredProfessionals = professionals.filter(prof =>
     prof.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
     prof.especialidade.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    prof.crm.includes(searchTerm)
+    prof.registro.includes(searchTerm)
   );
+
+  const professionTypes = [
+    { value: 'medico', label: 'Médico', registro: 'CRM' },
+    { value: 'dentista', label: 'Dentista', registro: 'CRO' },
+    { value: 'nutricionista', label: 'Nutricionista', registro: 'CRN' },
+    { value: 'psicologo', label: 'Psicólogo', registro: 'CRP' },
+    { value: 'fisioterapeuta', label: 'Fisioterapeuta', registro: 'CREFITO' },
+    { value: 'enfermeiro', label: 'Enfermeiro', registro: 'COREN' },
+    { value: 'farmaceutico', label: 'Farmacêutico', registro: 'CRF' },
+    { value: 'fonoaudiologo', label: 'Fonoaudiólogo', registro: 'CRFa' }
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 p-6">
@@ -68,7 +88,7 @@ const ProfessionalManagement = ({ onBack }) => {
                 <Users className="text-white h-7 w-7" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Gestão de Profissionais</h1>
+                <h1 className="text-3xl font-bold text-gray-900">Equipe de Profissionais</h1>
                 <p className="text-gray-600">{professionals.length} profissionais cadastrados</p>
               </div>
             </div>
@@ -95,34 +115,40 @@ const ProfessionalManagement = ({ onBack }) => {
                     <Input id="nome" placeholder="Nome do profissional" className="mt-1" />
                   </div>
                   <div>
-                    <Label htmlFor="crm">CRM</Label>
-                    <Input id="crm" placeholder="12345-SP" className="mt-1" />
+                    <Label htmlFor="tipo-profissional">Tipo de Profissional</Label>
+                    <Select>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Selecione o tipo" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {professionTypes.map((type) => (
+                          <SelectItem key={type.value} value={type.value}>
+                            {type.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="especialidade">Especialidade</Label>
-                    <Select>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder="Selecione a especialidade" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="cardiologia">Cardiologia</SelectItem>
-                        <SelectItem value="pediatria">Pediatria</SelectItem>
-                        <SelectItem value="ortopedia">Ortopedia</SelectItem>
-                        <SelectItem value="dermatologia">Dermatologia</SelectItem>
-                        <SelectItem value="ginecologia">Ginecologia</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="registro">Número do Registro</Label>
+                    <Input id="registro" placeholder="Ex: 12345-SP" className="mt-1" />
                   </div>
+                  <div>
+                    <Label htmlFor="especialidade">Especialidade</Label>
+                    <Input id="especialidade" placeholder="Especialidade do profissional" className="mt-1" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="telefone">Telefone</Label>
                     <Input id="telefone" placeholder="(11) 99999-9999" className="mt-1" />
                   </div>
-                </div>
-                <div>
-                  <Label htmlFor="email">E-mail</Label>
-                  <Input id="email" type="email" placeholder="email@clinica.com" className="mt-1" />
+                  <div>
+                    <Label htmlFor="email">E-mail</Label>
+                    <Input id="email" type="email" placeholder="email@clinica.com" className="mt-1" />
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -153,7 +179,7 @@ const ProfessionalManagement = ({ onBack }) => {
                 <div className="relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
-                    placeholder="Buscar profissional por nome, especialidade ou CRM..."
+                    placeholder="Buscar profissional por nome, especialidade ou registro..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -170,6 +196,7 @@ const ProfessionalManagement = ({ onBack }) => {
                     <SelectItem value="cardiologia">Cardiologia</SelectItem>
                     <SelectItem value="pediatria">Pediatria</SelectItem>
                     <SelectItem value="ortopedia">Ortopedia</SelectItem>
+                    <SelectItem value="nutricao">Nutrição</SelectItem>
                   </SelectContent>
                 </Select>
                 <Select defaultValue="ativo">
@@ -199,7 +226,7 @@ const ProfessionalManagement = ({ onBack }) => {
                     </div>
                     <div>
                       <h3 className="text-xl font-semibold text-gray-900">{professional.nome}</h3>
-                      <p className="text-gray-600">{professional.especialidade} • CRM: {professional.crm}</p>
+                      <p className="text-gray-600">{professional.especialidade} • {professional.registro}</p>
                     </div>
                   </div>
                   
