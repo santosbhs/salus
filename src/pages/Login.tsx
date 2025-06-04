@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Lock, Mail, Eye, EyeOff, Zap, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -20,7 +19,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const createTestUserIfNeeded = async (email: string, password: string) => {
+  const ensureTestUserExists = async (email: string, password: string) => {
     const testUsers = [
       { email: 'admin.basico@teste.com', password: '123456' },
       { email: 'admin.profissional@teste.com', password: '123456' },
@@ -29,26 +28,36 @@ const Login = () => {
     
     const testUser = testUsers.find(user => user.email === email && user.password === password);
     
-    if (testUser) {
+    if (!testUser) return false;
+
+    try {
+      console.log(`Ensuring test user exists: ${email}`);
+      
+      // Try to sign up first (will succeed if user doesn't exist)
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: testUser.email,
+        password: testUser.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashboard`
+        }
+      });
+      
+      console.log('Sign up result:', { signUpData, signUpError });
+      
+      // Try to confirm the user via edge function
       try {
-        // Try to sign up first (in case user doesn't exist)
-        await supabase.auth.signUp({
-          email: testUser.email,
-          password: testUser.password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/dashboard`
-          }
-        });
-        
-        // Confirm the test user
-        await supabase.functions.invoke('confirm-test-users', {
+        const { data: confirmData, error: confirmError } = await supabase.functions.invoke('confirm-test-users', {
           body: { email: testUser.email }
         });
-        
-        console.log(`Test user ${email} created/confirmed`);
-      } catch (error) {
-        console.log('Error creating/confirming test user:', error);
+        console.log('Confirm result:', { confirmData, confirmError });
+      } catch (confirmErr) {
+        console.log('Confirm function error (continuing):', confirmErr);
       }
+      
+      return true;
+    } catch (error) {
+      console.log('Error ensuring test user exists:', error);
+      return true; // Continue anyway
     }
   };
 
@@ -57,50 +66,63 @@ const Login = () => {
     setLoading(true);
 
     try {
+      console.log(`Login attempt for: ${formData.email}`);
+      
       // Clean up existing auth state first
       cleanupAuthState();
       
-      // Try global sign out first
+      // Force sign out
       try {
         await supabase.auth.signOut({ scope: 'global' });
+        console.log('Global sign out completed');
       } catch (err) {
-        // Continue even if this fails
         console.log('Sign out error (continuing):', err);
       }
 
+      // Wait for cleanup to complete
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
       // For test users, ensure they exist and are confirmed
-      await createTestUserIfNeeded(formData.email, formData.password);
+      const isTestUser = await ensureTestUserExists(formData.email, formData.password);
+      
+      if (isTestUser) {
+        toast({
+          title: "Preparando usuário de teste...",
+          description: "Aguarde um momento.",
+        });
+        
+        // Wait for user creation/confirmation to complete
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
 
-      // Wait a moment for the cleanup to complete
-      await new Promise(resolve => setTimeout(resolve, 500));
-
+      console.log('Attempting sign in...');
       const { data, error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
       });
 
+      console.log('Sign in result:', { data, error });
+
       if (error) {
-        // If it's a test user and login fails, try signing them up again
-        const testEmails = ['admin.basico@teste.com', 'admin.profissional@teste.com', 'admin.enterprise@teste.com'];
-        if (testEmails.includes(formData.email) && formData.password === '123456') {
+        if (isTestUser) {
+          // For test users, try creating them again with a different approach
           toast({
-            title: "Criando usuário de teste...",
-            description: "Aguarde um momento enquanto configuramos sua conta.",
+            title: "Recriando usuário de teste...",
+            description: "Tentativa de recuperação em andamento.",
           });
           
-          // Force create the test user
-          await createTestUserIfNeeded(formData.email, formData.password);
-          
-          // Try login again after a short delay
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          // Wait and try again
+          await new Promise(resolve => setTimeout(resolve, 2000));
           
           const { data: retryData, error: retryError } = await supabase.auth.signInWithPassword({
             email: formData.email,
             password: formData.password,
           });
           
+          console.log('Retry result:', { retryData, retryError });
+          
           if (retryError) {
-            throw retryError;
+            throw new Error(`Erro persistente no login do usuário de teste: ${retryError.message}`);
           }
           
           if (retryData.user) {
@@ -108,21 +130,20 @@ const Login = () => {
               title: "Login realizado com sucesso!",
               description: "Redirecionando para o dashboard...",
             });
-            // Force page reload for clean state
             window.location.href = '/dashboard';
             return;
           }
+        } else {
+          throw error;
         }
-        
-        throw error;
       }
 
       if (data.user) {
+        console.log('Login successful for user:', data.user.email);
         toast({
           title: "Login realizado com sucesso!",
           description: "Redirecionando para o dashboard...",
         });
-        // Force page reload for clean state
         window.location.href = '/dashboard';
       }
     } catch (error: any) {
@@ -258,12 +279,24 @@ const Login = () => {
 
               {/* Test Users Info */}
               <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <h4 className="font-semibold text-blue-800 mb-2">Usuários de Teste:</h4>
-                <div className="text-sm text-blue-700 space-y-1">
-                  <p><strong>admin.basico@teste.com</strong> - Senha: 123456</p>
-                  <p><strong>admin.profissional@teste.com</strong> - Senha: 123456</p>
-                  <p><strong>admin.enterprise@teste.com</strong> - Senha: 123456</p>
+                <h4 className="font-semibold text-blue-800 mb-2">🔑 Usuários de Teste Disponíveis:</h4>
+                <div className="text-sm text-blue-700 space-y-2">
+                  <div className="p-2 bg-white rounded border">
+                    <p><strong>📧 admin.basico@teste.com</strong></p>
+                    <p>🔐 Senha: <code className="bg-gray-100 px-1 rounded">123456</code></p>
+                  </div>
+                  <div className="p-2 bg-white rounded border">
+                    <p><strong>📧 admin.profissional@teste.com</strong></p>
+                    <p>🔐 Senha: <code className="bg-gray-100 px-1 rounded">123456</code></p>
+                  </div>
+                  <div className="p-2 bg-white rounded border">
+                    <p><strong>📧 admin.enterprise@teste.com</strong></p>
+                    <p>🔐 Senha: <code className="bg-gray-100 px-1 rounded">123456</code></p>
+                  </div>
                 </div>
+                <p className="text-xs text-blue-600 mt-2">
+                  💡 Estes usuários são criados automaticamente no primeiro login
+                </p>
               </div>
             </CardContent>
           </Card>
