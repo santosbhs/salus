@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, FileText, User, Stethoscope, Save, Eye, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,29 +8,101 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { usePatients, Patient } from '@/hooks/usePatients';
+import { useProfessionals, Professional } from '@/hooks/useProfessionals';
+import { useConsultations } from '@/hooks/useConsultations';
+import { useToast } from '@/hooks/use-toast';
 import MedicalPrescription from './MedicalPrescription';
 import MedicalCertificate from './MedicalCertificate';
 import ExamRequest from './ExamRequest';
 
 const NovoAtendimento = ({ onBack }) => {
-  const [paciente, setPaciente] = useState('');
+  const [pacienteSelecionado, setPacienteSelecionado] = useState('');
+  const [profissionalSelecionado, setProfissionalSelecionado] = useState('');
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [professionals, setProfessionals] = useState<Professional[]>([]);
+  const [salvando, setSalvando] = useState(false);
+  
   const [soap, setSoap] = useState({
     subjetivo: '',
     objetivo: '',
     avaliacao: '',
     plano: ''
   });
+  
   const [declaracao, setDeclaracao] = useState({
     titulo: '',
     texto: ''
   });
+  
   const [prescricao, setPrescricao] = useState(null);
   const [atestado, setAtestado] = useState(null);
   const [exames, setExames] = useState(null);
 
-  const handleSalvar = () => {
-    console.log('Atendimento salvo:', { paciente, soap, declaracao, prescricao, atestado, exames });
-    // Aqui você implementaria a lógica para salvar o atendimento
+  const { getPatients } = usePatients();
+  const { getProfessionals } = useProfessionals();
+  const { createConsultation } = useConsultations();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const loadData = async () => {
+      const [patientsData, professionalsData] = await Promise.all([
+        getPatients(),
+        getProfessionals()
+      ]);
+      setPatients(patientsData);
+      setProfessionals(professionalsData);
+    };
+    
+    loadData();
+  }, []);
+
+  const handleSalvar = async () => {
+    if (!pacienteSelecionado || !profissionalSelecionado) {
+      toast({
+        title: "Campos obrigatórios",
+        description: "Selecione o paciente e o profissional",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSalvando(true);
+    
+    const consultationData = {
+      patient_id: pacienteSelecionado,
+      professional_id: profissionalSelecionado,
+      subjetivo: soap.subjetivo || null,
+      objetivo: soap.objetivo || null,
+      avaliacao: soap.avaliacao || null,
+      plano: soap.plano || null,
+      receitas: prescricao ? JSON.stringify(prescricao) : null,
+      exames: exames ? JSON.stringify(exames) : null,
+      atestados: atestado ? JSON.stringify(atestado) : null
+    };
+
+    const resultado = await createConsultation(consultationData);
+    
+    if (resultado) {
+      // Limpar formulário
+      setPacienteSelecionado('');
+      setProfissionalSelecionado('');
+      setSoap({
+        subjetivo: '',
+        objetivo: '',
+        avaliacao: '',
+        plano: ''
+      });
+      setDeclaracao({
+        titulo: '',
+        texto: ''
+      });
+      setPrescricao(null);
+      setAtestado(null);
+      setExames(null);
+    }
+    
+    setSalvando(false);
   };
 
   const handlePrescriptionSave = (prescription) => {
@@ -87,6 +160,9 @@ const NovoAtendimento = ({ onBack }) => {
     printWindow.print();
   };
 
+  const pacienteSelecionadoObj = patients.find(p => p.id === pacienteSelecionado);
+  const profissionalSelecionadoObj = professionals.find(p => p.id === profissionalSelecionado);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-green-50 p-6">
       <div className="max-w-6xl mx-auto">
@@ -124,29 +200,48 @@ const NovoAtendimento = ({ onBack }) => {
 
               {/* Tab Anamnese */}
               <TabsContent value="anamnese" className="space-y-6">
-                {/* Dados do Paciente */}
+                {/* Seleção de Paciente e Profissional */}
                 <Card className="shadow-lg border-green-200">
                   <CardHeader>
                     <CardTitle className="flex items-center text-green-800">
                       <User className="mr-2 h-5 w-5" />
-                      Paciente
+                      Dados do Atendimento
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="paciente">Nome do Paciente</Label>
-                        <Select>
+                        <Label htmlFor="paciente">Paciente *</Label>
+                        <Select value={pacienteSelecionado} onValueChange={setPacienteSelecionado}>
                           <SelectTrigger className="mt-1">
                             <SelectValue placeholder="Selecione o paciente" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="maria">Maria Silva</SelectItem>
-                            <SelectItem value="joao">João Santos</SelectItem>
-                            <SelectItem value="ana">Ana Costa</SelectItem>
+                            {patients.map((patient) => (
+                              <SelectItem key={patient.id} value={patient.id}>
+                                {patient.nome} - {patient.idade} anos
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </div>
+                      
+                      <div>
+                        <Label htmlFor="profissional">Profissional *</Label>
+                        <Select value={profissionalSelecionado} onValueChange={setProfissionalSelecionado}>
+                          <SelectTrigger className="mt-1">
+                            <SelectValue placeholder="Selecione o profissional" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {professionals.map((professional) => (
+                              <SelectItem key={professional.id} value={professional.id}>
+                                {professional.nome} - {professional.especialidade}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
                       <div>
                         <Label htmlFor="data">Data da Consulta</Label>
                         <Input
@@ -157,6 +252,24 @@ const NovoAtendimento = ({ onBack }) => {
                         />
                       </div>
                     </div>
+                    
+                    {/* Informações dos selecionados */}
+                    {(pacienteSelecionadoObj || profissionalSelecionadoObj) && (
+                      <div className="mt-4 p-4 bg-green-50 rounded-lg">
+                        {pacienteSelecionadoObj && (
+                          <div className="mb-2">
+                            <h4 className="font-semibold text-green-800">Paciente Selecionado:</h4>
+                            <p>{pacienteSelecionadoObj.nome} - {pacienteSelecionadoObj.idade} anos - {pacienteSelecionadoObj.telefone}</p>
+                          </div>
+                        )}
+                        {profissionalSelecionadoObj && (
+                          <div>
+                            <h4 className="font-semibold text-green-800">Profissional Responsável:</h4>
+                            <p>{profissionalSelecionadoObj.nome} - {profissionalSelecionadoObj.especialidade}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
 
@@ -234,7 +347,7 @@ const NovoAtendimento = ({ onBack }) => {
               <TabsContent value="prescricao" className="space-y-6">
                 <MedicalPrescription 
                   onSave={handlePrescriptionSave}
-                  patientName={paciente || "Paciente Selecionado"}
+                  patientName={pacienteSelecionadoObj?.nome || "Selecione um paciente"}
                 />
               </TabsContent>
 
@@ -242,7 +355,7 @@ const NovoAtendimento = ({ onBack }) => {
               <TabsContent value="atestado" className="space-y-6">
                 <MedicalCertificate 
                   onSave={handleCertificateSave}
-                  patientName={paciente || "Paciente Selecionado"}
+                  patientName={pacienteSelecionadoObj?.nome || "Selecione um paciente"}
                 />
               </TabsContent>
 
@@ -250,7 +363,7 @@ const NovoAtendimento = ({ onBack }) => {
               <TabsContent value="exames" className="space-y-6">
                 <ExamRequest 
                   onSave={handleExamSave}
-                  patientName={paciente || "Paciente Selecionado"}
+                  patientName={pacienteSelecionadoObj?.nome || "Selecione um paciente"}
                 />
               </TabsContent>
 
@@ -321,9 +434,10 @@ const NovoAtendimento = ({ onBack }) => {
                 <Button 
                   className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800"
                   onClick={handleSalvar}
+                  disabled={salvando}
                 >
                   <Save className="mr-2 h-4 w-4" />
-                  Salvar Atendimento
+                  {salvando ? 'Salvando...' : 'Salvar Atendimento'}
                 </Button>
                 <Button variant="outline" className="w-full">
                   Agendar Retorno
@@ -336,18 +450,18 @@ const NovoAtendimento = ({ onBack }) => {
 
             <Card className="shadow-lg border-green-200">
               <CardHeader>
-                <CardTitle className="text-green-800">Histórico</CardTitle>
+                <CardTitle className="text-green-800">Dados Disponíveis</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  <div className="p-3 bg-green-50 rounded border-l-4 border-green-500">
-                    <p className="text-sm font-semibold">15/01/2024</p>
-                    <p className="text-sm text-gray-600">Consulta de rotina</p>
-                  </div>
-                  <div className="p-3 bg-gray-50 rounded border-l-4 border-gray-300">
-                    <p className="text-sm font-semibold">10/12/2023</p>
-                    <p className="text-sm text-gray-600">Exames laboratoriais</p>
-                  </div>
+                <div className="space-y-2 text-sm">
+                  <p><strong>Pacientes:</strong> {patients.length} cadastrados</p>
+                  <p><strong>Profissionais:</strong> {professionals.length} cadastrados</p>
+                  {patients.length === 0 && (
+                    <p className="text-red-600">⚠️ Cadastre pacientes primeiro</p>
+                  )}
+                  {professionals.length === 0 && (
+                    <p className="text-red-600">⚠️ Cadastre profissionais primeiro</p>
+                  )}
                 </div>
               </CardContent>
             </Card>

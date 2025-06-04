@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { useToast } from './use-toast';
 
-export interface MedicalConsultation {
+export interface Consultation {
   id: string;
   patient_id: string;
   professional_id: string;
@@ -15,6 +15,8 @@ export interface MedicalConsultation {
   receitas?: string;
   exames?: string;
   atestados?: string;
+  created_at: string;
+  updated_at: string;
   // Dados relacionados
   patientName?: string;
   professionalName?: string;
@@ -25,7 +27,7 @@ export const useConsultations = () => {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const getConsultations = async (): Promise<MedicalConsultation[]> => {
+  const getConsultations = async (): Promise<Consultation[]> => {
     try {
       setLoading(true);
       
@@ -33,7 +35,6 @@ export const useConsultations = () => {
         throw new Error('Usuário não autenticado');
       }
       
-      // Buscar consultas com dados de pacientes e profissionais
       const { data, error } = await supabase
         .from('medical_consultations')
         .select(`
@@ -45,7 +46,6 @@ export const useConsultations = () => {
       
       if (error) throw error;
       
-      // Formatar dados para uso no front-end
       return data.map(item => ({
         ...item,
         patientName: item.patient?.nome,
@@ -64,7 +64,7 @@ export const useConsultations = () => {
     }
   };
 
-  const getConsultationById = async (id: string): Promise<MedicalConsultation | null> => {
+  const getConsultationById = async (id: string): Promise<Consultation | null> => {
     try {
       setLoading(true);
       
@@ -104,7 +104,7 @@ export const useConsultations = () => {
     }
   };
 
-  const createConsultation = async (consultationData: Omit<MedicalConsultation, 'id' | 'patientName' | 'professionalName'>): Promise<MedicalConsultation | null> => {
+  const createConsultation = async (consultationData: Omit<Consultation, 'id' | 'patientName' | 'professionalName' | 'created_at' | 'updated_at'>): Promise<Consultation | null> => {
     try {
       setLoading(true);
       
@@ -122,7 +122,7 @@ export const useConsultations = () => {
       
       toast({
         title: 'Consulta registrada com sucesso!',
-        description: 'Os dados da consulta foram salvos.',
+        description: 'O atendimento foi salvo no sistema.',
       });
       
       // Buscar nomes do paciente e profissional
@@ -156,7 +156,7 @@ export const useConsultations = () => {
     }
   };
 
-  const updateConsultation = async (id: string, consultationData: Partial<MedicalConsultation>): Promise<MedicalConsultation | null> => {
+  const updateConsultation = async (id: string, consultationData: Partial<Consultation>): Promise<Consultation | null> => {
     try {
       setLoading(true);
       
@@ -165,7 +165,7 @@ export const useConsultations = () => {
       }
       
       // Remover campos calculados que não existem na tabela
-      const { patientName, professionalName, ...dataToUpdate } = consultationData;
+      const { patientName, professionalName, created_at, ...dataToUpdate } = consultationData;
       
       const { data, error } = await supabase
         .from('medical_consultations')

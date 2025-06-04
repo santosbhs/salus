@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, User, Heart, Thermometer, Activity, AlertTriangle, Clock, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,10 +8,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { usePatients, Patient } from '@/hooks/usePatients';
+import { useTriagem } from '@/hooks/useTriagem';
+import { useToast } from '@/hooks/use-toast';
 
 const Triagem = ({ onBack }) => {
-  const [paciente, setPaciente] = useState('');
+  const [pacienteSelecionado, setPacienteSelecionado] = useState('');
+  const [patients, setPatients] = useState<Patient[]>([]);
   const [queixaPrincipal, setQueixaPrincipal] = useState('');
+  const [sintomas, setSintomas] = useState('');
   const [sinaisVitais, setSinaisVitais] = useState({
     pressao: '',
     temperatura: '',
@@ -19,6 +24,21 @@ const Triagem = ({ onBack }) => {
     saturacao: ''
   });
   const [classificacao, setClassificacao] = useState('');
+  const [observacoes, setObservacoes] = useState('');
+  const [salvando, setSalvando] = useState(false);
+
+  const { getPatients } = usePatients();
+  const { createTriagem } = useTriagem();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const loadPatients = async () => {
+      const data = await getPatients();
+      setPatients(data);
+    };
+    
+    loadPatients();
+  }, []);
 
   const classificacoesManchester = [
     { nivel: 'vermelho', nome: 'Emergência', tempo: 'Imediato', cor: 'bg-red-500' },
@@ -28,10 +48,51 @@ const Triagem = ({ onBack }) => {
     { nivel: 'azul', nome: 'Não Urgente', tempo: '240 min', cor: 'bg-blue-500' }
   ];
 
-  const handleSalvar = () => {
-    console.log('Triagem salva:', { paciente, queixaPrincipal, sinaisVitais, classificacao });
-    // Aqui você implementaria a lógica para salvar a triagem
+  const handleSalvar = async () => {
+    if (!pacienteSelecionado || !queixaPrincipal || !classificacao) {
+      toast({
+        title: "Campos obrigatórios",
+        description: "Selecione o paciente, informe a queixa principal e a classificação",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSalvando(true);
+    
+    const triagemData = {
+      patient_id: pacienteSelecionado,
+      queixa_principal: queixaPrincipal,
+      sintomas: sintomas ? sintomas.split(',').map(s => s.trim()) : [],
+      pressao_arterial: sinaisVitais.pressao || null,
+      temperatura: sinaisVitais.temperatura ? parseFloat(sinaisVitais.temperatura) : null,
+      frequencia_cardiaca: sinaisVitais.frequenciaCardiaca ? parseInt(sinaisVitais.frequenciaCardiaca) : null,
+      saturacao_oxigenio: sinaisVitais.saturacao ? parseInt(sinaisVitais.saturacao) : null,
+      classificacao_manchester: classificacao,
+      observacoes: observacoes || null
+    };
+
+    const resultado = await createTriagem(triagemData);
+    
+    if (resultado) {
+      // Limpar formulário
+      setPacienteSelecionado('');
+      setQueixaPrincipal('');
+      setSintomas('');
+      setSinaisVitais({
+        pressao: '',
+        temperatura: '',
+        frequenciaCardiaca: '',
+        saturacao: ''
+      });
+      setClassificacao('');
+      setObservacoes('');
+    }
+    
+    setSalvando(false);
   };
+
+  const pacienteSelecionadoObj = patients.find(p => p.id === pacienteSelecionado);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-red-50 p-6">
@@ -69,17 +130,33 @@ const Triagem = ({ onBack }) => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="paciente">Nome do Paciente</Label>
-                  <Input
-                    id="paciente"
-                    value={paciente}
-                    onChange={(e) => setPaciente(e.target.value)}
-                    placeholder="Digite o nome completo do paciente"
-                    className="mt-1"
-                  />
+                  <Label htmlFor="paciente">Selecionar Paciente</Label>
+                  <Select value={pacienteSelecionado} onValueChange={setPacienteSelecionado}>
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Selecione um paciente cadastrado" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {patients.map((patient) => (
+                        <SelectItem key={patient.id} value={patient.id}>
+                          {patient.nome} - {patient.idade} anos - {patient.telefone}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
+                
+                {pacienteSelecionadoObj && (
+                  <div className="p-4 bg-red-50 rounded-lg">
+                    <h4 className="font-semibold text-red-800">Informações do Paciente</h4>
+                    <p><strong>Nome:</strong> {pacienteSelecionadoObj.nome}</p>
+                    <p><strong>Idade:</strong> {pacienteSelecionadoObj.idade} anos</p>
+                    <p><strong>Telefone:</strong> {pacienteSelecionadoObj.telefone}</p>
+                    <p><strong>Convênio:</strong> {pacienteSelecionadoObj.convenio || 'Particular'}</p>
+                  </div>
+                )}
+                
                 <div>
-                  <Label htmlFor="queixa">Queixa Principal</Label>
+                  <Label htmlFor="queixa">Queixa Principal *</Label>
                   <Textarea
                     id="queixa"
                     value={queixaPrincipal}
@@ -87,6 +164,17 @@ const Triagem = ({ onBack }) => {
                     placeholder="Descreva a queixa principal do paciente"
                     className="mt-1"
                     rows={3}
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="sintomas">Sintomas (separados por vírgula)</Label>
+                  <Input
+                    id="sintomas"
+                    value={sintomas}
+                    onChange={(e) => setSintomas(e.target.value)}
+                    placeholder="Ex: febre, dor de cabeça, náusea"
+                    className="mt-1"
                   />
                 </div>
               </CardContent>
@@ -116,6 +204,8 @@ const Triagem = ({ onBack }) => {
                     <Label htmlFor="temperatura">Temperatura (°C)</Label>
                     <Input
                       id="temperatura"
+                      type="number"
+                      step="0.1"
                       value={sinaisVitais.temperatura}
                       onChange={(e) => setSinaisVitais({...sinaisVitais, temperatura: e.target.value})}
                       placeholder="36.5"
@@ -123,12 +213,13 @@ const Triagem = ({ onBack }) => {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="fc">Frequência Cardíaca</Label>
+                    <Label htmlFor="fc">Frequência Cardíaca (bpm)</Label>
                     <Input
                       id="fc"
+                      type="number"
                       value={sinaisVitais.frequenciaCardiaca}
                       onChange={(e) => setSinaisVitais({...sinaisVitais, frequenciaCardiaca: e.target.value})}
-                      placeholder="80 bpm"
+                      placeholder="80"
                       className="mt-1"
                     />
                   </div>
@@ -136,9 +227,12 @@ const Triagem = ({ onBack }) => {
                     <Label htmlFor="saturacao">Saturação O2 (%)</Label>
                     <Input
                       id="saturacao"
+                      type="number"
+                      min="0"
+                      max="100"
                       value={sinaisVitais.saturacao}
                       onChange={(e) => setSinaisVitais({...sinaisVitais, saturacao: e.target.value})}
-                      placeholder="98%"
+                      placeholder="98"
                       className="mt-1"
                     />
                   </div>
@@ -151,7 +245,7 @@ const Triagem = ({ onBack }) => {
               <CardHeader>
                 <CardTitle className="flex items-center text-red-800">
                   <AlertTriangle className="mr-2 h-5 w-5" />
-                  Classificação de Risco
+                  Classificação de Risco *
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -181,6 +275,21 @@ const Triagem = ({ onBack }) => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Observações */}
+            <Card className="shadow-lg border-red-200">
+              <CardHeader>
+                <CardTitle className="text-red-800">Observações Adicionais</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Textarea
+                  value={observacoes}
+                  onChange={(e) => setObservacoes(e.target.value)}
+                  placeholder="Observações adicionais sobre o paciente ou triagem..."
+                  rows={3}
+                />
+              </CardContent>
+            </Card>
           </div>
 
           {/* Painel Lateral */}
@@ -194,12 +303,10 @@ const Triagem = ({ onBack }) => {
                 <Button 
                   className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800"
                   onClick={handleSalvar}
+                  disabled={salvando}
                 >
                   <Save className="mr-2 h-4 w-4" />
-                  Salvar Triagem
-                </Button>
-                <Button variant="outline" className="w-full">
-                  Imprimir Protocolo
+                  {salvando ? 'Salvando...' : 'Salvar Triagem'}
                 </Button>
               </CardContent>
             </Card>
@@ -226,26 +333,20 @@ const Triagem = ({ onBack }) => {
               </Card>
             )}
 
-            {/* Últimas Triagens */}
+            {/* Informações */}
             <Card className="shadow-lg border-red-200">
               <CardHeader>
-                <CardTitle className="text-red-800">Últimas Triagens</CardTitle>
+                <CardTitle className="text-red-800">Pacientes Cadastrados</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-2 bg-red-50 rounded">
-                    <span className="text-sm">João Silva</span>
-                    <Badge className="bg-red-500">Emergência</Badge>
-                  </div>
-                  <div className="flex items-center justify-between p-2 bg-yellow-50 rounded">
-                    <span className="text-sm">Maria Santos</span>
-                    <Badge className="bg-yellow-500 text-black">Urgente</Badge>
-                  </div>
-                  <div className="flex items-center justify-between p-2 bg-green-50 rounded">
-                    <span className="text-sm">Pedro Costa</span>
-                    <Badge className="bg-green-500">Pouco Urgente</Badge>
-                  </div>
-                </div>
+                <p className="text-gray-600">
+                  {patients.length} pacientes disponíveis para triagem
+                </p>
+                {patients.length === 0 && (
+                  <p className="text-sm text-gray-500 mt-2">
+                    Cadastre pacientes primeiro na gestão de pacientes
+                  </p>
+                )}
               </CardContent>
             </Card>
           </div>
