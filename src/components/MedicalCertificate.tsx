@@ -51,6 +51,9 @@ const MedicalCertificate = ({ onSave, patientName }) => {
     
     const certificateTitle = certificateTypes.find(t => t.value === certificateData.type)?.label || 'Atestado Médico';
     
+    // Convert days to number for arithmetic operations
+    const daysAsNumber = parseInt(certificateData.days) || 0;
+    
     printWindow.document.write(`
       <html>
         <head>
@@ -118,7 +121,7 @@ const MedicalCertificate = ({ onSave, patientName }) => {
             
             <p>
               ${certificateData.type === 'medical' ? 
-                `Necessita de afastamento de suas atividades por <strong>${certificateData.days} dias</strong>, no período de <strong>${new Date(certificateData.startDate).toLocaleDateString('pt-BR')}</strong> a <strong>${new Date(new Date(certificateData.startDate).getTime() + (certificateData.days - 1) * 24 * 60 * 60 * 1000).toLocaleDateString('pt-BR')}</strong>, devido a <strong>${certificateData.reason}</strong>.` :
+                `Necessita de afastamento de suas atividades por <strong>${certificateData.days} dias</strong>, no período de <strong>${new Date(certificateData.startDate).toLocaleDateString('pt-BR')}</strong> a <strong>${new Date(new Date(certificateData.startDate).getTime() + (daysAsNumber - 1) * 24 * 60 * 60 * 1000).toLocaleDateString('pt-BR')}</strong>, devido a <strong>${certificateData.reason}</strong>.` :
                 certificateData.type === 'work' ?
                 `Esteve presente em consulta médica no dia <strong>${new Date(certificateData.startDate).toLocaleDateString('pt-BR')}</strong>, das <strong>[horário início]</strong> às <strong>[horário fim]</strong>, por motivo de <strong>${certificateData.reason}</strong>.` :
                 certificateData.type === 'rest' ?
