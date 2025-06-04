@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { FileText, Printer, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -107,7 +106,7 @@ const MedicalCertificate = ({ onSave, patientName }) => {
         </head>
         <body>
           <div class="header">
-            <h1>Flash Clinics</h1>
+            <h1>Salus Healthcare Platform</h1>
             <h2>${certificateTitle}</h2>
           </div>
           
@@ -144,7 +143,7 @@ const MedicalCertificate = ({ onSave, patientName }) => {
           
           <div class="footer">
             <p style="font-size: 12px; color: #666;">
-              Flash Clinics - Seus atendimentos em um flash!<br>
+              Salus Healthcare Platform - Saúde e inovação em suas mãos!<br>
               Este documento foi gerado eletronicamente em ${currentDate}
             </p>
           </div>

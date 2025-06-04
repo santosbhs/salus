@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Plus, Trash2, FileSearch, Printer, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -167,7 +166,7 @@ const ExamRequest = ({ onSave, patientName }) => {
         </head>
         <body>
           <div class="header">
-            <h1>Flash Clinics</h1>
+            <h1>Salus Healthcare Platform</h1>
             <h2>Solicitação de Exames Complementares</h2>
             <p>Data: ${currentDate}</p>
           </div>
@@ -213,7 +212,7 @@ const ExamRequest = ({ onSave, patientName }) => {
           </div>
           
           <div class="footer">
-            <p>Flash Clinics - Seus atendimentos em um flash!</p>
+            <p>Salus Healthcare Platform - Saúde e inovação em suas mãos!</p>
             <p>Este documento foi gerado eletronicamente em ${currentDate}</p>
           </div>
         </body>
