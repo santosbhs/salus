@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Users, Search, Plus, Edit, Eye, Phone, Mail, Stethoscope } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -6,11 +7,14 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import ProfessionalForm from './ProfessionalForm';
+import ProfessionalAgenda from './ProfessionalAgenda';
 import { useProfessionals, Professional } from '@/hooks/useProfessionals';
 
 const ProfessionalManagement = ({ onBack }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [showAgenda, setShowAgenda] = useState(false);
+  const [selectedProfessional, setSelectedProfessional] = useState<Professional | null>(null);
   const [professionals, setProfessionals] = useState<Professional[]>([]);
   const [especialidadeFilter, setEspecialidadeFilter] = useState('todas');
   const [statusFilter, setStatusFilter] = useState('ativo');
@@ -31,6 +35,11 @@ const ProfessionalManagement = ({ onBack }) => {
     const data = await getProfessionals();
     setProfessionals(data);
     setShowForm(false);
+  };
+
+  const handleViewAgenda = (professional: Professional) => {
+    setSelectedProfessional(professional);
+    setShowAgenda(true);
   };
 
   const filteredProfessionals = professionals.filter(prof => {
@@ -54,6 +63,13 @@ const ProfessionalManagement = ({ onBack }) => {
 
   if (showForm) {
     return <ProfessionalForm onBack={() => setShowForm(false)} onSave={handleSaveProfessional} />;
+  }
+
+  if (showAgenda && selectedProfessional) {
+    return <ProfessionalAgenda 
+      professional={selectedProfessional} 
+      onBack={() => { setShowAgenda(false); setSelectedProfessional(null); }} 
+    />;
   }
 
   return (
@@ -197,7 +213,11 @@ const ProfessionalManagement = ({ onBack }) => {
                         <Button variant="outline" size="sm">
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800" size="sm">
+                        <Button 
+                          className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800" 
+                          size="sm"
+                          onClick={() => handleViewAgenda(professional)}
+                        >
                           Ver Agenda
                         </Button>
                       </div>
