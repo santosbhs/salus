@@ -7,9 +7,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { useProfessionals } from '@/hooks/useProfessionals';
 
 const ProfessionalForm = ({ onBack, onSave }) => {
   const { toast } = useToast();
+  const { createProfessional, loading } = useProfessionals();
   const [formData, setFormData] = useState({
     nome: '',
     tipo: '',
@@ -17,9 +19,9 @@ const ProfessionalForm = ({ onBack, onSave }) => {
     especialidade: '',
     telefone: '',
     email: '',
-    horarioInicio: '08:00',
-    horarioFim: '18:00',
-    diasAtendimento: [],
+    horario_inicio: '08:00',
+    horario_fim: '18:00',
+    dias_atendimento: [],
     observacoes: ''
   });
 
@@ -34,32 +36,37 @@ const ProfessionalForm = ({ onBack, onSave }) => {
     { value: 'fonoaudiologo', label: 'Fonoaudiólogo', registro: 'CRFa' }
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Salvando profissional:', formData);
     
-    toast({
-      title: "Profissional cadastrado com sucesso!",
-      description: `${formData.nome} foi adicionado à equipe.`,
-    });
-
-    if (onSave) {
-      onSave(formData);
+    try {
+      // Validar campos obrigatórios
+      if (!formData.nome || !formData.tipo || !formData.registro || !formData.especialidade || !formData.telefone || !formData.email) {
+        toast({
+          title: "Campos obrigatórios",
+          description: "Preencha todos os campos obrigatórios.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Salvar no banco de dados via Supabase
+      const newProfessional = await createProfessional(formData);
+      
+      if (newProfessional) {
+        if (onSave) {
+          onSave(newProfessional);
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao salvar profissional:", error);
+      toast({
+        title: "Erro ao salvar",
+        description: error.message || "Ocorreu um erro ao salvar o profissional.",
+        variant: "destructive",
+      });
     }
-    
-    // Reset form
-    setFormData({
-      nome: '',
-      tipo: '',
-      registro: '',
-      especialidade: '',
-      telefone: '',
-      email: '',
-      horarioInicio: '08:00',
-      horarioFim: '18:00',
-      diasAtendimento: [],
-      observacoes: ''
-    });
   };
 
   const handleInputChange = (field, value) => {
@@ -116,7 +123,11 @@ const ProfessionalForm = ({ onBack, onSave }) => {
                 </div>
                 <div>
                   <Label htmlFor="tipo">Tipo de Profissional *</Label>
-                  <Select onValueChange={(value) => handleInputChange('tipo', value)} required>
+                  <Select
+                    value={formData.tipo}
+                    onValueChange={(value) => handleInputChange('tipo', value)}
+                    required
+                  >
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Selecione o tipo" />
                     </SelectTrigger>
@@ -186,22 +197,22 @@ const ProfessionalForm = ({ onBack, onSave }) => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="horarioInicio">Horário de Início</Label>
+                  <Label htmlFor="horario_inicio">Horário de Início</Label>
                   <Input
-                    id="horarioInicio"
+                    id="horario_inicio"
                     type="time"
-                    value={formData.horarioInicio}
-                    onChange={(e) => handleInputChange('horarioInicio', e.target.value)}
+                    value={formData.horario_inicio}
+                    onChange={(e) => handleInputChange('horario_inicio', e.target.value)}
                     className="mt-1"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="horarioFim">Horário de Fim</Label>
+                  <Label htmlFor="horario_fim">Horário de Fim</Label>
                   <Input
-                    id="horarioFim"
+                    id="horario_fim"
                     type="time"
-                    value={formData.horarioFim}
-                    onChange={(e) => handleInputChange('horarioFim', e.target.value)}
+                    value={formData.horario_fim}
+                    onChange={(e) => handleInputChange('horario_fim', e.target.value)}
                     className="mt-1"
                   />
                 </div>
@@ -221,15 +232,25 @@ const ProfessionalForm = ({ onBack, onSave }) => {
           </Card>
 
           <div className="flex justify-end space-x-4 mt-6">
-            <Button type="button" variant="outline" onClick={onBack}>
+            <Button type="button" variant="outline" onClick={onBack} disabled={loading}>
               Cancelar
             </Button>
             <Button 
               type="submit"
               className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800"
+              disabled={loading}
             >
-              <Save className="mr-2 h-4 w-4" />
-              Cadastrar Profissional
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Salvando...
+                </>
+              ) : (
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  Cadastrar Profissional
+                </>
+              )}
             </Button>
           </div>
         </form>

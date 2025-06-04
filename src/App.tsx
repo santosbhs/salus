@@ -10,6 +10,7 @@ import Sales from "./pages/Sales";
 import Subscription from "./pages/Subscription";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
+import AuthRequired from "./components/AuthRequired";
 
 const queryClient = new QueryClient();
 
@@ -23,7 +24,11 @@ const App = () => (
           <Route path="/" element={<Sales />} />
           <Route path="/login" element={<Login />} />
           <Route path="/subscription" element={<Subscription />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={
+            <AuthRequired>
+              <Dashboard />
+            </AuthRequired>
+          } />
           <Route path="/agendar" element={<ClientBooking />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

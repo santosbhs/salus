@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Users, Search, Plus, Edit, Eye, Phone, Mail, Stethoscope } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,74 +7,51 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import ProfessionalForm from './ProfessionalForm';
+import { useProfessionals, Professional } from '@/hooks/useProfessionals';
 
 const ProfessionalManagement = ({ onBack }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showForm, setShowForm] = useState(false);
-  const [professionals, setProfessionals] = useState([
-    {
-      id: 1,
-      nome: 'Dr. João Silva',
-      especialidade: 'Cardiologia',
-      registro: 'CRM 12345-SP',
-      telefone: '(11) 99999-9999',
-      email: 'joao@clinica.com',
-      status: 'Ativo',
-      consultasHoje: 8
-    },
-    {
-      id: 2,
-      nome: 'Dra. Maria Santos',
-      especialidade: 'Pediatria',
-      registro: 'CRM 54321-SP',
-      telefone: '(11) 88888-8888',
-      email: 'maria@clinica.com',
-      status: 'Ativo',
-      consultasHoje: 12
-    },
-    {
-      id: 3,
-      nome: 'Dr. Carlos Oliveira',
-      especialidade: 'Ortopedia',
-      registro: 'CRM 67890-SP',
-      telefone: '(11) 77777-7777',
-      email: 'carlos@clinica.com',
-      status: 'Ativo',
-      consultasHoje: 5
-    },
-    {
-      id: 4,
-      nome: 'Dra. Ana Costa',
-      especialidade: 'Nutrição',
-      registro: 'CRN 12345-SP',
-      telefone: '(11) 66666-6666',
-      email: 'ana@clinica.com',
-      status: 'Ativo',
-      consultasHoje: 3
-    }
-  ]);
+  const [professionals, setProfessionals] = useState<Professional[]>([]);
+  const [especialidadeFilter, setEspecialidadeFilter] = useState('todas');
+  const [statusFilter, setStatusFilter] = useState('ativo');
+  const { getProfessionals, loading } = useProfessionals();
 
-  const handleSaveProfessional = (professionalData) => {
-    const newProfessional = {
-      id: professionals.length + 1,
-      nome: professionalData.nome,
-      especialidade: professionalData.especialidade,
-      registro: professionalData.registro,
-      telefone: professionalData.telefone,
-      email: professionalData.email,
-      status: 'Ativo',
-      consultasHoje: 0
+  useEffect(() => {
+    const loadProfessionals = async () => {
+      const data = await getProfessionals();
+      setProfessionals(data);
     };
     
-    setProfessionals(prev => [...prev, newProfessional]);
+    loadProfessionals();
+  }, []);
+
+  const handleSaveProfessional = async (professionalData) => {
+    // Dados reais são salvos no banco através do hook useProfessionals no ProfessionalForm
+    // Aqui só precisamos atualizar a lista
+    const data = await getProfessionals();
+    setProfessionals(data);
     setShowForm(false);
   };
 
-  const filteredProfessionals = professionals.filter(prof =>
-    prof.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    prof.especialidade.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    prof.registro.includes(searchTerm)
-  );
+  const filteredProfessionals = professionals.filter(prof => {
+    // Filtro de busca
+    const matchesSearch = (
+      prof.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      prof.especialidade.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      prof.registro.includes(searchTerm)
+    );
+    
+    // Filtro de especialidade
+    const matchesEspecialidade = especialidadeFilter === 'todas' || 
+      prof.especialidade.toLowerCase().includes(especialidadeFilter.toLowerCase());
+    
+    // Filtro de status
+    const matchesStatus = statusFilter === 'todos' || 
+      prof.status?.toLowerCase() === statusFilter.toLowerCase();
+    
+    return matchesSearch && matchesEspecialidade && matchesStatus;
+  });
 
   if (showForm) {
     return <ProfessionalForm onBack={() => setShowForm(false)} onSave={handleSaveProfessional} />;
@@ -128,7 +106,11 @@ const ProfessionalManagement = ({ onBack }) => {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Select defaultValue="todas">
+                <Select 
+                  defaultValue="todas"
+                  value={especialidadeFilter}
+                  onValueChange={setEspecialidadeFilter}
+                >
                   <SelectTrigger className="w-48">
                     <SelectValue placeholder="Especialidade" />
                   </SelectTrigger>
@@ -138,9 +120,15 @@ const ProfessionalManagement = ({ onBack }) => {
                     <SelectItem value="pediatria">Pediatria</SelectItem>
                     <SelectItem value="ortopedia">Ortopedia</SelectItem>
                     <SelectItem value="nutricao">Nutrição</SelectItem>
+                    <SelectItem value="psicologia">Psicologia</SelectItem>
+                    <SelectItem value="dermatologia">Dermatologia</SelectItem>
                   </SelectContent>
                 </Select>
-                <Select defaultValue="ativo">
+                <Select 
+                  defaultValue="ativo"
+                  value={statusFilter}
+                  onValueChange={setStatusFilter}
+                >
                   <SelectTrigger className="w-32">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
@@ -155,62 +143,74 @@ const ProfessionalManagement = ({ onBack }) => {
           </CardContent>
         </Card>
 
-        {/* Lista de Profissionais */}
-        <div className="grid gap-4">
-          {filteredProfessionals.map((professional) => (
-            <Card key={professional.id} className="shadow-lg hover:shadow-xl transition-all duration-300 border-emerald-200">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center">
-                      <Stethoscope className="h-6 w-6 text-emerald-700" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-900">{professional.nome}</h3>
-                      <p className="text-gray-600">{professional.especialidade} • {professional.registro}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-6">
-                    <div className="text-right">
-                      <div className="flex items-center text-gray-600 mb-1">
-                        <Phone className="h-4 w-4 mr-1" />
-                        <span className="text-sm">{professional.telefone}</span>
-                      </div>
-                      <div className="flex items-center text-gray-600">
-                        <Mail className="h-4 w-4 mr-1" />
-                        <span className="text-sm">{professional.email}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="text-center bg-emerald-50 rounded-lg p-3">
-                      <p className="text-sm text-gray-600">Consultas hoje</p>
-                      <p className="text-2xl font-bold text-emerald-700">{professional.consultasHoje}</p>
-                    </div>
-                    
-                    <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-200">
-                      {professional.status}
-                    </Badge>
-                    
-                    <div className="flex space-x-2">
-                      <Button variant="outline" size="sm">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button variant="outline" size="sm">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800" size="sm">
-                        Ver Agenda
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        {/* Estado de carregamento */}
+        {loading && (
+          <div className="text-center py-8">
+            <div className="w-12 h-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600 text-lg">Carregando profissionais...</p>
+          </div>
+        )}
 
-        {filteredProfessionals.length === 0 && (
+        {/* Lista de Profissionais */}
+        {!loading && (
+          <div className="grid gap-4">
+            {filteredProfessionals.map((professional) => (
+              <Card key={professional.id} className="shadow-lg hover:shadow-xl transition-all duration-300 border-emerald-200">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-gradient-to-r from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center">
+                        <Stethoscope className="h-6 w-6 text-emerald-700" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-gray-900">{professional.nome}</h3>
+                        <p className="text-gray-600">{professional.especialidade} • {professional.registro}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-6">
+                      <div className="text-right">
+                        <div className="flex items-center text-gray-600 mb-1">
+                          <Phone className="h-4 w-4 mr-1" />
+                          <span className="text-sm">{professional.telefone}</span>
+                        </div>
+                        <div className="flex items-center text-gray-600">
+                          <Mail className="h-4 w-4 mr-1" />
+                          <span className="text-sm">{professional.email}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="text-center bg-emerald-50 rounded-lg p-3">
+                        <p className="text-sm text-gray-600">Consultas hoje</p>
+                        <p className="text-2xl font-bold text-emerald-700">{professional.consultasHoje || 0}</p>
+                      </div>
+                      
+                      <Badge className={`${
+                        professional.status === 'Ativo' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-800'
+                      } hover:bg-emerald-200`}>
+                        {professional.status || 'Ativo'}
+                      </Badge>
+                      
+                      <div className="flex space-x-2">
+                        <Button variant="outline" size="sm">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800" size="sm">
+                          Ver Agenda
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {!loading && filteredProfessionals.length === 0 && (
           <Card className="shadow-lg border-emerald-200">
             <CardContent className="text-center py-12">
               <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />

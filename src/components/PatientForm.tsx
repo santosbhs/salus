@@ -7,9 +7,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { usePatients } from '@/hooks/usePatients';
 
 const PatientForm = ({ onBack, onSave }) => {
   const { toast } = useToast();
+  const { createPatient, loading } = usePatients();
   const [formData, setFormData] = useState({
     nome: '',
     cpf: '',
@@ -23,32 +25,37 @@ const PatientForm = ({ onBack, onSave }) => {
     observacoes: ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Salvando paciente:', formData);
     
-    toast({
-      title: "Paciente cadastrado com sucesso!",
-      description: `${formData.nome} foi adicionado ao sistema.`,
-    });
-
-    if (onSave) {
-      onSave(formData);
+    try {
+      // Validar campos obrigatórios
+      if (!formData.nome || !formData.cpf || !formData.telefone || !formData.nascimento) {
+        toast({
+          title: "Campos obrigatórios",
+          description: "Preencha todos os campos obrigatórios.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Salvar no banco de dados via Supabase
+      const newPatient = await createPatient(formData);
+      
+      if (newPatient) {
+        if (onSave) {
+          onSave(newPatient);
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao salvar paciente:", error);
+      toast({
+        title: "Erro ao salvar",
+        description: error.message || "Ocorreu um erro ao salvar o paciente.",
+        variant: "destructive",
+      });
     }
-    
-    // Reset form
-    setFormData({
-      nome: '',
-      cpf: '',
-      telefone: '',
-      email: '',
-      nascimento: '',
-      convenio: '',
-      endereco: '',
-      genero: '',
-      responsavel: '',
-      observacoes: ''
-    });
   };
 
   const handleInputChange = (field, value) => {
@@ -153,7 +160,7 @@ const PatientForm = ({ onBack, onSave }) => {
                 </div>
                 <div>
                   <Label htmlFor="genero">Gênero</Label>
-                  <Select onValueChange={(value) => handleInputChange('genero', value)}>
+                  <Select value={formData.genero} onValueChange={(value) => handleInputChange('genero', value)}>
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
@@ -167,7 +174,7 @@ const PatientForm = ({ onBack, onSave }) => {
                 </div>
                 <div>
                   <Label htmlFor="convenio">Convênio</Label>
-                  <Select onValueChange={(value) => handleInputChange('convenio', value)}>
+                  <Select value={formData.convenio} onValueChange={(value) => handleInputChange('convenio', value)}>
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Selecione o convênio" />
                     </SelectTrigger>
@@ -219,15 +226,25 @@ const PatientForm = ({ onBack, onSave }) => {
           </Card>
 
           <div className="flex justify-end space-x-4 mt-6">
-            <Button type="button" variant="outline" onClick={onBack}>
+            <Button type="button" variant="outline" onClick={onBack} disabled={loading}>
               Cancelar
             </Button>
             <Button 
               type="submit"
               className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800"
+              disabled={loading}
             >
-              <Save className="mr-2 h-4 w-4" />
-              Cadastrar Paciente
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Salvando...
+                </>
+              ) : (
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  Cadastrar Paciente
+                </>
+              )}
             </Button>
           </div>
         </form>
