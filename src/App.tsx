@@ -4,7 +4,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
 import ClientBooking from "./pages/ClientBooking";
 import Login from "./pages/Login";
 import Sales from "./pages/Sales";
@@ -21,9 +20,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<Sales />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/sales" element={<Sales />} />
           <Route path="/subscription" element={<Subscription />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/agendar" element={<ClientBooking />} />
