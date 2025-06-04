@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Zap, LogOut, Settings, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,6 +11,8 @@ import PatientManagement from '@/components/PatientManagement';
 import ProfessionalManagement from '@/components/ProfessionalManagement';
 import AppointmentScheduling from '@/components/AppointmentScheduling';
 import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/integrations/supabase/client';
+import { cleanupAuthState } from '@/utils/authCleanup';
 
 const DashboardPage = () => {
   const [currentView, setCurrentView] = useState('default');
@@ -21,8 +22,28 @@ const DashboardPage = () => {
     setCurrentView(view);
   };
 
-  const handleLogout = () => {
-    console.log('Logout');
+  const handleLogout = async () => {
+    try {
+      console.log('Iniciando logout...');
+      
+      // Limpar estado de autenticação
+      cleanupAuthState();
+      
+      // Tentar fazer logout global
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+        console.log('Logout global realizado');
+      } catch (err) {
+        console.log('Erro no logout global (continuando):', err);
+      }
+      
+      // Redirecionar para página de login
+      window.location.href = '/login';
+    } catch (error) {
+      console.error('Erro no logout:', error);
+      // Mesmo com erro, limpar e redirecionar
+      window.location.href = '/login';
+    }
   };
 
   const getPlanBadgeColor = (plan: string) => {
