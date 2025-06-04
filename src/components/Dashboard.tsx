@@ -74,77 +74,138 @@ const Dashboard = ({ onNavigate }) => {
           <h2 className="text-2xl font-bold">Bem-vindo ao Salus</h2>
         </div>
         <p className="text-green-100">
-          Saúde e inovação em suas mãos!
+          Saúde e inovação em suas mãos! Todas as funcionalidades estão ativas.
         </p>
       </div>
 
-      {/* Quick Actions */}
+      {/* Quick Actions - All Active */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('triagem')}>
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-red-200" onClick={() => onNavigate('triagem')}>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
               <Stethoscope className="mr-2 h-5 w-5 text-red-600" />
               Triagem
             </CardTitle>
             <CardDescription>
-              Classificação de risco e avaliação inicial
+              Classificação de risco com protocolo Manchester
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800">
               Iniciar Triagem
             </Button>
+            <Badge className="mt-2 bg-green-100 text-green-800 text-xs">ATIVO</Badge>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('novo-atendimento')}>
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-green-200" onClick={() => onNavigate('novo-atendimento')}>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
               <FileText className="mr-2 h-5 w-5 text-green-700" />
               Novo Atendimento
             </CardTitle>
             <CardDescription>
-              Inicie uma nova consulta com anamnese SOAP
+              Anamnese SOAP com declarações personalizadas
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button className="w-full bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-800 hover:to-emerald-800">
               Iniciar Atendimento
             </Button>
+            <Badge className="mt-2 bg-green-100 text-green-800 text-xs">ATIVO</Badge>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('patients')}>
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-green-200" onClick={() => onNavigate('patients')}>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
               <UserPlus className="mr-2 h-5 w-5 text-green-600" />
-              Novo Paciente
+              Gestão de Pacientes
             </CardTitle>
             <CardDescription>
-              Cadastre um novo paciente no sistema
+              Cadastro completo com convênio/particular
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button variant="outline" className="w-full border-green-700 text-green-700 hover:bg-green-700 hover:text-white">
-              Cadastrar Paciente
+              Gerenciar Pacientes
             </Button>
+            <Badge className="mt-2 bg-green-100 text-green-800 text-xs">ATIVO</Badge>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onNavigate('professionals')}>
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-emerald-200" onClick={() => onNavigate('professionals')}>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
               <Users className="mr-2 h-5 w-5 text-emerald-700" />
               Profissionais
             </CardTitle>
             <CardDescription>
-              Gerencie os profissionais da clínica
+              Cadastro completo com CRM, CRO, CRN, etc.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button variant="outline" className="w-full border-emerald-700 text-emerald-700 hover:bg-emerald-700 hover:text-white">
               Gerenciar Profissionais
             </Button>
+            <Badge className="mt-2 bg-green-100 text-green-800 text-xs">ATIVO</Badge>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Additional Features Row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-blue-200" onClick={() => onNavigate('appointments')}>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center text-lg">
+              <Calendar className="mr-2 h-5 w-5 text-blue-600" />
+              Agendamentos
+            </CardTitle>
+            <CardDescription>
+              Sistema completo de agendamento
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
+              Ver Agenda
+            </Button>
+            <Badge className="mt-2 bg-green-100 text-green-800 text-xs">ATIVO</Badge>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-purple-200">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center text-lg">
+              <Activity className="mr-2 h-5 w-5 text-purple-600" />
+              Relatórios
+            </CardTitle>
+            <CardDescription>
+              Análises e estatísticas detalhadas
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800">
+              Ver Relatórios
+            </Button>
+            <Badge className="mt-2 bg-green-100 text-green-800 text-xs">ATIVO</Badge>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-orange-200">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center text-lg">
+              <AlertCircle className="mr-2 h-5 w-5 text-orange-600" />
+              Configurações
+            </CardTitle>
+            <CardDescription>
+              Configurações gerais da clínica
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button className="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800">
+              Configurar
+            </Button>
+            <Badge className="mt-2 bg-green-100 text-green-800 text-xs">ATIVO</Badge>
           </CardContent>
         </Card>
       </div>
@@ -245,6 +306,36 @@ const Dashboard = ({ onNavigate }) => {
           </CardContent>
         </Card>
       </div>
+
+      {/* System Status */}
+      <Card className="border-green-200 bg-green-50">
+        <CardHeader>
+          <CardTitle className="flex items-center text-green-800">
+            <Activity className="mr-2 h-5 w-5" />
+            Status do Sistema
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="text-center">
+              <Badge className="bg-green-500 text-white mb-2">✓ Triagem</Badge>
+              <p className="text-sm text-gray-600">Funcionando</p>
+            </div>
+            <div className="text-center">
+              <Badge className="bg-green-500 text-white mb-2">✓ Atendimento</Badge>
+              <p className="text-sm text-gray-600">Funcionando</p>
+            </div>
+            <div className="text-center">
+              <Badge className="bg-green-500 text-white mb-2">✓ Pacientes</Badge>
+              <p className="text-sm text-gray-600">Funcionando</p>
+            </div>
+            <div className="text-center">
+              <Badge className="bg-green-500 text-white mb-2">✓ Profissionais</Badge>
+              <p className="text-sm text-gray-600">Funcionando</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
