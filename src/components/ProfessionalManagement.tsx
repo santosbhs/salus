@@ -3,14 +3,14 @@ import { ArrowLeft, Users, Search, Plus, Edit, Eye, Phone, Mail, Stethoscope } f
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import ProfessionalForm from './ProfessionalForm';
 
 const ProfessionalManagement = ({ onBack }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [professionals] = useState([
+  const [showForm, setShowForm] = useState(false);
+  const [professionals, setProfessionals] = useState([
     {
       id: 1,
       nome: 'Dr. João Silva',
@@ -53,22 +53,31 @@ const ProfessionalManagement = ({ onBack }) => {
     }
   ]);
 
+  const handleSaveProfessional = (professionalData) => {
+    const newProfessional = {
+      id: professionals.length + 1,
+      nome: professionalData.nome,
+      especialidade: professionalData.especialidade,
+      registro: professionalData.registro,
+      telefone: professionalData.telefone,
+      email: professionalData.email,
+      status: 'Ativo',
+      consultasHoje: 0
+    };
+    
+    setProfessionals(prev => [...prev, newProfessional]);
+    setShowForm(false);
+  };
+
   const filteredProfessionals = professionals.filter(prof =>
     prof.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
     prof.especialidade.toLowerCase().includes(searchTerm.toLowerCase()) ||
     prof.registro.includes(searchTerm)
   );
 
-  const professionTypes = [
-    { value: 'medico', label: 'Médico', registro: 'CRM' },
-    { value: 'dentista', label: 'Dentista', registro: 'CRO' },
-    { value: 'nutricionista', label: 'Nutricionista', registro: 'CRN' },
-    { value: 'psicologo', label: 'Psicólogo', registro: 'CRP' },
-    { value: 'fisioterapeuta', label: 'Fisioterapeuta', registro: 'CREFITO' },
-    { value: 'enfermeiro', label: 'Enfermeiro', registro: 'COREN' },
-    { value: 'farmaceutico', label: 'Farmacêutico', registro: 'CRF' },
-    { value: 'fonoaudiologo', label: 'Fonoaudiólogo', registro: 'CRFa' }
-  ];
+  if (showForm) {
+    return <ProfessionalForm onBack={() => setShowForm(false)} onSave={handleSaveProfessional} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 p-6">
@@ -94,81 +103,13 @@ const ProfessionalManagement = ({ onBack }) => {
             </div>
           </div>
 
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800">
-                <Plus className="mr-2 h-4 w-4" />
-                Novo Profissional
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Cadastrar Novo Profissional</DialogTitle>
-                <DialogDescription>
-                  Preencha os dados do profissional para cadastrá-lo no sistema
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="nome">Nome Completo</Label>
-                    <Input id="nome" placeholder="Nome do profissional" className="mt-1" />
-                  </div>
-                  <div>
-                    <Label htmlFor="tipo-profissional">Tipo de Profissional</Label>
-                    <Select>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder="Selecione o tipo" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {professionTypes.map((type) => (
-                          <SelectItem key={type.value} value={type.value}>
-                            {type.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="registro">Número do Registro</Label>
-                    <Input id="registro" placeholder="Ex: 12345-SP" className="mt-1" />
-                  </div>
-                  <div>
-                    <Label htmlFor="especialidade">Especialidade</Label>
-                    <Input id="especialidade" placeholder="Especialidade do profissional" className="mt-1" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="telefone">Telefone</Label>
-                    <Input id="telefone" placeholder="(11) 99999-9999" className="mt-1" />
-                  </div>
-                  <div>
-                    <Label htmlFor="email">E-mail</Label>
-                    <Input id="email" type="email" placeholder="email@clinica.com" className="mt-1" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="horario_inicio">Horário Início</Label>
-                    <Input id="horario_inicio" type="time" defaultValue="08:00" className="mt-1" />
-                  </div>
-                  <div>
-                    <Label htmlFor="horario_fim">Horário Fim</Label>
-                    <Input id="horario_fim" type="time" defaultValue="18:00" className="mt-1" />
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-end space-x-2">
-                <Button variant="outline">Cancelar</Button>
-                <Button className="bg-gradient-to-r from-emerald-600 to-emerald-700">
-                  Cadastrar Profissional
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button 
+            onClick={() => setShowForm(true)}
+            className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Novo Profissional
+          </Button>
         </div>
 
         {/* Filtros e Busca */}

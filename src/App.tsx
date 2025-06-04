@@ -9,7 +9,6 @@ import ClientBooking from "./pages/ClientBooking";
 import Login from "./pages/Login";
 import Sales from "./pages/Sales";
 import Subscription from "./pages/Subscription";
-import Success from "./pages/Success";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
 
@@ -26,7 +25,6 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/sales" element={<Sales />} />
           <Route path="/subscription" element={<Subscription />} />
-          <Route path="/success" element={<Success />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/agendar" element={<ClientBooking />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

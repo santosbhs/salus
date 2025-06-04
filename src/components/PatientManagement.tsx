@@ -1,17 +1,16 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, User, Search, Plus, Edit, Eye, Phone, Mail, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import PatientForm from './PatientForm';
 
 const PatientManagement = ({ onBack }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [patients] = useState([
+  const [showForm, setShowForm] = useState(false);
+  const [patients, setPatients] = useState([
     {
       id: 1,
       nome: 'Maria Silva',
@@ -44,11 +43,31 @@ const PatientManagement = ({ onBack }) => {
     }
   ]);
 
+  const handleSavePatient = (patientData) => {
+    const newPatient = {
+      id: patients.length + 1,
+      nome: patientData.nome,
+      idade: new Date().getFullYear() - new Date(patientData.nascimento).getFullYear(),
+      telefone: patientData.telefone,
+      email: patientData.email,
+      ultimaConsulta: 'Nunca',
+      convenio: patientData.convenio || 'Particular',
+      status: 'Ativo'
+    };
+    
+    setPatients(prev => [...prev, newPatient]);
+    setShowForm(false);
+  };
+
   const filteredPatients = patients.filter(patient =>
     patient.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
     patient.telefone.includes(searchTerm) ||
     patient.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (showForm) {
+    return <PatientForm onBack={() => setShowForm(false)} onSave={handleSavePatient} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-green-50 p-6">
@@ -74,74 +93,13 @@ const PatientManagement = ({ onBack }) => {
             </div>
           </div>
 
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800">
-                <Plus className="mr-2 h-4 w-4" />
-                Novo Paciente
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Cadastrar Novo Paciente</DialogTitle>
-                <DialogDescription>
-                  Preencha os dados do paciente para cadastrá-lo no sistema
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="nome">Nome Completo</Label>
-                    <Input id="nome" placeholder="Nome do paciente" className="mt-1" />
-                  </div>
-                  <div>
-                    <Label htmlFor="cpf">CPF</Label>
-                    <Input id="cpf" placeholder="000.000.000-00" className="mt-1" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="telefone">Telefone</Label>
-                    <Input id="telefone" placeholder="(11) 99999-9999" className="mt-1" />
-                  </div>
-                  <div>
-                    <Label htmlFor="email">E-mail</Label>
-                    <Input id="email" type="email" placeholder="email@exemplo.com" className="mt-1" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="nascimento">Data de Nascimento</Label>
-                    <Input id="nascimento" type="date" className="mt-1" />
-                  </div>
-                  <div>
-                    <Label htmlFor="convenio">Convênio</Label>
-                    <Select>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder="Selecione o convênio" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="particular">Particular</SelectItem>
-                        <SelectItem value="unimed">Unimed</SelectItem>
-                        <SelectItem value="bradesco">Bradesco Saúde</SelectItem>
-                        <SelectItem value="sulamerica">SulAmérica</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="endereco">Endereço Completo</Label>
-                  <Input id="endereco" placeholder="Rua, número, bairro, cidade" className="mt-1" />
-                </div>
-              </div>
-              <div className="flex justify-end space-x-2">
-                <Button variant="outline">Cancelar</Button>
-                <Button className="bg-gradient-to-r from-green-600 to-green-700">
-                  Cadastrar Paciente
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button 
+            onClick={() => setShowForm(true)}
+            className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Novo Paciente
+          </Button>
         </div>
 
         {/* Filtros e Busca */}
