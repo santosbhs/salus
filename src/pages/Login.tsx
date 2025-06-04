@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { cleanupAuthState } from '@/utils/authCleanup';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,17 +20,34 @@ const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const confirmTestUser = async (email: string) => {
-    const testUsers = ['admin.basico@teste.com', 'admin.profissional@teste.com', 'admin.enterprise@teste.com'];
+  const createTestUserIfNeeded = async (email: string, password: string) => {
+    const testUsers = [
+      { email: 'admin.basico@teste.com', password: '123456' },
+      { email: 'admin.profissional@teste.com', password: '123456' },
+      { email: 'admin.enterprise@teste.com', password: '123456' }
+    ];
     
-    if (testUsers.includes(email)) {
+    const testUser = testUsers.find(user => user.email === email && user.password === password);
+    
+    if (testUser) {
       try {
-        await supabase.functions.invoke('confirm-test-users', {
-          body: { email }
+        // Try to sign up first (in case user doesn't exist)
+        await supabase.auth.signUp({
+          email: testUser.email,
+          password: testUser.password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/dashboard`
+          }
         });
-        console.log(`Test user ${email} confirmed`);
+        
+        // Confirm the test user
+        await supabase.functions.invoke('confirm-test-users', {
+          body: { email: testUser.email }
+        });
+        
+        console.log(`Test user ${email} created/confirmed`);
       } catch (error) {
-        console.log('Error confirming test user:', error);
+        console.log('Error creating/confirming test user:', error);
       }
     }
   };
@@ -39,7 +57,22 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await confirmTestUser(formData.email);
+      // Clean up existing auth state first
+      cleanupAuthState();
+      
+      // Try global sign out first
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (err) {
+        // Continue even if this fails
+        console.log('Sign out error (continuing):', err);
+      }
+
+      // For test users, ensure they exist and are confirmed
+      await createTestUserIfNeeded(formData.email, formData.password);
+
+      // Wait a moment for the cleanup to complete
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       const { data, error } = await supabase.auth.signInWithPassword({
         email: formData.email,
@@ -47,6 +80,40 @@ const Login = () => {
       });
 
       if (error) {
+        // If it's a test user and login fails, try signing them up again
+        const testEmails = ['admin.basico@teste.com', 'admin.profissional@teste.com', 'admin.enterprise@teste.com'];
+        if (testEmails.includes(formData.email) && formData.password === '123456') {
+          toast({
+            title: "Criando usuário de teste...",
+            description: "Aguarde um momento enquanto configuramos sua conta.",
+          });
+          
+          // Force create the test user
+          await createTestUserIfNeeded(formData.email, formData.password);
+          
+          // Try login again after a short delay
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          const { data: retryData, error: retryError } = await supabase.auth.signInWithPassword({
+            email: formData.email,
+            password: formData.password,
+          });
+          
+          if (retryError) {
+            throw retryError;
+          }
+          
+          if (retryData.user) {
+            toast({
+              title: "Login realizado com sucesso!",
+              description: "Redirecionando para o dashboard...",
+            });
+            // Force page reload for clean state
+            window.location.href = '/dashboard';
+            return;
+          }
+        }
+        
         throw error;
       }
 
@@ -55,12 +122,14 @@ const Login = () => {
           title: "Login realizado com sucesso!",
           description: "Redirecionando para o dashboard...",
         });
-        navigate('/dashboard');
+        // Force page reload for clean state
+        window.location.href = '/dashboard';
       }
     } catch (error: any) {
+      console.error('Login error:', error);
       toast({
         title: "Erro no login",
-        description: error.message || "Credenciais inválidas",
+        description: error.message || "Verifique suas credenciais e tente novamente",
         variant: "destructive",
       });
     } finally {
@@ -184,6 +253,16 @@ const Login = () => {
                       Assinar SALUS - 30 dias grátis
                     </Button>
                   </Link>
+                </div>
+              </div>
+
+              {/* Test Users Info */}
+              <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <h4 className="font-semibold text-blue-800 mb-2">Usuários de Teste:</h4>
+                <div className="text-sm text-blue-700 space-y-1">
+                  <p><strong>admin.basico@teste.com</strong> - Senha: 123456</p>
+                  <p><strong>admin.profissional@teste.com</strong> - Senha: 123456</p>
+                  <p><strong>admin.enterprise@teste.com</strong> - Senha: 123456</p>
                 </div>
               </div>
             </CardContent>
