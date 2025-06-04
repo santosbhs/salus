@@ -20,102 +20,112 @@ const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const ensureTestUserExists = async (email: string, password: string) => {
-    const testUsers = [
-      { email: 'admin.basico@teste.com', password: '123456' },
-      { email: 'admin.profissional@teste.com', password: '123456' },
-      { email: 'admin.enterprise@teste.com', password: '123456' }
-    ];
-    
-    const testUser = testUsers.find(user => user.email === email && user.password === password);
-    
-    if (!testUser) return false;
-
-    try {
-      console.log(`Ensuring test user exists: ${email}`);
-      
-      // Try to sign up first (will succeed if user doesn't exist)
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email: testUser.email,
-        password: testUser.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`
-        }
-      });
-      
-      console.log('Sign up result:', { signUpData, signUpError });
-      
-      // Try to confirm the user via edge function
-      try {
-        const { data: confirmData, error: confirmError } = await supabase.functions.invoke('confirm-test-users', {
-          body: { email: testUser.email }
-        });
-        console.log('Confirm result:', { confirmData, confirmError });
-      } catch (confirmErr) {
-        console.log('Confirm function error (continuing):', confirmErr);
-      }
-      
-      return true;
-    } catch (error) {
-      console.log('Error ensuring test user exists:', error);
-      return true; // Continue anyway
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      console.log(`Login attempt for: ${formData.email}`);
+      console.log(`Tentativa de login para: ${formData.email}`);
       
-      // Clean up existing auth state first
+      // Limpar estado de autenticação primeiro
       cleanupAuthState();
       
-      // Force sign out
+      // Forçar logout global
       try {
         await supabase.auth.signOut({ scope: 'global' });
-        console.log('Global sign out completed');
+        console.log('Logout global realizado');
       } catch (err) {
-        console.log('Sign out error (continuing):', err);
+        console.log('Erro no logout global (continuando):', err);
       }
 
-      // Wait for cleanup to complete
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Aguardar limpeza completa
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // For test users, ensure they exist and are confirmed
-      const isTestUser = await ensureTestUserExists(formData.email, formData.password);
+      // Verificar se é usuário teste e criar/confirmar se necessário
+      const testUsers = [
+        { email: 'admin.basico@teste.com', password: '123456' },
+        { email: 'admin.profissional@teste.com', password: '123456' },
+        { email: 'admin.enterprise@teste.com', password: '123456' }
+      ];
+      
+      const isTestUser = testUsers.find(user => 
+        user.email === formData.email && user.password === formData.password
+      );
       
       if (isTestUser) {
-        // Wait for user creation/confirmation to complete
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        console.log('Usuário teste detectado, garantindo que existe...');
+        
+        // Tentar criar o usuário (falhará se já existir)
+        try {
+          const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+            email: formData.email,
+            password: formData.password,
+            options: {
+              emailRedirectTo: `${window.location.origin}/dashboard`
+            }
+          });
+          
+          console.log('Resultado do signup:', { signUpData, signUpError });
+          
+          // Tentar confirmar via edge function
+          try {
+            const { data: confirmData, error: confirmError } = await supabase.functions.invoke('confirm-test-users', {
+              body: { email: formData.email }
+            });
+            console.log('Resultado da confirmação:', { confirmData, confirmError });
+          } catch (confirmErr) {
+            console.log('Erro na função de confirmação (continuando):', confirmErr);
+          }
+          
+          // Aguardar processamento
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        } catch (createError) {
+          console.log('Erro ao criar usuário teste (pode já existir):', createError);
+        }
       }
 
-      console.log('Attempting sign in...');
+      console.log('Tentando fazer login...');
       const { data, error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
       });
 
-      console.log('Sign in result:', { data, error });
+      console.log('Resultado do login:', { data, error });
 
       if (error) {
         throw error;
       }
 
-      if (data.user) {
-        console.log('Login successful for user:', data.user.email);
+      if (data.user && data.session) {
+        console.log('Login bem-sucedido para usuário:', data.user.email);
         toast({
           title: "Login realizado com sucesso!",
           description: "Redirecionando para o dashboard...",
         });
-        window.location.href = '/dashboard';
+        
+        // Aguardar um pouco e redirecionar
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 1000);
+      } else {
+        throw new Error('Dados de login inválidos');
       }
     } catch (error: any) {
-      console.error('Login error:', error);
+      console.error('Erro no login:', error);
+      
+      let errorMessage = "Verifique suas credenciais e tente novamente";
+      
+      if (error.message?.includes('Invalid login credentials')) {
+        errorMessage = "Email ou senha incorretos";
+      } else if (error.message?.includes('Email not confirmed')) {
+        errorMessage = "Email não confirmado. Verifique sua caixa de entrada.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       toast({
         title: "Erro no login",
-        description: error.message || "Verifique suas credenciais e tente novamente",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
