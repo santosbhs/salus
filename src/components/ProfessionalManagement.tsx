@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Users, Search, Plus, Edit, Eye, Phone, Mail, Stethoscope } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -182,7 +181,7 @@ const ProfessionalManagement = ({ onBack }) => {
                       
                       <div className="text-center bg-emerald-50 rounded-lg p-3">
                         <p className="text-sm text-gray-600">Consultas hoje</p>
-                        <p className="text-2xl font-bold text-emerald-700">{professional.consultasHoje || 0}</p>
+                        <p className="text-2xl font-bold text-emerald-700">0</p>
                       </div>
                       
                       <Badge className={`${
