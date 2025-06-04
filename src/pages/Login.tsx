@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Lock, Mail, Eye, EyeOff, Zap } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff, Zap, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -30,7 +30,6 @@ const Login = () => {
         console.log(`Test user ${email} confirmed`);
       } catch (error) {
         console.log('Error confirming test user:', error);
-        // Continue with login attempt even if confirmation fails
       }
     }
   };
@@ -40,7 +39,6 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // First, try to confirm test user if needed
       await confirmTestUser(formData.email);
 
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -57,7 +55,7 @@ const Login = () => {
           title: "Login realizado com sucesso!",
           description: "Redirecionando para o dashboard...",
         });
-        navigate('/');
+        navigate('/dashboard');
       }
     } catch (error: any) {
       toast({
@@ -79,105 +77,123 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="flex items-center justify-center mb-8">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-r from-green-700 to-emerald-700 rounded-lg flex items-center justify-center">
-              <Zap className="text-white h-7 w-7" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">Salus</h1>
-              <p className="text-sm text-gray-600">Saúde e inovação</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-green-900 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-green-400/20 to-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-blue-400/20 to-green-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          {/* Back to home button */}
+          <div className="mb-6">
+            <Link to="/">
+              <Button variant="ghost" className="text-white hover:bg-white/10 p-2">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Voltar ao início
+              </Button>
+            </Link>
+          </div>
+
+          {/* Logo */}
+          <div className="flex items-center justify-center mb-8">
+            <div className="flex items-center space-x-4 bg-white/10 backdrop-blur-md rounded-2xl px-8 py-4 border border-white/20">
+              <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-400 rounded-xl flex items-center justify-center">
+                <Zap className="text-white h-7 w-7" />
+              </div>
+              <div className="text-left">
+                <h1 className="text-3xl font-bold text-white">SALUS</h1>
+                <p className="text-green-200 text-sm">Healthcare Platform</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <Card className="shadow-xl border-0">
-          <CardHeader className="space-y-1 text-center">
-            <CardTitle className="text-2xl font-bold text-gray-900">
-              Acesso à Plataforma
-            </CardTitle>
-            <CardDescription className="text-gray-600">
-              Entre com suas credenciais de assinante
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-gray-700">E-mail</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="seu@email.com"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="pl-10"
-                    required
-                  />
+          <Card className="bg-white/95 backdrop-blur-md shadow-2xl border-0">
+            <CardHeader className="space-y-1 text-center pb-6">
+              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                Acesso à Plataforma
+              </CardTitle>
+              <CardDescription className="text-gray-600 text-lg">
+                Entre com suas credenciais de assinante
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-gray-700 font-medium">E-mail</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="seu@email.com"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      className="pl-12 h-12 text-lg border-gray-300 focus:border-green-500 focus:ring-green-500"
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-gray-700">Senha</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <Input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Sua senha"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className="pl-10 pr-10"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-gray-700 font-medium">Senha</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                    <Input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Sua senha"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      className="pl-12 pr-12 h-12 text-lg border-gray-300 focus:border-green-500 focus:ring-green-500"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              <Button 
-                type="submit" 
-                className="w-full bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-800 hover:to-emerald-800 text-white"
-                disabled={loading}
-              >
-                {loading ? "Entrando..." : "Entrar na Plataforma"}
-              </Button>
-            </form>
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white text-lg font-bold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+                  disabled={loading}
+                >
+                  {loading ? "Entrando..." : "Entrar na Plataforma"}
+                </Button>
+              </form>
 
-            <div className="text-center space-y-4">
-              <Link to="/forgot-password" className="text-sm text-gray-600 hover:text-green-700">
-                Esqueci minha senha
-              </Link>
-              
-              <div className="border-t pt-4">
-                <p className="text-sm text-gray-600 mb-3">
-                  Ainda não é assinante?
-                </p>
-                <Link to="/subscription">
-                  <Button variant="outline" className="w-full border-green-700 text-green-700 hover:bg-green-700 hover:text-white">
-                    Assinar Salus
-                  </Button>
+              <div className="text-center space-y-6">
+                <Link to="/forgot-password" className="text-green-600 hover:text-green-700 font-medium">
+                  Esqueci minha senha
                 </Link>
+                
+                <div className="border-t pt-6">
+                  <p className="text-gray-600 mb-4 text-lg">
+                    Ainda não é assinante?
+                  </p>
+                  <Link to="/subscription">
+                    <Button variant="outline" className="w-full h-12 border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white text-lg font-bold rounded-xl transform hover:scale-105 transition-all duration-300">
+                      Assinar SALUS - 30 dias grátis
+                    </Button>
+                  </Link>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <div className="mt-6 text-center">
-          <p className="text-xs text-gray-500">
-            © 2024 Salus - SalusHub.com. Todos os direitos reservados.
-          </p>
+          <div className="mt-8 text-center">
+            <p className="text-white/70 text-sm">
+              © 2024 SALUS - Healthcare Platform. Todos os direitos reservados.
+            </p>
+          </div>
         </div>
       </div>
     </div>

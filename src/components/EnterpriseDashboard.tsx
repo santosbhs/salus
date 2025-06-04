@@ -1,11 +1,24 @@
 
-import React from 'react';
-import { Calendar, Users, Clock, FileText, BarChart3, Activity, Stethoscope, UserPlus, Building, Shield, Zap } from 'lucide-react';
+import React, { useState } from 'react';
+import { Calendar, Users, Clock, FileText, BarChart3, Activity, Stethoscope, UserPlus, Building, Shield, Zap, Plus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 const EnterpriseDashboard = ({ onNavigate }) => {
+  const [selectedUnit, setSelectedUnit] = useState('unidade-1');
+  const [units, setUnits] = useState([
+    { id: 'unidade-1', name: 'Unidade Centro', address: 'Rua Principal, 123' },
+    { id: 'unidade-2', name: 'Unidade Zona Sul', address: 'Av. Sul, 456' },
+    { id: 'unidade-3', name: 'Unidade Norte', address: 'Rua Norte, 789' }
+  ]);
+  const [newUnitName, setNewUnitName] = useState('');
+  const [newUnitAddress, setNewUnitAddress] = useState('');
+
   const enterpriseStats = [
     {
       title: 'Pacientes Cadastrados',
@@ -32,7 +45,7 @@ const EnterpriseDashboard = ({ onNavigate }) => {
       bgColor: 'bg-purple-50',
     },
     {
-      title: 'Profissionais',
+      title: 'Equipe de Profissionais',
       value: '15',
       limit: 'Ilimitado',
       icon: Stethoscope,
@@ -40,8 +53,8 @@ const EnterpriseDashboard = ({ onNavigate }) => {
       bgColor: 'bg-purple-50',
     },
     {
-      title: 'Unidades',
-      value: '3',
+      title: 'Unidades Ativas',
+      value: units.length.toString(),
       limit: 'Ilimitado',
       icon: Building,
       color: 'text-purple-600',
@@ -57,6 +70,14 @@ const EnterpriseDashboard = ({ onNavigate }) => {
     },
   ];
 
+  const upcomingAppointments = [
+    { time: '09:00', patient: 'Maria Silva', doctor: 'Dr. João', unit: 'Centro', type: 'Consulta', status: 'confirmado' },
+    { time: '10:30', patient: 'Pedro Santos', doctor: 'Dra. Ana', unit: 'Zona Sul', type: 'Retorno', status: 'confirmado' },
+    { time: '11:00', patient: 'Ana Costa', doctor: 'Dr. Carlos', unit: 'Centro', type: 'Exame', status: 'pendente' },
+    { time: '14:00', patient: 'José Oliveira', doctor: 'Dra. Maria', unit: 'Norte', type: 'Consulta', status: 'confirmado' },
+    { time: '15:30', patient: 'Lucia Santos', doctor: 'Dr. João', unit: 'Centro', type: 'Retorno', status: 'confirmado' },
+  ];
+
   const enterpriseFeatures = [
     'Pacientes ilimitados',
     'Sistema de triagem avançado',
@@ -68,22 +89,185 @@ const EnterpriseDashboard = ({ onNavigate }) => {
     'Integrações avançadas',
   ];
 
+  const handleCreateUnit = () => {
+    if (newUnitName && newUnitAddress) {
+      const newUnit = {
+        id: `unidade-${units.length + 1}`,
+        name: newUnitName,
+        address: newUnitAddress
+      };
+      setUnits([...units, newUnit]);
+      setNewUnitName('');
+      setNewUnitAddress('');
+    }
+  };
+
+  const currentUnit = units.find(unit => unit.id === selectedUnit);
+
   return (
     <div className="space-y-6">
       {/* Plan Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-lg p-6 text-white">
+      <div className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-2xl p-8 text-white shadow-xl">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold">Plano Enterprise</h2>
-            <p className="text-purple-100">Solução completa para grandes organizações</p>
+            <h2 className="text-3xl font-bold mb-2">Plano Enterprise</h2>
+            <p className="text-purple-100 text-lg">Solução completa para grandes organizações</p>
+            <p className="text-purple-200 text-sm mt-2">Recursos ilimitados • Múltiplas unidades</p>
           </div>
-          <div className="flex items-center space-x-2">
-            <Shield className="h-5 w-5" />
-            <Badge className="bg-white text-purple-700 hover:bg-gray-100">
-              Premium
-            </Badge>
+          <div className="text-right">
+            <div className="flex items-center space-x-2 mb-2">
+              <Shield className="h-5 w-5" />
+              <Badge className="bg-white text-purple-700 hover:bg-gray-100 text-lg px-4 py-2">
+                Premium
+              </Badge>
+            </div>
+            <p className="text-purple-100 text-sm">R$ 397/mês</p>
           </div>
         </div>
+      </div>
+
+      {/* Unit Selector */}
+      <div className="bg-white rounded-xl p-6 shadow-lg border border-purple-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <Building className="h-6 w-6 text-purple-600" />
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Unidade Ativa</h3>
+              <p className="text-sm text-gray-600">Selecione a unidade para visualizar dados específicos</p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Select value={selectedUnit} onValueChange={setSelectedUnit}>
+              <SelectTrigger className="w-64">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {units.map((unit) => (
+                  <SelectItem key={unit.id} value={unit.id}>
+                    {unit.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nova Unidade
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Criar Nova Unidade</DialogTitle>
+                  <DialogDescription>
+                    Adicione uma nova unidade à sua rede de clínicas
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="unit-name">Nome da Unidade</Label>
+                    <Input
+                      id="unit-name"
+                      value={newUnitName}
+                      onChange={(e) => setNewUnitName(e.target.value)}
+                      placeholder="Ex: Unidade Barra"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="unit-address">Endereço</Label>
+                    <Input
+                      id="unit-address"
+                      value={newUnitAddress}
+                      onChange={(e) => setNewUnitAddress(e.target.value)}
+                      placeholder="Ex: Av. Principal, 123"
+                    />
+                  </div>
+                  <Button onClick={handleCreateUnit} className="w-full">
+                    Criar Unidade
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
+        {currentUnit && (
+          <div className="mt-4 p-4 bg-purple-50 rounded-lg">
+            <p className="font-semibold text-purple-900">{currentUnit.name}</p>
+            <p className="text-sm text-purple-700">{currentUnit.address}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Quick Actions - All Active */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-red-200" onClick={() => onNavigate('triagem')}>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center text-lg">
+              <Stethoscope className="mr-2 h-5 w-5 text-red-600" />
+              Triagem Avançada
+            </CardTitle>
+            <CardDescription>
+              Protocolo Manchester com IA
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800">
+              Iniciar Triagem
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-purple-200" onClick={() => onNavigate('novo-atendimento')}>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center text-lg">
+              <FileText className="mr-2 h-5 w-5 text-purple-600" />
+              Atendimento
+            </CardTitle>
+            <CardDescription>
+              Anamnese SOAP com templates personalizados
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800">
+              Novo Atendimento
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-purple-200" onClick={() => onNavigate('professionals')}>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center text-lg">
+              <UserPlus className="mr-2 h-5 w-5 text-purple-600" />
+              Equipe de Profissionais
+            </CardTitle>
+            <CardDescription>
+              Gestão completa da equipe médica
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" className="w-full border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white">
+              Gerenciar Equipe
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-purple-200" onClick={() => onNavigate('patients')}>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center text-lg">
+              <Users className="mr-2 h-5 w-5 text-purple-600" />
+              Pacientes
+            </CardTitle>
+            <CardDescription>
+              Base de dados unificada
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" className="w-full border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white">
+              Gerenciar Pacientes
+            </Button>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Stats Grid */}
@@ -108,11 +292,11 @@ const EnterpriseDashboard = ({ onNavigate }) => {
                     <span className="text-purple-600 font-medium">Ilimitado</span>
                   )}
                 </p>
-                {stat.limit !== 'Ilimitado' && (
+                {stat.limit !== 'Ilimitado' && stat.title === 'Taxa de Ocupação' && (
                   <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
                     <div 
                       className="bg-purple-600 h-2 rounded-full" 
-                      style={{ width: stat.title === 'Taxa de Ocupação' ? stat.value : '75%' }}
+                      style={{ width: stat.value }}
                     ></div>
                   </div>
                 )}
@@ -122,105 +306,89 @@ const EnterpriseDashboard = ({ onNavigate }) => {
         })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Quick Actions */}
-        <Card className="lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Agenda Centralizada */}
+        <Card className="lg:col-span-2 border-purple-200 shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <Zap className="mr-2 h-5 w-5 text-purple-600" />
-              Ações Avançadas
+            <CardTitle className="flex items-center text-xl text-purple-800">
+              <Calendar className="mr-2 h-5 w-5" />
+              Agenda Consolidada - Todas as Unidades
             </CardTitle>
-            <CardDescription>Recursos exclusivos do plano enterprise</CardDescription>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Button 
-              className="justify-start bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800" 
-              onClick={() => onNavigate('triagem')}
-            >
-              <Stethoscope className="mr-2 h-4 w-4" />
-              Triagem Avançada
-            </Button>
-            <Button 
-              className="justify-start bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800"
-              onClick={() => onNavigate('novo-atendimento')}
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              Atendimento
-            </Button>
-            <Button 
-              className="justify-start" 
-              variant="outline"
-              onClick={() => onNavigate('professionals')}
-            >
-              <UserPlus className="mr-2 h-4 w-4" />
-              Equipe Médica
-            </Button>
-            <Button 
-              className="justify-start" 
-              variant="outline"
-            >
-              <Building className="mr-2 h-4 w-4" />
-              Múltiplas Unidades
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Analytics */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Analytics</CardTitle>
-            <CardDescription>Relatórios empresariais</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button 
-              className="w-full justify-start" 
-              variant="outline"
-            >
-              <BarChart3 className="mr-2 h-4 w-4" />
-              Dashboard BI
-            </Button>
-            <Button 
-              className="w-full justify-start" 
-              variant="outline"
-            >
-              <Activity className="mr-2 h-4 w-4" />
-              KPIs Avançados
-            </Button>
-            <Button 
-              className="w-full justify-start" 
-              variant="outline"
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              Relatórios Custom
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Premium Features */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Recursos Premium</CardTitle>
-            <CardDescription>Exclusivos do Enterprise</CardDescription>
+            <CardDescription>Agendamentos de hoje em todas as unidades</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              {enterpriseFeatures.slice(0, 6).map((feature, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
-                  <span className="text-sm">{feature}</span>
+            <div className="space-y-3">
+              {upcomingAppointments.map((appointment, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-purple-50 rounded-lg border border-purple-100">
+                  <div className="flex items-center space-x-3">
+                    <div className="text-sm font-bold text-purple-700 bg-white px-2 py-1 rounded">
+                      {appointment.time}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900">{appointment.patient}</p>
+                      <p className="text-sm text-gray-600">{appointment.doctor} • {appointment.unit} • {appointment.type}</p>
+                    </div>
+                  </div>
+                  <Badge variant={appointment.status === 'confirmado' ? 'default' : 'secondary'} className="text-xs">
+                    {appointment.status === 'confirmado' ? 'Confirmado' : 'Pendente'}
+                  </Badge>
                 </div>
               ))}
             </div>
-            <div className="mt-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
-              <div className="flex items-center space-x-2">
-                <Shield className="h-4 w-4 text-purple-600" />
-                <span className="text-sm text-purple-800 font-medium">
-                  Suporte 24/7 incluso
-                </span>
-              </div>
-            </div>
+            <Button className="w-full mt-4 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800" onClick={() => onNavigate('appointments')}>
+              Ver Agenda Completa
+            </Button>
           </CardContent>
         </Card>
+
+        {/* Analytics and Features */}
+        <div className="space-y-6">
+          <Card className="border-purple-200 shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-xl text-purple-800">Analytics Empresariais</CardTitle>
+              <CardDescription>Dashboards e relatórios avançados</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button className="w-full justify-start" variant="outline">
+                <BarChart3 className="mr-2 h-4 w-4" />
+                Dashboard BI
+              </Button>
+              <Button className="w-full justify-start" variant="outline">
+                <Activity className="mr-2 h-4 w-4" />
+                KPIs Avançados
+              </Button>
+              <Button className="w-full justify-start" variant="outline">
+                <FileText className="mr-2 h-4 w-4" />
+                Relatórios Custom
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="border-purple-200 shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-xl text-purple-800">Recursos Premium</CardTitle>
+              <CardDescription>Exclusivos do Enterprise</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {enterpriseFeatures.slice(0, 6).map((feature, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
+                    <span className="text-sm">{feature}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <Shield className="h-4 w-4 text-purple-600" />
+                  <span className="text-sm text-purple-800 font-medium">
+                    Suporte 24/7 incluso
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

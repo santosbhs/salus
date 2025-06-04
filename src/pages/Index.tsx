@@ -1,12 +1,40 @@
 
 import React from 'react';
-import { Zap, ArrowRight, Calendar, FileText, Users, Shield, Clock, Headphones } from 'lucide-react';
+import { Zap, ArrowRight, Calendar, FileText, Users, Shield, Clock, Headphones, CheckCircle, Activity, Building, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 
 const Index = () => {
+  const testimonials = [
+    {
+      name: "Dr. Maria Silva",
+      role: "Cardiologista",
+      text: "O SALUS revolucionou minha prática médica. A agenda inteligente reduziu as faltas em 80%.",
+      rating: 5
+    },
+    {
+      name: "Dr. João Santos", 
+      role: "Clínica Geral",
+      text: "Prontuário eletrônico completo e intuitivo. Meus pacientes adoram a praticidade.",
+      rating: 5
+    },
+    {
+      name: "Dra. Ana Costa",
+      role: "Pediatra",
+      text: "Suporte excepcional e sistema que realmente funciona. Recomendo para todos os colegas.",
+      rating: 5
+    }
+  ];
+
+  const stats = [
+    { number: "10,000+", label: "Médicos ativos" },
+    { number: "500,000+", label: "Consultas realizadas" },
+    { number: "99.9%", label: "Uptime garantido" },
+    { number: "24/7", label: "Suporte disponível" }
+  ];
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -77,11 +105,6 @@ const Index = () => {
                   <ArrowRight className="ml-3 h-6 w-6" />
                 </Button>
               </Link>
-              <Link to="/sales">
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-green-700 text-xl px-12 py-6 rounded-2xl transform hover:scale-105 transition-all duration-300">
-                  Ver Mais Detalhes
-                </Button>
-              </Link>
             </div>
 
             <div className="flex items-center justify-center space-x-8 text-green-200 text-lg font-semibold">
@@ -102,8 +125,22 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Stats Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto max-w-6xl px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center">
+                <div className="text-4xl font-bold text-green-600 mb-2">{stat.number}</div>
+                <div className="text-gray-600">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
-      <section className="py-20 px-6 bg-white">
+      <section className="py-20 px-6 bg-gradient-to-r from-gray-50 to-green-50">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">
@@ -114,7 +151,7 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
             <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
               <CardHeader className="text-center">
                 <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -126,6 +163,11 @@ const Index = () => {
                 <CardDescription className="text-gray-600 text-lg leading-relaxed">
                   Sistema automatizado de agendamento com confirmação por WhatsApp e lembretes automáticos
                 </CardDescription>
+                <ul className="mt-4 text-sm text-gray-600 space-y-2">
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Confirmação automática por WhatsApp</li>
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Lembretes personalizados</li>
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Redução de faltas em até 80%</li>
+                </ul>
               </CardContent>
             </Card>
 
@@ -140,6 +182,11 @@ const Index = () => {
                 <CardDescription className="text-gray-600 text-lg leading-relaxed">
                   Anamnese SOAP completa, prescrições digitais e histórico médico centralizado
                 </CardDescription>
+                <ul className="mt-4 text-sm text-gray-600 space-y-2">
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Anamnese SOAP completa</li>
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Prescrições digitais</li>
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Histórico centralizado</li>
+                </ul>
               </CardContent>
             </Card>
 
@@ -154,8 +201,80 @@ const Index = () => {
                 <CardDescription className="text-gray-600 text-lg leading-relaxed">
                   Controle de profissionais, especialidades, convênios e relatórios gerenciais
                 </CardDescription>
+                <ul className="mt-4 text-sm text-gray-600 space-y-2">
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Gestão de profissionais</li>
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Controle de convênios</li>
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Relatórios gerenciais</li>
+                </ul>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Additional Features */}
+          <div className="grid md:grid-cols-2 gap-8">
+            <Card className="border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-xl text-gray-900 flex items-center">
+                  <Activity className="h-6 w-6 text-red-600 mr-3" />
+                  Sistema de Triagem
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 mb-4">Classificação de risco baseada no protocolo de Manchester</p>
+                <ul className="text-sm text-gray-600 space-y-2">
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Classificação automática de risco</li>
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Protocolo de Manchester</li>
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Priorização inteligente</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-xl text-gray-900 flex items-center">
+                  <Building className="h-6 w-6 text-purple-600 mr-3" />
+                  Múltiplas Unidades
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 mb-4">Gerencie várias unidades da sua clínica em um só lugar</p>
+                <ul className="text-sm text-gray-600 space-y-2">
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Controle centralizado</li>
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Relatórios por unidade</li>
+                  <li className="flex items-center"><CheckCircle className="h-4 w-4 text-green-500 mr-2" />Gestão unificada</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-20 px-6 bg-white">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-6">
+              O que dizem nossos <span className="text-green-600">clientes</span>
+            </h2>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <Card key={index} className="border-0 shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                    ))}
+                  </div>
+                  <p className="text-gray-600 mb-4 italic">"{testimonial.text}"</p>
+                  <div>
+                    <div className="font-semibold text-gray-900">{testimonial.name}</div>
+                    <div className="text-sm text-gray-500">{testimonial.role}</div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>

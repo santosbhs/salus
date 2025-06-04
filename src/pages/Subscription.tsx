@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Check, Zap, CreditCard, Shield, Clock } from 'lucide-react';
+import { Check, Zap, CreditCard, Shield, Clock, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -18,15 +18,16 @@ const Subscription = () => {
     {
       id: 'basic',
       name: 'Básico',
-      price: 'R$ 99',
+      price: 'R$ 97',
       period: '/mês',
-      description: 'Para clínicas pequenas',
+      description: 'Para consultórios pequenos',
       features: [
         'Até 50 pacientes',
         '1 profissional',
         'Agenda básica',
         'Prontuário eletrônico',
         'Anamnese SOAP',
+        'Sistema de triagem',
         'Suporte por email'
       ],
       popular: false
@@ -34,7 +35,7 @@ const Subscription = () => {
     {
       id: 'professional',
       name: 'Profissional',
-      price: 'R$ 199',
+      price: 'R$ 197',
       period: '/mês',
       description: 'Para clínicas em crescimento',
       features: [
@@ -44,6 +45,7 @@ const Subscription = () => {
         'Prontuário completo',
         'Relatórios detalhados',
         'Integração WhatsApp',
+        'Sistema de triagem avançado',
         'Suporte prioritário'
       ],
       popular: true
@@ -51,12 +53,13 @@ const Subscription = () => {
     {
       id: 'enterprise',
       name: 'Enterprise',
-      price: 'R$ 399',
+      price: 'R$ 397',
       period: '/mês',
       description: 'Para grandes clínicas',
       features: [
         'Pacientes ilimitados',
         'Profissionais ilimitados',
+        'Múltiplas unidades',
         'Funcionalidades avançadas',
         'API personalizada',
         'Backup automático',
@@ -99,7 +102,6 @@ const Subscription = () => {
       
       const { data: { session } } = await supabase.auth.getSession();
       
-      // Se há uma sessão ativa, verificar se já usou o trial
       if (session && subscriptionStatus?.has_used_trial && !subscriptionStatus?.subscribed) {
         toast({
           title: "Teste já utilizado",
@@ -109,7 +111,6 @@ const Subscription = () => {
         return;
       }
 
-      // Chamar a função sem autenticação obrigatória
       const { data, error } = await supabase.functions.invoke('create-trial-checkout', {
         body: { planId },
         headers: session ? {
@@ -172,22 +173,34 @@ const Subscription = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-green-900 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-green-400/20 to-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-blue-400/20 to-green-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white/10 backdrop-blur-md shadow-lg border-b border-white/20 relative z-10">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-green-700 to-emerald-700 rounded-lg flex items-center justify-center">
+            <div className="flex items-center space-x-4">
+              <Link to="/">
+                <Button variant="ghost" className="text-white hover:bg-white/10 p-2 mr-4">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Voltar
+                </Button>
+              </Link>
+              <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-400 rounded-lg flex items-center justify-center">
                 <Zap className="text-white h-6 w-6" />
               </div>
               <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">Salus</h1>
-                <p className="text-xs text-gray-600">Saúde e inovação</p>
+                <h1 className="text-xl font-bold text-white">SALUS</h1>
+                <p className="text-xs text-green-200">Healthcare Platform</p>
               </div>
             </div>
             <Link to="/login">
-              <Button variant="outline" className="border-green-700 text-green-700 hover:bg-green-700 hover:text-white">
+              <Button variant="outline" className="border-white text-white hover:bg-white hover:text-green-700">
                 Já sou assinante
               </Button>
             </Link>
@@ -195,10 +208,10 @@ const Subscription = () => {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-12">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-12">
         {/* Trial Status Banner */}
         {subscriptionStatus?.is_trial_active && (
-          <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="mb-8 p-4 bg-blue-50/90 backdrop-blur-md border border-blue-200 rounded-lg">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-blue-900">
@@ -217,7 +230,7 @@ const Subscription = () => {
 
         {/* Subscription Status Banner */}
         {subscriptionStatus?.subscribed && (
-          <div className="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <div className="mb-8 p-4 bg-green-50/90 backdrop-blur-md border border-green-200 rounded-lg">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-green-900">
@@ -236,15 +249,15 @@ const Subscription = () => {
 
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-5xl font-bold text-white mb-6">
             Experimente 30 dias grátis
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-200 max-w-2xl mx-auto mb-8">
             Comece sua jornada digital na medicina agora mesmo. Durante o checkout você pode criar sua conta.
           </p>
-          <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg inline-block">
-            <p className="text-sm text-yellow-800">
-              ⚡ <strong>30 dias gratuitos</strong> → Cadastre-se durante a compra → Cobrança automática após o período de teste
+          <div className="p-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl inline-block">
+            <p className="text-green-200 font-medium">
+              ⚡ <strong className="text-white">30 dias gratuitos</strong> → Cadastre-se durante a compra → Cobrança automática após o período de teste
             </p>
           </div>
         </div>
@@ -254,12 +267,12 @@ const Subscription = () => {
           {plans.map((plan) => (
             <Card 
               key={plan.id}
-              className={`relative hover:shadow-xl transition-all duration-300 ${
-                plan.popular ? 'ring-2 ring-green-600 scale-105' : 'hover:scale-105'
+              className={`relative hover:shadow-2xl transition-all duration-300 bg-white/95 backdrop-blur-md ${
+                plan.popular ? 'ring-2 ring-green-400 scale-105 shadow-2xl' : 'hover:scale-105'
               }`}
             >
               {plan.popular && (
-                <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-700 to-emerald-700 text-white">
+                <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-1">
                   Mais Popular
                 </Badge>
               )}
@@ -273,7 +286,7 @@ const Subscription = () => {
                 </CardDescription>
                 <div className="mt-4">
                   <div className="text-sm text-gray-500 mb-1">30 dias grátis, depois:</div>
-                  <span className="text-4xl font-bold bg-gradient-to-r from-green-700 to-emerald-700 bg-clip-text text-transparent">{plan.price}</span>
+                  <span className="text-4xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">{plan.price}</span>
                   <span className="text-gray-600">{plan.period}</span>
                 </div>
               </CardHeader>
@@ -291,10 +304,10 @@ const Subscription = () => {
                 <Button 
                   onClick={() => handleSubscribe(plan.id)}
                   disabled={loading}
-                  className={`w-full ${
+                  className={`w-full h-12 font-bold rounded-xl transform hover:scale-105 transition-all duration-300 ${
                     plan.popular 
-                      ? 'bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-800 hover:to-emerald-800 text-white' 
-                      : 'border-green-700 text-green-700 hover:bg-green-700 hover:text-white'
+                      ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-lg' 
+                      : 'border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white'
                   }`}
                   variant={plan.popular ? 'default' : 'outline'}
                 >
@@ -307,14 +320,14 @@ const Subscription = () => {
         </div>
 
         {/* Features Section */}
-        <div className="bg-white rounded-lg p-8 shadow-sm">
+        <div className="bg-white/95 backdrop-blur-md rounded-2xl p-8 shadow-2xl">
           <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-            Por que escolher o Salus?
+            Por que escolher o SALUS?
           </h3>
           
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-700 to-emerald-700 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-green-600 to-green-700 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Clock className="text-white h-6 w-6" />
               </div>
               <h4 className="font-semibold text-gray-900 mb-2">Cadastro Simplificado</h4>
@@ -324,7 +337,7 @@ const Subscription = () => {
             </div>
 
             <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-700 to-emerald-700 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-green-600 to-green-700 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Shield className="text-white h-6 w-6" />
               </div>
               <h4 className="font-semibold text-gray-900 mb-2">Segurança</h4>
@@ -334,7 +347,7 @@ const Subscription = () => {
             </div>
 
             <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-700 to-emerald-700 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-green-600 to-green-700 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Zap className="text-white h-6 w-6" />
               </div>
               <h4 className="font-semibold text-gray-900 mb-2">Teste Completo</h4>
@@ -358,9 +371,9 @@ const Subscription = () => {
 
         {/* Call to Action */}
         <div className="text-center mt-12">
-          <p className="text-gray-600 mb-4">
+          <p className="text-white/80 mb-4">
             Já é assinante? 
-            <Link to="/login" className="text-green-700 font-medium hover:underline ml-1">
+            <Link to="/login" className="text-green-300 font-medium hover:underline ml-1">
               Faça login aqui
             </Link>
           </p>
