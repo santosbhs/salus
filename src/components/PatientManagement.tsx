@@ -1,37 +1,55 @@
 
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, User, Search, Plus, Edit, Eye, Phone, Mail, Calendar } from 'lucide-react';
+import { ArrowLeft, User, Search, Plus, Edit, Eye, Phone, Mail, Calendar, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import PatientForm from './PatientForm';
+import PatientEditForm from './PatientEditForm';
 import { usePatients, Patient } from '@/hooks/usePatients';
 
 const PatientManagement = ({ onBack }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [convenioFilter, setConvenioFilter] = useState('todos');
   const [statusFilter, setStatusFilter] = useState('ativo');
-  const { getPatients, loading } = usePatients();
+  const { getPatients, deletePatient, loading } = usePatients();
 
   useEffect(() => {
-    const loadPatients = async () => {
-      const data = await getPatients();
-      setPatients(data);
-    };
-    
     loadPatients();
   }, []);
 
-  const handleSavePatient = async (patientData) => {
-    // Dados reais são salvos no banco através do hook usePatients no PatientForm
-    // Aqui só precisamos atualizar a lista
+  const loadPatients = async () => {
+    console.log('Carregando pacientes...');
     const data = await getPatients();
+    console.log('Pacientes carregados:', data);
     setPatients(data);
+  };
+
+  const handleSavePatient = async () => {
+    await loadPatients();
     setShowForm(false);
+    setShowEditForm(false);
+    setSelectedPatient(null);
+  };
+
+  const handleEditPatient = (patient: Patient) => {
+    setSelectedPatient(patient);
+    setShowEditForm(true);
+  };
+
+  const handleDeletePatient = async (patientId: string) => {
+    console.log('Excluindo paciente:', patientId);
+    const success = await deletePatient(patientId);
+    if (success) {
+      await loadPatients();
+    }
   };
 
   const filteredPatients = patients.filter(patient => {
@@ -56,6 +74,14 @@ const PatientManagement = ({ onBack }) => {
 
   if (showForm) {
     return <PatientForm onBack={() => setShowForm(false)} onSave={handleSavePatient} />;
+  }
+
+  if (showEditForm && selectedPatient) {
+    return <PatientEditForm 
+      patient={selectedPatient} 
+      onBack={() => { setShowEditForm(false); setSelectedPatient(null); }} 
+      onSave={handleSavePatient} 
+    />;
   }
 
   return (
@@ -198,9 +224,37 @@ const PatientManagement = ({ onBack }) => {
                         <Button variant="outline" size="sm">
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleEditPatient(patient)}
+                        >
                           <Edit className="h-4 w-4" />
                         </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="outline" size="sm">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Tem certeza que deseja excluir o paciente {patient.nome}? Esta ação não pode ser desfeita.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction 
+                                onClick={() => handleDeletePatient(patient.id)}
+                                className="bg-red-600 hover:bg-red-700"
+                              >
+                                Excluir
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                         <Button className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800" size="sm">
                           <Calendar className="h-4 w-4 mr-1" />
                           Agendar

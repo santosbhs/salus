@@ -15,6 +15,7 @@ export interface Triagem {
   saturacao_oxigenio?: number;
   classificacao_manchester: string;
   observacoes?: string;
+  created_at: string;
   // Dados relacionados
   patientName?: string;
 }
@@ -29,21 +30,28 @@ export const useTriagem = () => {
       setLoading(true);
       
       if (!user) {
-        throw new Error('Usuário não autenticado');
+        console.log('Usuário não autenticado');
+        return [];
       }
       
-      // Buscar triagens com dados de pacientes
+      console.log('Buscando triagens para usuário:', user.id);
+      
       const { data, error } = await supabase
         .from('triagem')
         .select(`
           *,
           patient:patients(nome)
         `)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Erro ao buscar triagens:', error);
+        throw error;
+      }
       
-      // Formatar dados para uso no front-end
+      console.log('Triagens encontradas:', data);
+      
       return data.map(item => ({
         ...item,
         patientName: item.patient?.nome
@@ -61,7 +69,7 @@ export const useTriagem = () => {
     }
   };
 
-  const getTriagemById = async (id: string): Promise<Triagem | null> => {
+  const createTriagem = async (triagemData: Omit<Triagem, 'id' | 'patientName' | 'created_at'>): Promise<Triagem | null> => {
     try {
       setLoading(true);
       
@@ -69,43 +77,7 @@ export const useTriagem = () => {
         throw new Error('Usuário não autenticado');
       }
       
-      const { data, error } = await supabase
-        .from('triagem')
-        .select(`
-          *,
-          patient:patients(nome)
-        `)
-        .eq('id', id)
-        .single();
-      
-      if (error) throw error;
-      
-      if (!data) return null;
-      
-      return {
-        ...data,
-        patientName: data.patient?.nome
-      };
-    } catch (error: any) {
-      console.error('Erro ao buscar triagem:', error);
-      toast({
-        title: 'Erro ao carregar triagem',
-        description: error.message || 'Não foi possível carregar os dados da triagem',
-        variant: 'destructive',
-      });
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const createTriagem = async (triagemData: Omit<Triagem, 'id' | 'patientName'>): Promise<Triagem | null> => {
-    try {
-      setLoading(true);
-      
-      if (!user) {
-        throw new Error('Usuário não autenticado');
-      }
+      console.log('Criando triagem:', triagemData);
       
       const { data, error } = await supabase
         .from('triagem')
@@ -113,11 +85,16 @@ export const useTriagem = () => {
         .select()
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Erro do Supabase ao criar triagem:', error);
+        throw error;
+      }
+      
+      console.log('Triagem criada com sucesso:', data);
       
       toast({
         title: 'Triagem registrada com sucesso!',
-        description: `Classificação: ${triagemData.classificacao_manchester}`,
+        description: 'A triagem foi salva no sistema.',
       });
       
       // Buscar nome do paciente
@@ -144,95 +121,9 @@ export const useTriagem = () => {
     }
   };
 
-  const updateTriagem = async (id: string, triagemData: Partial<Triagem>): Promise<Triagem | null> => {
-    try {
-      setLoading(true);
-      
-      if (!user) {
-        throw new Error('Usuário não autenticado');
-      }
-      
-      // Remover campos calculados que não existem na tabela
-      const { patientName, ...dataToUpdate } = triagemData;
-      
-      const { data, error } = await supabase
-        .from('triagem')
-        .update(dataToUpdate)
-        .eq('id', id)
-        .select()
-        .single();
-      
-      if (error) throw error;
-      
-      toast({
-        title: 'Triagem atualizada com sucesso!',
-        description: 'Os dados da triagem foram atualizados.',
-      });
-      
-      // Buscar nome do paciente
-      const patientRes = await supabase
-        .from('patients')
-        .select('nome')
-        .eq('id', data.patient_id)
-        .single();
-      
-      return {
-        ...data,
-        patientName: patientRes.data?.nome
-      };
-    } catch (error: any) {
-      console.error('Erro ao atualizar triagem:', error);
-      toast({
-        title: 'Erro ao atualizar triagem',
-        description: error.message || 'Não foi possível atualizar a triagem',
-        variant: 'destructive',
-      });
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const deleteTriagem = async (id: string): Promise<boolean> => {
-    try {
-      setLoading(true);
-      
-      if (!user) {
-        throw new Error('Usuário não autenticado');
-      }
-      
-      const { error } = await supabase
-        .from('triagem')
-        .delete()
-        .eq('id', id);
-      
-      if (error) throw error;
-      
-      toast({
-        title: 'Triagem removida com sucesso',
-        description: 'O registro de triagem foi removido do sistema.',
-      });
-      
-      return true;
-    } catch (error: any) {
-      console.error('Erro ao excluir triagem:', error);
-      toast({
-        title: 'Erro ao remover triagem',
-        description: error.message || 'Não foi possível remover o registro de triagem',
-        variant: 'destructive',
-      });
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return {
     loading,
     getTriagens,
-    getTriagemById,
-    createTriagem,
-    updateTriagem,
-    deleteTriagem
+    createTriagem
   };
 };

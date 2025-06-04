@@ -17,7 +17,6 @@ export interface Professional {
   dias_atendimento?: string[];
   observacoes?: string;
   status?: string;
-  consultasHoje?: number; // Calculado, não armazenado
 }
 
 export const useProfessionals = () => {
@@ -30,21 +29,25 @@ export const useProfessionals = () => {
       setLoading(true);
       
       if (!user) {
-        throw new Error('Usuário não autenticado');
+        console.log('Usuário não autenticado');
+        return [];
       }
+      
+      console.log('Buscando profissionais para usuário:', user.id);
       
       const { data, error } = await supabase
         .from('professionals')
         .select('*')
+        .eq('user_id', user.id)
         .order('nome', { ascending: true });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Erro ao buscar profissionais:', error);
+        throw error;
+      }
       
-      // Retornar dados com cálculos adicionais se necessário
-      return data.map(professional => ({
-        ...professional,
-        consultasHoje: 0 // Será atualizado em uma consulta separada
-      }));
+      console.log('Profissionais encontrados:', data);
+      return data || [];
     } catch (error: any) {
       console.error('Erro ao buscar profissionais:', error);
       toast({
@@ -70,13 +73,12 @@ export const useProfessionals = () => {
         .from('professionals')
         .select('*')
         .eq('id', id)
+        .eq('user_id', user.id)
         .single();
       
       if (error) throw error;
       
-      if (!data) return null;
-      
-      return { ...data, consultasHoje: 0 };
+      return data;
     } catch (error: any) {
       console.error('Erro ao buscar profissional:', error);
       toast({
@@ -90,7 +92,7 @@ export const useProfessionals = () => {
     }
   };
 
-  const createProfessional = async (professionalData: Omit<Professional, 'id' | 'consultasHoje'>): Promise<Professional | null> => {
+  const createProfessional = async (professionalData: Omit<Professional, 'id'>): Promise<Professional | null> => {
     try {
       setLoading(true);
       
@@ -98,20 +100,27 @@ export const useProfessionals = () => {
         throw new Error('Usuário não autenticado');
       }
       
+      console.log('Criando profissional:', professionalData);
+      
       const { data, error } = await supabase
         .from('professionals')
         .insert([{ ...professionalData, user_id: user.id }])
         .select()
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Erro do Supabase ao criar profissional:', error);
+        throw error;
+      }
+      
+      console.log('Profissional criado com sucesso:', data);
       
       toast({
         title: 'Profissional cadastrado com sucesso!',
-        description: `${professionalData.nome} foi adicionado à equipe.`,
+        description: `${professionalData.nome} foi adicionado ao sistema.`,
       });
       
-      return { ...data, consultasHoje: 0 };
+      return data;
     } catch (error: any) {
       console.error('Erro ao criar profissional:', error);
       toast({
@@ -133,24 +142,29 @@ export const useProfessionals = () => {
         throw new Error('Usuário não autenticado');
       }
       
-      // Remover campos calculados que não existem na tabela
-      const { consultasHoje, ...dataToUpdate } = professionalData;
+      console.log('Atualizando profissional:', id, professionalData);
       
       const { data, error } = await supabase
         .from('professionals')
-        .update(dataToUpdate)
+        .update(professionalData)
         .eq('id', id)
+        .eq('user_id', user.id)
         .select()
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Erro do Supabase ao atualizar profissional:', error);
+        throw error;
+      }
+      
+      console.log('Profissional atualizado com sucesso:', data);
       
       toast({
         title: 'Profissional atualizado com sucesso!',
         description: `Os dados de ${data.nome} foram atualizados.`,
       });
       
-      return { ...data, consultasHoje: consultasHoje || 0 };
+      return data;
     } catch (error: any) {
       console.error('Erro ao atualizar profissional:', error);
       toast({
@@ -172,16 +186,24 @@ export const useProfessionals = () => {
         throw new Error('Usuário não autenticado');
       }
       
+      console.log('Excluindo profissional:', id);
+      
       const { error } = await supabase
         .from('professionals')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
+        .eq('user_id', user.id);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Erro do Supabase ao excluir profissional:', error);
+        throw error;
+      }
+      
+      console.log('Profissional excluído com sucesso');
       
       toast({
         title: 'Profissional removido com sucesso',
-        description: 'O profissional foi removido da equipe.',
+        description: 'O profissional foi removido do sistema.',
       });
       
       return true;

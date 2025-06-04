@@ -31,15 +31,24 @@ export const usePatients = () => {
       setLoading(true);
       
       if (!user) {
-        throw new Error('Usuário não autenticado');
+        console.log('Usuário não autenticado');
+        return [];
       }
+      
+      console.log('Buscando pacientes para usuário:', user.id);
       
       const { data, error } = await supabase
         .from('patients')
         .select('*')
+        .eq('user_id', user.id)
         .order('nome', { ascending: true });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Erro ao buscar pacientes:', error);
+        throw error;
+      }
+      
+      console.log('Pacientes encontrados:', data);
       
       // Processar dados para cálculo de idade
       return data.map(patient => {
@@ -83,6 +92,7 @@ export const usePatients = () => {
         .from('patients')
         .select('*')
         .eq('id', id)
+        .eq('user_id', user.id)
         .single();
       
       if (error) throw error;
@@ -121,13 +131,21 @@ export const usePatients = () => {
         throw new Error('Usuário não autenticado');
       }
       
+      console.log('Criando paciente:', patientData);
+      console.log('User ID:', user.id);
+      
       const { data, error } = await supabase
         .from('patients')
         .insert([{ ...patientData, user_id: user.id }])
         .select()
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Erro do Supabase ao criar paciente:', error);
+        throw error;
+      }
+      
+      console.log('Paciente criado com sucesso:', data);
       
       toast({
         title: 'Paciente cadastrado com sucesso!',
@@ -166,6 +184,8 @@ export const usePatients = () => {
         throw new Error('Usuário não autenticado');
       }
       
+      console.log('Atualizando paciente:', id, patientData);
+      
       // Remover campos calculados que não existem na tabela
       const { idade, ultimaConsulta, ...dataToUpdate } = patientData;
       
@@ -173,10 +193,16 @@ export const usePatients = () => {
         .from('patients')
         .update(dataToUpdate)
         .eq('id', id)
+        .eq('user_id', user.id)
         .select()
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Erro do Supabase ao atualizar paciente:', error);
+        throw error;
+      }
+      
+      console.log('Paciente atualizado com sucesso:', data);
       
       toast({
         title: 'Paciente atualizado com sucesso!',
@@ -215,12 +241,20 @@ export const usePatients = () => {
         throw new Error('Usuário não autenticado');
       }
       
+      console.log('Excluindo paciente:', id);
+      
       const { error } = await supabase
         .from('patients')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
+        .eq('user_id', user.id);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Erro do Supabase ao excluir paciente:', error);
+        throw error;
+      }
+      
+      console.log('Paciente excluído com sucesso');
       
       toast({
         title: 'Paciente removido com sucesso',
