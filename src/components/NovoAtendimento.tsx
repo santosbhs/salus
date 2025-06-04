@@ -8,6 +8,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import MedicalPrescription from './MedicalPrescription';
+import MedicalCertificate from './MedicalCertificate';
+import ExamRequest from './ExamRequest';
 
 const NovoAtendimento = ({ onBack }) => {
   const [paciente, setPaciente] = useState('');
@@ -17,11 +20,28 @@ const NovoAtendimento = ({ onBack }) => {
     avaliacao: '',
     plano: ''
   });
-  const [prescricao, setPrescricao] = useState('');
+  const [prescricao, setPrescricao] = useState(null);
+  const [atestado, setAtestado] = useState(null);
+  const [exames, setExames] = useState(null);
 
   const handleSalvar = () => {
-    console.log('Atendimento salvo:', { paciente, soap, prescricao });
+    console.log('Atendimento salvo:', { paciente, soap, prescricao, atestado, exames });
     // Aqui você implementaria a lógica para salvar o atendimento
+  };
+
+  const handlePrescriptionSave = (prescription) => {
+    setPrescricao(prescription);
+    console.log('Prescrição salva:', prescription);
+  };
+
+  const handleCertificateSave = (certificate) => {
+    setAtestado(certificate);
+    console.log('Atestado salvo:', certificate);
+  };
+
+  const handleExamSave = (examData) => {
+    setExames(examData);
+    console.log('Exames salvos:', examData);
   };
 
   return (
@@ -42,7 +62,7 @@ const NovoAtendimento = ({ onBack }) => {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Novo Atendimento</h1>
-              <p className="text-gray-600">Anamnese SOAP e Prescrição</p>
+              <p className="text-gray-600">Sistema completo de atendimento médico</p>
             </div>
           </div>
         </div>
@@ -51,9 +71,11 @@ const NovoAtendimento = ({ onBack }) => {
           {/* Conteúdo Principal */}
           <div className="lg:col-span-3">
             <Tabs defaultValue="anamnese" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="anamnese">Anamnese SOAP</TabsTrigger>
-                <TabsTrigger value="prescricao">Prescrição</TabsTrigger>
+                <TabsTrigger value="prescricao">Receitas</TabsTrigger>
+                <TabsTrigger value="atestado">Atestados</TabsTrigger>
+                <TabsTrigger value="exames">Exames</TabsTrigger>
                 <TabsTrigger value="revisao">Revisão</TabsTrigger>
               </TabsList>
 
@@ -168,25 +190,26 @@ const NovoAtendimento = ({ onBack }) => {
 
               {/* Tab Prescrição */}
               <TabsContent value="prescricao" className="space-y-6">
-                <Card className="shadow-lg border-green-200">
-                  <CardHeader>
-                    <CardTitle className="flex items-center text-green-800">
-                      <FileText className="mr-2 h-5 w-5" />
-                      Prescrição Médica
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Textarea
-                      value={prescricao}
-                      onChange={(e) => setPrescricao(e.target.value)}
-                      placeholder="1. Dipirona 500mg - Tomar 1 comprimido de 6/6h se dor
-2. Orientações gerais sobre hidratação
-3. Retorno em 7 dias se persistir sintomas"
-                      rows={12}
-                      className="font-mono"
-                    />
-                  </CardContent>
-                </Card>
+                <MedicalPrescription 
+                  onSave={handlePrescriptionSave}
+                  patientName={paciente || "Paciente Selecionado"}
+                />
+              </TabsContent>
+
+              {/* Tab Atestado */}
+              <TabsContent value="atestado" className="space-y-6">
+                <MedicalCertificate 
+                  onSave={handleCertificateSave}
+                  patientName={paciente || "Paciente Selecionado"}
+                />
+              </TabsContent>
+
+              {/* Tab Exames */}
+              <TabsContent value="exames" className="space-y-6">
+                <ExamRequest 
+                  onSave={handleExamSave}
+                  patientName={paciente || "Paciente Selecionado"}
+                />
               </TabsContent>
 
               {/* Tab Revisão */}
@@ -215,10 +238,24 @@ const NovoAtendimento = ({ onBack }) => {
                       <h4 className="font-semibold text-gray-900 mb-2">Plano:</h4>
                       <p className="text-gray-700">{soap.plano || 'Não informado'}</p>
                     </div>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-gray-900 mb-2">Prescrição:</h4>
-                      <pre className="text-gray-700 whitespace-pre-wrap">{prescricao || 'Não informado'}</pre>
-                    </div>
+                    {prescricao && (
+                      <div className="bg-blue-50 p-4 rounded-lg">
+                        <h4 className="font-semibold text-gray-900 mb-2">Prescrição:</h4>
+                        <p className="text-gray-700">Receita gerada com {prescricao.medications?.length || 0} medicações</p>
+                      </div>
+                    )}
+                    {atestado && (
+                      <div className="bg-green-50 p-4 rounded-lg">
+                        <h4 className="font-semibold text-gray-900 mb-2">Atestado:</h4>
+                        <p className="text-gray-700">Atestado de {atestado.days} dias por {atestado.reason}</p>
+                      </div>
+                    )}
+                    {exames && (
+                      <div className="bg-purple-50 p-4 rounded-lg">
+                        <h4 className="font-semibold text-gray-900 mb-2">Exames Solicitados:</h4>
+                        <p className="text-gray-700">{exames.exams?.length || 0} exames solicitados</p>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -241,10 +278,10 @@ const NovoAtendimento = ({ onBack }) => {
                   Salvar Atendimento
                 </Button>
                 <Button variant="outline" className="w-full">
-                  Imprimir Receita
+                  Agendar Retorno
                 </Button>
                 <Button variant="outline" className="w-full">
-                  Agendar Retorno
+                  Finalizar Consulta
                 </Button>
               </CardContent>
             </Card>
