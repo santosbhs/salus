@@ -139,7 +139,7 @@ const NovoAtendimento = ({ onBack }) => {
                       </SelectTrigger>
                       <SelectContent>
                         {patients.length === 0 ? (
-                          <SelectItem value="" disabled>
+                          <SelectItem value="no-patients" disabled>
                             Nenhum paciente cadastrado
                           </SelectItem>
                         ) : (
@@ -161,7 +161,7 @@ const NovoAtendimento = ({ onBack }) => {
                       </SelectTrigger>
                       <SelectContent>
                         {professionals.length === 0 ? (
-                          <SelectItem value="" disabled>
+                          <SelectItem value="no-professionals" disabled>
                             Nenhum profissional cadastrado
                           </SelectItem>
                         ) : (
