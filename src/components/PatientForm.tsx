@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { User, Save, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -27,23 +26,82 @@ const PatientForm = ({ onBack, onSave }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Salvando paciente:', formData);
+    console.log('Iniciando salvamento do paciente:', formData);
     
     try {
       // Validar campos obrigatórios
-      if (!formData.nome || !formData.cpf || !formData.telefone || !formData.nascimento) {
+      if (!formData.nome?.trim()) {
         toast({
-          title: "Campos obrigatórios",
-          description: "Preencha todos os campos obrigatórios.",
+          title: "Campo obrigatório",
+          description: "O nome é obrigatório.",
           variant: "destructive",
         });
         return;
       }
+
+      if (!formData.cpf?.trim()) {
+        toast({
+          title: "Campo obrigatório",
+          description: "O CPF é obrigatório.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!formData.telefone?.trim()) {
+        toast({
+          title: "Campo obrigatório",
+          description: "O telefone é obrigatório.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!formData.nascimento) {
+        toast({
+          title: "Campo obrigatório",
+          description: "A data de nascimento é obrigatória.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Preparar dados para envio - garantir que strings vazias sejam null
+      const patientDataToSave = {
+        nome: formData.nome.trim(),
+        cpf: formData.cpf.trim(),
+        telefone: formData.telefone.trim(),
+        email: formData.email?.trim() || null,
+        nascimento: formData.nascimento,
+        convenio: formData.convenio || null,
+        endereco: formData.endereco?.trim() || null,
+        genero: formData.genero || null,
+        responsavel: formData.responsavel?.trim() || null,
+        observacoes: formData.observacoes?.trim() || null,
+        status: 'Ativo'
+      };
+
+      console.log('Dados preparados para salvamento:', patientDataToSave);
       
       // Salvar no banco de dados via Supabase
-      const newPatient = await createPatient(formData);
+      const newPatient = await createPatient(patientDataToSave);
       
       if (newPatient) {
+        console.log('Paciente salvo com sucesso:', newPatient);
+        // Limpar formulário
+        setFormData({
+          nome: '',
+          cpf: '',
+          telefone: '',
+          email: '',
+          nascimento: '',
+          convenio: '',
+          endereco: '',
+          genero: '',
+          responsavel: '',
+          observacoes: ''
+        });
+        
         if (onSave) {
           onSave(newPatient);
         }
@@ -59,6 +117,7 @@ const PatientForm = ({ onBack, onSave }) => {
   };
 
   const handleInputChange = (field, value) => {
+    console.log('Campo alterado:', field, 'Valor:', value);
     setFormData(prev => ({
       ...prev,
       [field]: value

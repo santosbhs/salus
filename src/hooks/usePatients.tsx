@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
@@ -31,7 +30,7 @@ export const usePatients = () => {
       setLoading(true);
       
       if (!user) {
-        console.log('Usuário não autenticado');
+        console.log('Usuário não autenticado para buscar pacientes');
         return [];
       }
       
@@ -80,6 +79,83 @@ export const usePatients = () => {
     }
   };
 
+  const createPatient = async (patientData: Omit<Patient, 'id' | 'idade' | 'ultimaConsulta'>): Promise<Patient | null> => {
+    try {
+      setLoading(true);
+      
+      if (!user) {
+        console.error('Usuário não autenticado - não é possível criar paciente');
+        toast({
+          title: 'Erro de autenticação',
+          description: 'Você precisa estar logado para cadastrar pacientes',
+          variant: 'destructive',
+        });
+        return null;
+      }
+      
+      console.log('Criando paciente para usuário:', user.id);
+      console.log('Dados do paciente:', patientData);
+      
+      // Preparar dados para inserção - remover campos calculados e adicionar user_id
+      const insertData = {
+        nome: patientData.nome,
+        cpf: patientData.cpf,
+        telefone: patientData.telefone,
+        email: patientData.email || null,
+        nascimento: patientData.nascimento,
+        convenio: patientData.convenio || null,
+        endereco: patientData.endereco || null,
+        genero: patientData.genero || null,
+        responsavel: patientData.responsavel || null,
+        observacoes: patientData.observacoes || null,
+        status: patientData.status || 'Ativo',
+        user_id: user.id
+      };
+      
+      console.log('Dados preparados para inserção:', insertData);
+      
+      const { data, error } = await supabase
+        .from('patients')
+        .insert([insertData])
+        .select()
+        .single();
+      
+      if (error) {
+        console.error('Erro do Supabase ao criar paciente:', error);
+        throw error;
+      }
+      
+      console.log('Paciente criado com sucesso:', data);
+      
+      toast({
+        title: 'Paciente cadastrado com sucesso!',
+        description: `${patientData.nome} foi adicionado ao sistema.`,
+      });
+      
+      // Calcular idade para o retorno
+      const birthDate = new Date(data.nascimento);
+      const today = new Date();
+      let idade = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        idade--;
+      }
+      
+      return { ...data, idade, ultimaConsulta: 'Nunca' };
+    } catch (error: any) {
+      console.error('Erro ao criar paciente:', error);
+      toast({
+        title: 'Erro ao cadastrar paciente',
+        description: error.message || 'Não foi possível cadastrar o paciente',
+        variant: 'destructive',
+      });
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getPatientById = async (id: string): Promise<Patient | null> => {
     try {
       setLoading(true);
@@ -115,59 +191,6 @@ export const usePatients = () => {
       toast({
         title: 'Erro ao carregar paciente',
         description: error.message || 'Não foi possível carregar os dados do paciente',
-        variant: 'destructive',
-      });
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const createPatient = async (patientData: Omit<Patient, 'id' | 'idade' | 'ultimaConsulta'>): Promise<Patient | null> => {
-    try {
-      setLoading(true);
-      
-      if (!user) {
-        throw new Error('Usuário não autenticado');
-      }
-      
-      console.log('Criando paciente:', patientData);
-      console.log('User ID:', user.id);
-      
-      const { data, error } = await supabase
-        .from('patients')
-        .insert([{ ...patientData, user_id: user.id }])
-        .select()
-        .single();
-      
-      if (error) {
-        console.error('Erro do Supabase ao criar paciente:', error);
-        throw error;
-      }
-      
-      console.log('Paciente criado com sucesso:', data);
-      
-      toast({
-        title: 'Paciente cadastrado com sucesso!',
-        description: `${patientData.nome} foi adicionado ao sistema.`,
-      });
-      
-      // Calcular idade para o retorno
-      const birthDate = new Date(data.nascimento);
-      const today = new Date();
-      let idade = today.getFullYear() - birthDate.getFullYear();
-      const monthDiff = today.getMonth() - birthDate.getMonth();
-      
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-        idade--;
-      }
-      
-      return { ...data, idade, ultimaConsulta: 'Nunca' };
-    } catch (error: any) {
-      console.error('Erro ao criar paciente:', error);
-      toast({
-        title: 'Erro ao cadastrar paciente',
-        description: error.message || 'Não foi possível cadastrar o paciente',
         variant: 'destructive',
       });
       return null;
