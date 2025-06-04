@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Lock, Mail, Eye, EyeOff, Zap, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -80,19 +81,14 @@ const Login = () => {
       }
 
       // Wait for cleanup to complete
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       // For test users, ensure they exist and are confirmed
       const isTestUser = await ensureTestUserExists(formData.email, formData.password);
       
       if (isTestUser) {
-        toast({
-          title: "Preparando usuário de teste...",
-          description: "Aguarde um momento.",
-        });
-        
         // Wait for user creation/confirmation to complete
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
 
       console.log('Attempting sign in...');
@@ -104,38 +100,7 @@ const Login = () => {
       console.log('Sign in result:', { data, error });
 
       if (error) {
-        if (isTestUser) {
-          // For test users, try creating them again with a different approach
-          toast({
-            title: "Recriando usuário de teste...",
-            description: "Tentativa de recuperação em andamento.",
-          });
-          
-          // Wait and try again
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          
-          const { data: retryData, error: retryError } = await supabase.auth.signInWithPassword({
-            email: formData.email,
-            password: formData.password,
-          });
-          
-          console.log('Retry result:', { retryData, retryError });
-          
-          if (retryError) {
-            throw new Error(`Erro persistente no login do usuário de teste: ${retryError.message}`);
-          }
-          
-          if (retryData.user) {
-            toast({
-              title: "Login realizado com sucesso!",
-              description: "Redirecionando para o dashboard...",
-            });
-            window.location.href = '/dashboard';
-            return;
-          }
-        } else {
-          throw error;
-        }
+        throw error;
       }
 
       if (data.user) {
@@ -165,6 +130,8 @@ const Login = () => {
       [name]: value
     }));
   };
+
+  const isFormValid = formData.email.trim() !== '' && formData.password.trim() !== '';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-green-900 relative overflow-hidden">
@@ -254,7 +221,7 @@ const Login = () => {
                 <Button 
                   type="submit" 
                   className="w-full h-12 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white text-lg font-bold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
-                  disabled={loading}
+                  disabled={loading || !isFormValid}
                 >
                   {loading ? "Entrando..." : "Entrar na Plataforma"}
                 </Button>
@@ -275,28 +242,6 @@ const Login = () => {
                     </Button>
                   </Link>
                 </div>
-              </div>
-
-              {/* Test Users Info */}
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <h4 className="font-semibold text-blue-800 mb-2">🔑 Usuários de Teste Disponíveis:</h4>
-                <div className="text-sm text-blue-700 space-y-2">
-                  <div className="p-2 bg-white rounded border">
-                    <p><strong>📧 admin.basico@teste.com</strong></p>
-                    <p>🔐 Senha: <code className="bg-gray-100 px-1 rounded">123456</code></p>
-                  </div>
-                  <div className="p-2 bg-white rounded border">
-                    <p><strong>📧 admin.profissional@teste.com</strong></p>
-                    <p>🔐 Senha: <code className="bg-gray-100 px-1 rounded">123456</code></p>
-                  </div>
-                  <div className="p-2 bg-white rounded border">
-                    <p><strong>📧 admin.enterprise@teste.com</strong></p>
-                    <p>🔐 Senha: <code className="bg-gray-100 px-1 rounded">123456</code></p>
-                  </div>
-                </div>
-                <p className="text-xs text-blue-600 mt-2">
-                  💡 Estes usuários são criados automaticamente no primeiro login
-                </p>
               </div>
             </CardContent>
           </Card>
