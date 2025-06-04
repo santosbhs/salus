@@ -6,25 +6,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 export const SalesTestimonials = () => {
   const testimonials = [
     {
-      name: "Dr. João Silva",
+      name: "Dr. Rafael Monteiro",
       specialty: "Cardiologista",
       rating: 5,
       comment: "O Salus revolucionou minha clínica. Reduzi o tempo administrativo em 70% e meus pacientes adoram o agendamento online.",
-      initials: "JS"
+      initials: "RM"
     },
     {
-      name: "Dra. Maria Santos",
+      name: "Dra. Fernanda Almeida",
       specialty: "Pediatra",
       rating: 5,
       comment: "Segurança dos dados e facilidade de uso excepcionais. Recomendo para todos os colegas médicos.",
-      initials: "MS"
+      initials: "FA"
     },
     {
-      name: "Dr. Carlos Oliveira",
+      name: "Dr. Bruno Carvalho",
       specialty: "Ortopedista",
       rating: 5,
       comment: "Interface intuitiva e suporte técnico fantástico. Minha produtividade aumentou significativamente.",
-      initials: "CO"
+      initials: "BC"
     }
   ];
 

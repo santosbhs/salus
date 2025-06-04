@@ -9,19 +9,19 @@ import { Link } from 'react-router-dom';
 const Index = () => {
   const testimonials = [
     {
-      name: "Dr. Maria Silva",
+      name: "Dr. Eduardo Fernandes",
       role: "Cardiologista",
       text: "O SALUS revolucionou minha prática médica. A agenda inteligente reduziu as faltas em 80%.",
       rating: 5
     },
     {
-      name: "Dr. João Santos", 
+      name: "Dr. Ricardo Moreira", 
       role: "Clínica Geral",
       text: "Prontuário eletrônico completo e intuitivo. Meus pacientes adoram a praticidade.",
       rating: 5
     },
     {
-      name: "Dra. Ana Costa",
+      name: "Dra. Juliana Rodrigues",
       role: "Pediatra",
       text: "Suporte excepcional e sistema que realmente funciona. Recomendo para todos os colegas.",
       rating: 5
