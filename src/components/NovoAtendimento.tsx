@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, User, Stethoscope, FileText, Save, AlertCircle } from 'lucide-react';
+import { ArrowLeft, User, Stethoscope, FileText, Save, AlertCircle, Wand2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -22,6 +22,8 @@ const NovoAtendimento = ({ onBack }) => {
   const [receitas, setReceitas] = useState('');
   const [exames, setExames] = useState('');
   const [atestados, setAtestados] = useState('');
+  const [relatorioTitulo, setRelatorioTitulo] = useState('');
+  const [relatorioConteudo, setRelatorioConteudo] = useState('');
   const [salvando, setSalvando] = useState(false);
 
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -48,6 +50,59 @@ const NovoAtendimento = ({ onBack }) => {
     loadData();
   }, []);
 
+  const preencherReceitaAutomatica = () => {
+    const receitaModelo = `RECEITUÁRIO MÉDICO
+
+Paciente: ${patients.find(p => p.id === pacienteSelecionado)?.nome || '[Nome do Paciente]'}
+Data: ${new Date().toLocaleDateString('pt-BR')}
+
+Prescrição:
+1. [Nome do medicamento] [Dosagem] - [Frequência] - [Duração]
+   Via de administração: [oral/tópica/etc]
+   
+2. [Nome do medicamento] [Dosagem] - [Frequência] - [Duração]
+   Via de administração: [oral/tópica/etc]
+
+Orientações:
+- Tomar conforme prescrito
+- Não interromper o tratamento sem orientação médica
+- Em caso de reações adversas, procurar atendimento médico
+
+Dr(a). ${professionals.find(p => p.id === profissionalSelecionado)?.nome || '[Nome do Profissional]'}
+${professionals.find(p => p.id === profissionalSelecionado)?.registro || '[Registro Profissional]'}`;
+    
+    setReceitas(receitaModelo);
+    toast({
+      title: "Receita preenchida automaticamente",
+      description: "Modelo de receita inserido. Edite conforme necessário.",
+    });
+  };
+
+  const preencherAtestadoAutomatico = () => {
+    const atestadoModelo = `ATESTADO MÉDICO
+
+Atesto para os devidos fins que o(a) Sr(a). ${patients.find(p => p.id === pacienteSelecionado)?.nome || '[Nome do Paciente]'}, portador(a) do CPF ${patients.find(p => p.id === pacienteSelecionado)?.cpf || '[CPF]'}, esteve sob meus cuidados médicos no dia ${new Date().toLocaleDateString('pt-BR')}.
+
+Diagnóstico: [Inserir diagnóstico]
+
+Recomendo afastamento de suas atividades habituais por [X] dias, a partir de ${new Date().toLocaleDateString('pt-BR')}.
+
+Por ser verdade, firmo o presente atestado.
+
+${new Date().toLocaleDateString('pt-BR')}
+
+_________________________________
+Dr(a). ${professionals.find(p => p.id === profissionalSelecionado)?.nome || '[Nome do Profissional]'}
+${professionals.find(p => p.id === profissionalSelecionado)?.especialidade || '[Especialidade]'}
+${professionals.find(p => p.id === profissionalSelecionado)?.registro || '[Registro Profissional]'}`;
+    
+    setAtestados(atestadoModelo);
+    toast({
+      title: "Atestado preenchido automaticamente",
+      description: "Modelo de atestado inserido. Edite conforme necessário.",
+    });
+  };
+
   const handleSalvar = async () => {
     if (!pacienteSelecionado || !profissionalSelecionado) {
       toast({
@@ -60,6 +115,10 @@ const NovoAtendimento = ({ onBack }) => {
 
     setSalvando(true);
     
+    const relatorioCompleto = relatorioTitulo && relatorioConteudo 
+      ? `${relatorioTitulo}\n\n${relatorioConteudo}` 
+      : null;
+    
     const consultaData = {
       patient_id: pacienteSelecionado,
       professional_id: profissionalSelecionado,
@@ -69,7 +128,8 @@ const NovoAtendimento = ({ onBack }) => {
       plano: plano || null,
       receitas: receitas || null,
       exames: exames || null,
-      atestados: atestados || null
+      atestados: atestados || null,
+      relatorio: relatorioCompleto
     };
 
     console.log('Dados da consulta a serem salvos:', consultaData);
@@ -87,6 +147,8 @@ const NovoAtendimento = ({ onBack }) => {
       setReceitas('');
       setExames('');
       setAtestados('');
+      setRelatorioTitulo('');
+      setRelatorioConteudo('');
     }
     
     setSalvando(false);
@@ -272,14 +334,26 @@ const NovoAtendimento = ({ onBack }) => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="receitas">Receitas</Label>
+                  <div className="flex items-center justify-between mb-2">
+                    <Label htmlFor="receitas">Receitas</Label>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={preencherReceitaAutomatica}
+                      disabled={!pacienteSelecionado || !profissionalSelecionado}
+                    >
+                      <Wand2 className="mr-1 h-3 w-3" />
+                      Preencher Automaticamente
+                    </Button>
+                  </div>
                   <Textarea
                     id="receitas"
                     value={receitas}
                     onChange={(e) => setReceitas(e.target.value)}
                     placeholder="Prescrições médicas..."
                     className="mt-1"
-                    rows={3}
+                    rows={6}
                   />
                 </div>
                 
@@ -296,14 +370,60 @@ const NovoAtendimento = ({ onBack }) => {
                 </div>
                 
                 <div>
-                  <Label htmlFor="atestados">Atestados</Label>
+                  <div className="flex items-center justify-between mb-2">
+                    <Label htmlFor="atestados">Atestados</Label>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={preencherAtestadoAutomatico}
+                      disabled={!pacienteSelecionado || !profissionalSelecionado}
+                    >
+                      <Wand2 className="mr-1 h-3 w-3" />
+                      Preencher Automaticamente
+                    </Button>
+                  </div>
                   <Textarea
                     id="atestados"
                     value={atestados}
                     onChange={(e) => setAtestados(e.target.value)}
                     placeholder="Atestados médicos..."
                     className="mt-1"
-                    rows={3}
+                    rows={8}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Relatórios */}
+            <Card className="shadow-lg border-blue-200">
+              <CardHeader>
+                <CardTitle className="text-blue-800">Relatórios</CardTitle>
+                <CardDescription>
+                  Relatórios médicos personalizados
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="relatorio-titulo">Título do Relatório</Label>
+                  <Input
+                    id="relatorio-titulo"
+                    value={relatorioTitulo}
+                    onChange={(e) => setRelatorioTitulo(e.target.value)}
+                    placeholder="Ex: Relatório de Evolução, Laudo Médico, etc."
+                    className="mt-1"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="relatorio-conteudo">Conteúdo do Relatório</Label>
+                  <Textarea
+                    id="relatorio-conteudo"
+                    value={relatorioConteudo}
+                    onChange={(e) => setRelatorioConteudo(e.target.value)}
+                    placeholder="Digite o conteúdo livre do relatório médico..."
+                    className="mt-1"
+                    rows={6}
                   />
                 </div>
               </CardContent>
