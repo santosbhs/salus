@@ -1,15 +1,25 @@
 
 import React from 'react';
-import { Calendar, Users, Clock, FileText, AlertCircle, Activity, Stethoscope, UserPlus } from 'lucide-react';
+import { Calendar, Users, Clock, FileText, BarChart3, Activity } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
 const BasicDashboard = ({ onNavigate }) => {
+  const handleNavigate = (section) => {
+    if (section === 'pacientes') {
+      onNavigate('patients');
+    } else if (section === 'agenda') {
+      onNavigate('appointments');
+    } else if (section === 'relatorios') {
+      onNavigate('novo-atendimento');
+    }
+  };
+
   const basicStats = [
     {
       title: 'Pacientes Cadastrados',
-      value: '35',
+      value: '32',
       limit: '50',
       icon: Users,
       color: 'text-green-700',
@@ -17,11 +27,11 @@ const BasicDashboard = ({ onNavigate }) => {
     },
     {
       title: 'Agendamentos Hoje',
-      value: '8',
-      limit: '15',
+      value: '5',
+      limit: '10',
       icon: Calendar,
-      color: 'text-emerald-700',
-      bgColor: 'bg-emerald-50',
+      color: 'text-green-700',
+      bgColor: 'bg-green-50',
     },
     {
       title: 'Consultas do Mês',
@@ -36,27 +46,24 @@ const BasicDashboard = ({ onNavigate }) => {
   const upcomingAppointments = [
     { time: '09:00', patient: 'Maria Silva', type: 'Consulta', status: 'confirmado' },
     { time: '10:30', patient: 'Pedro Santos', type: 'Retorno', status: 'confirmado' },
-    { time: '14:00', patient: 'Ana Costa', type: 'Exame', status: 'pendente' },
-    { time: '15:30', patient: 'José Oliveira', type: 'Consulta', status: 'confirmado' },
+    { time: '14:00', patient: 'José Oliveira', type: 'Consulta', status: 'pendente' },
   ];
 
   const basicFeatures = [
     'Cadastro de até 50 pacientes',
-    'Sistema de triagem completo',
-    'Anamnese SOAP',
     'Agendamentos básicos',
-    'Histórico de consultas',
-    'Relatórios simples',
+    'Prontuário eletrônico simples',
+    'Relatórios básicos',
   ];
 
   return (
     <div className="space-y-6">
       {/* Plan Header */}
-      <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-8 text-white shadow-xl">
+      <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-8 text-white shadow-xl">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-3xl font-bold mb-2">Plano Básico</h2>
-            <p className="text-green-100 text-lg">Ideal para consultórios pequenos</p>
+            <p className="text-green-100 text-lg">Ideal para profissionais autônomos</p>
             <p className="text-green-200 text-sm mt-2">Até 50 pacientes • 1 profissional</p>
           </div>
           <div className="text-right">
@@ -68,73 +75,33 @@ const BasicDashboard = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* Quick Actions - Now with all features active */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-red-200" onClick={() => onNavigate('triagem')}>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center text-lg">
-              <Stethoscope className="mr-2 h-5 w-5 text-red-600" />
-              Triagem
-            </CardTitle>
-            <CardDescription>
-              Classificação de risco e avaliação inicial
-            </CardDescription>
+      {/* Navigation Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Pacientes</CardTitle>
+            <CardDescription>Cadastrar e editar</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800">
-              Iniciar Triagem
-            </Button>
+            <Button onClick={() => handleNavigate('pacientes')}>Gerenciar</Button>
           </CardContent>
         </Card>
-
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-green-200" onClick={() => onNavigate('novo-atendimento')}>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center text-lg">
-              <FileText className="mr-2 h-5 w-5 text-green-700" />
-              Atendimento SOAP
-            </CardTitle>
-            <CardDescription>
-              Inicie uma nova consulta com anamnese SOAP
-            </CardDescription>
+        <Card>
+          <CardHeader>
+            <CardTitle>Agenda</CardTitle>
+            <CardDescription>Agendamentos e horários</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-800 hover:to-emerald-800">
-              Iniciar Atendimento
-            </Button>
+            <Button onClick={() => handleNavigate('agenda')}>Ver agenda</Button>
           </CardContent>
         </Card>
-
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-green-200" onClick={() => onNavigate('patients')}>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center text-lg">
-              <UserPlus className="mr-2 h-5 w-5 text-green-600" />
-              Pacientes
-            </CardTitle>
-            <CardDescription>
-              Gerencie seus pacientes cadastrados
-            </CardDescription>
+        <Card>
+          <CardHeader>
+            <CardTitle>Relatórios</CardTitle>
+            <CardDescription>Atestados, receitas e mais</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full border-green-700 text-green-700 hover:bg-green-700 hover:text-white">
-              Gerenciar Pacientes
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-emerald-200" onClick={() => onNavigate('appointments')}>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center text-lg">
-              <Calendar className="mr-2 h-5 w-5 text-emerald-700" />
-              Agenda
-            </CardTitle>
-            <CardDescription>
-              Visualize e gerencie agendamentos
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button variant="outline" className="w-full border-emerald-700 text-emerald-700 hover:bg-emerald-700 hover:text-white">
-              Ver Agenda
-            </Button>
+            <Button onClick={() => handleNavigate('relatorios')}>Acessar</Button>
           </CardContent>
         </Card>
       </div>
@@ -172,14 +139,14 @@ const BasicDashboard = ({ onNavigate }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Agenda de Hoje */}
+        {/* Agenda */}
         <Card className="border-green-200 shadow-lg">
           <CardHeader>
             <CardTitle className="text-xl text-green-800 flex items-center">
               <Calendar className="mr-2 h-5 w-5" />
               Agenda de Hoje
             </CardTitle>
-            <CardDescription>Agendamentos para hoje com detalhes dos pacientes</CardDescription>
+            <CardDescription>Próximos agendamentos</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -200,42 +167,46 @@ const BasicDashboard = ({ onNavigate }) => {
                 </div>
               ))}
             </div>
-            <Button className="w-full mt-4 bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-800 hover:to-emerald-800" onClick={() => onNavigate('appointments')}>
+            <Button className="w-full mt-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800" onClick={() => onNavigate('appointments')}>
               Ver Agenda Completa
             </Button>
           </CardContent>
         </Card>
 
-        {/* Plan Features */}
-        <Card className="border-green-200 shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-xl text-green-800">Recursos Incluídos</CardTitle>
-            <CardDescription>Tudo que você tem acesso no plano básico</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {basicFeatures.map((feature, index) => (
-                <div key={index} className="flex items-center space-x-3">
-                  <div className="w-3 h-3 bg-green-600 rounded-full"></div>
-                  <span className="text-gray-700">{feature}</span>
-                </div>
-              ))}
-            </div>
-            <div className="mt-6 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl">
-              <div className="flex items-start space-x-3">
-                <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
-                <div>
-                  <span className="text-sm font-semibold text-yellow-800">
-                    Quer mais recursos?
-                  </span>
-                  <p className="text-sm text-yellow-700 mt-1">
-                    Faça upgrade para o plano Profissional e tenha acesso a até 200 pacientes, 5 profissionais e relatórios avançados.
-                  </p>
-                </div>
+        {/* Quick Actions and Features */}
+        <div className="space-y-6">
+          <Card className="border-green-200 shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-xl text-green-800">Ações Rápidas</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button className="w-full justify-start h-12 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800" onClick={() => onNavigate('novo-atendimento')}>
+                <FileText className="mr-3 h-5 w-5" />
+                Novo Atendimento
+              </Button>
+              <Button className="w-full justify-start h-12" variant="outline" onClick={() => onNavigate('patients')}>
+                <Users className="mr-3 h-5 w-5 text-green-600" />
+                Gerenciar Pacientes
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="border-green-200 shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-xl text-green-800">Recursos Incluídos</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {basicFeatures.map((feature, index) => (
+                  <div key={index} className="flex items-center space-x-3">
+                    <div className="w-3 h-3 bg-green-600 rounded-full"></div>
+                    <span className="text-sm text-gray-700">{feature}</span>
+                  </div>
+                ))}
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

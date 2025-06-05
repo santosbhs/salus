@@ -6,6 +6,16 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
 const ProfessionalDashboard = ({ onNavigate }) => {
+  const handleNavigate = (section) => {
+    if (section === 'pacientes') {
+      onNavigate('patients');
+    } else if (section === 'agenda') {
+      onNavigate('appointments');
+    } else if (section === 'relatorios') {
+      onNavigate('novo-atendimento');
+    }
+  };
+
   const professionalStats = [
     {
       title: 'Pacientes Cadastrados',
@@ -75,6 +85,37 @@ const ProfessionalDashboard = ({ onNavigate }) => {
             <p className="text-blue-100 text-sm mt-2">R$ 197/mês</p>
           </div>
         </div>
+      </div>
+
+      {/* Navigation Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Pacientes</CardTitle>
+            <CardDescription>Cadastrar e editar</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={() => handleNavigate('pacientes')}>Gerenciar</Button>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Agenda</CardTitle>
+            <CardDescription>Agendamentos e horários</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={() => handleNavigate('agenda')}>Ver agenda</Button>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Relatórios</CardTitle>
+            <CardDescription>Atestados, receitas e mais</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={() => handleNavigate('relatorios')}>Acessar</Button>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Quick Actions - All Active */}

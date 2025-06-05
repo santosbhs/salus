@@ -1,211 +1,101 @@
 
 import React from 'react';
-import { Calendar, Users, Clock, TrendingUp, Activity, AlertCircle, UserPlus, FileText, Zap, Stethoscope } from 'lucide-react';
+import { Calendar, Users, Clock, FileText, BarChart3, Activity } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 const Dashboard = ({ onNavigate }) => {
+  const handleNavigate = (section) => {
+    if (section === 'pacientes') {
+      onNavigate('patients');
+    } else if (section === 'agenda') {
+      onNavigate('appointments');
+    } else if (section === 'relatorios') {
+      onNavigate('novo-atendimento');
+    }
+  };
+
   const stats = [
     {
-      title: 'Pacientes Cadastrados',
-      value: '1,234',
-      change: '+12%',
+      title: 'Pacientes Ativos',
+      value: '127',
       icon: Users,
-      color: 'text-green-700',
-      bgColor: 'bg-green-50',
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-50',
     },
     {
-      title: 'Agendamentos Hoje',
-      value: '24',
-      change: '+5%',
+      title: 'Consultas Hoje',
+      value: '8',
       icon: Calendar,
-      color: 'text-emerald-700',
-      bgColor: 'bg-emerald-50',
-    },
-    {
-      title: 'Consultas Realizadas',
-      value: '18',
-      change: '+8%',
-      icon: Activity,
       color: 'text-green-600',
       bgColor: 'bg-green-50',
     },
     {
-      title: 'Taxa de Ocupação',
-      value: '85%',
-      change: '+3%',
-      icon: TrendingUp,
-      color: 'text-emerald-600',
-      bgColor: 'bg-emerald-50',
+      title: 'Atendimentos do Mês',
+      value: '89',
+      icon: Activity,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50',
+    },
+    {
+      title: 'Próxima Consulta',
+      value: '14:30',
+      icon: Clock,
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-50',
     },
   ];
 
   const upcomingAppointments = [
-    { time: '09:00', patient: 'Maria Silva', type: 'Consulta', doctor: 'Dr. João', priority: 'amarelo', priorityText: 'Urgente' },
-    { time: '10:30', patient: 'Pedro Santos', type: 'Retorno', doctor: 'Dra. Ana', priority: 'verde', priorityText: 'Pouco urgente' },
-    { time: '14:00', patient: 'Ana Costa', type: 'Exame', doctor: 'Dr. Carlos', priority: 'vermelho', priorityText: 'Emergência' },
-    { time: '15:30', patient: 'José Oliveira', type: 'Consulta', doctor: 'Dra. Maria', priority: 'verde', priorityText: 'Pouco urgente' },
+    { time: '09:00', patient: 'Maria Silva', type: 'Consulta', status: 'confirmado' },
+    { time: '10:30', patient: 'Pedro Santos', type: 'Retorno', status: 'confirmado' },
+    { time: '11:00', patient: 'Ana Costa', type: 'Exame', status: 'pendente' },
+    { time: '14:00', patient: 'José Oliveira', type: 'Consulta', status: 'confirmado' },
   ];
-
-  const alerts = [
-    { type: 'urgent', message: 'Paciente Maria Silva aguardando há 15 minutos' },
-    { type: 'info', message: '3 agendamentos confirmados para amanhã' },
-    { type: 'warning', message: 'Estoque de materiais baixo' },
-  ];
-
-  const getManchesterBadge = (cor) => {
-    const colors = {
-      vermelho: 'bg-red-500 text-white',
-      laranja: 'bg-orange-500 text-white',
-      amarelo: 'bg-yellow-500 text-black',
-      verde: 'bg-green-500 text-white',
-      azul: 'bg-blue-500 text-white'
-    };
-    return colors[cor] || 'bg-gray-500 text-white';
-  };
 
   return (
     <div className="space-y-6">
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-green-700 to-emerald-700 rounded-lg p-6 text-white">
-        <div className="flex items-center mb-4">
-          <Zap className="h-8 w-8 text-white mr-3" />
-          <h2 className="text-2xl font-bold">Bem-vindo ao Salus</h2>
+      {/* Header */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-8 text-white shadow-xl">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-3xl font-bold mb-2">Bem-vindo ao SALUS</h2>
+            <p className="text-blue-100 text-lg">Sua plataforma de gestão médica</p>
+          </div>
+          <Badge className="bg-white text-blue-700 hover:bg-gray-100 text-lg px-4 py-2">
+            Demo
+          </Badge>
         </div>
-        <p className="text-green-100">
-          Saúde e inovação em suas mãos! Todas as funcionalidades estão ativas.
-        </p>
       </div>
 
-      {/* Quick Actions - All Active */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-red-200" onClick={() => onNavigate('triagem')}>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center text-lg">
-              <Stethoscope className="mr-2 h-5 w-5 text-red-600" />
-              Triagem
-            </CardTitle>
-            <CardDescription>
-              Classificação de risco com protocolo Manchester
-            </CardDescription>
+      {/* Navigation Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Pacientes</CardTitle>
+            <CardDescription>Cadastrar e editar</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800">
-              Iniciar Triagem
-            </Button>
-            <Badge className="mt-2 bg-green-100 text-green-800 text-xs">ATIVO</Badge>
+            <Button onClick={() => handleNavigate('pacientes')}>Gerenciar</Button>
           </CardContent>
         </Card>
-
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-green-200" onClick={() => onNavigate('novo-atendimento')}>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center text-lg">
-              <FileText className="mr-2 h-5 w-5 text-green-700" />
-              Novo Atendimento
-            </CardTitle>
-            <CardDescription>
-              Anamnese SOAP com declarações personalizadas
-            </CardDescription>
+        <Card>
+          <CardHeader>
+            <CardTitle>Agenda</CardTitle>
+            <CardDescription>Agendamentos e horários</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-800 hover:to-emerald-800">
-              Iniciar Atendimento
-            </Button>
-            <Badge className="mt-2 bg-green-100 text-green-800 text-xs">ATIVO</Badge>
+            <Button onClick={() => handleNavigate('agenda')}>Ver agenda</Button>
           </CardContent>
         </Card>
-
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-green-200" onClick={() => onNavigate('patients')}>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center text-lg">
-              <UserPlus className="mr-2 h-5 w-5 text-green-600" />
-              Gestão de Pacientes
-            </CardTitle>
-            <CardDescription>
-              Cadastro completo com convênio/particular
-            </CardDescription>
+        <Card>
+          <CardHeader>
+            <CardTitle>Relatórios</CardTitle>
+            <CardDescription>Atestados, receitas e mais</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full border-green-700 text-green-700 hover:bg-green-700 hover:text-white">
-              Gerenciar Pacientes
-            </Button>
-            <Badge className="mt-2 bg-green-100 text-green-800 text-xs">ATIVO</Badge>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-emerald-200" onClick={() => onNavigate('professionals')}>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center text-lg">
-              <Users className="mr-2 h-5 w-5 text-emerald-700" />
-              Profissionais
-            </CardTitle>
-            <CardDescription>
-              Cadastro completo com CRM, CRO, CRN, etc.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button variant="outline" className="w-full border-emerald-700 text-emerald-700 hover:bg-emerald-700 hover:text-white">
-              Gerenciar Profissionais
-            </Button>
-            <Badge className="mt-2 bg-green-100 text-green-800 text-xs">ATIVO</Badge>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Additional Features Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-blue-200" onClick={() => onNavigate('appointments')}>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center text-lg">
-              <Calendar className="mr-2 h-5 w-5 text-blue-600" />
-              Agendamentos
-            </CardTitle>
-            <CardDescription>
-              Sistema completo de agendamento
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
-              Ver Agenda
-            </Button>
-            <Badge className="mt-2 bg-green-100 text-green-800 text-xs">ATIVO</Badge>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-purple-200">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center text-lg">
-              <Activity className="mr-2 h-5 w-5 text-purple-600" />
-              Relatórios
-            </CardTitle>
-            <CardDescription>
-              Análises e estatísticas detalhadas
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800">
-              Ver Relatórios
-            </Button>
-            <Badge className="mt-2 bg-green-100 text-green-800 text-xs">ATIVO</Badge>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-orange-200">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center text-lg">
-              <AlertCircle className="mr-2 h-5 w-5 text-orange-600" />
-              Configurações
-            </CardTitle>
-            <CardDescription>
-              Configurações gerais da clínica
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800">
-              Configurar
-            </Button>
-            <Badge className="mt-2 bg-green-100 text-green-800 text-xs">ATIVO</Badge>
+            <Button onClick={() => handleNavigate('relatorios')}>Acessar</Button>
           </CardContent>
         </Card>
       </div>
@@ -215,127 +105,72 @@ const Dashboard = ({ onNavigate }) => {
         {stats.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <Card key={index} className="hover:shadow-lg transition-shadow">
+            <Card key={index} className="hover:shadow-lg transition-all duration-300">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-600">
                   {stat.title}
                 </CardTitle>
-                <div className={`p-2 rounded-lg ${stat.bgColor}`}>
-                  <Icon className={`h-4 w-4 ${stat.color}`} />
+                <div className={`p-3 rounded-xl ${stat.bgColor}`}>
+                  <Icon className={`h-5 w-5 ${stat.color}`} />
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
-                <p className="text-xs text-gray-600 font-medium">
-                  {stat.change} em relação ao mês passado
-                </p>
+                <div className="text-3xl font-bold text-gray-900">{stat.value}</div>
               </CardContent>
             </Card>
           );
         })}
       </div>
 
+      {/* Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Upcoming Appointments with Triagem Priority */}
-        <Card>
+        <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <Clock className="mr-2 h-5 w-5" />
-              Próximos Agendamentos
-            </CardTitle>
-            <CardDescription>
-              Consultas agendadas para hoje com classificação de risco
-            </CardDescription>
+            <CardTitle className="text-xl text-blue-800">Próximos Agendamentos</CardTitle>
+            <CardDescription>Agenda para hoje</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {upcomingAppointments.map((appointment, index) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-center space-x-3">
-                    <div className="text-sm font-medium text-green-700">
+                    <div className="text-sm font-bold text-blue-700 bg-white px-2 py-1 rounded">
                       {appointment.time}
                     </div>
                     <div>
-                      <p className="font-medium">{appointment.patient}</p>
-                      <p className="text-sm text-gray-500">{appointment.doctor}</p>
+                      <p className="font-semibold text-gray-900">{appointment.patient}</p>
+                      <p className="text-sm text-gray-600">{appointment.type}</p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge variant="secondary">
-                      {appointment.type}
-                    </Badge>
-                    <Badge className={`text-xs ${getManchesterBadge(appointment.priority)}`}>
-                      {appointment.priorityText}
-                    </Badge>
-                  </div>
+                  <Badge variant={appointment.status === 'confirmado' ? 'default' : 'secondary'} className="text-xs">
+                    {appointment.status === 'confirmado' ? 'Confirmado' : 'Pendente'}
+                  </Badge>
                 </div>
               ))}
             </div>
-            <Button className="w-full mt-4 bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-800 hover:to-emerald-800" onClick={() => onNavigate('appointments')}>
-              Ver Todos os Agendamentos
-            </Button>
           </CardContent>
         </Card>
 
-        {/* Alerts */}
-        <Card>
+        <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <AlertCircle className="mr-2 h-5 w-5" />
-              Alertas e Notificações
-            </CardTitle>
-            <CardDescription>
-              Informações importantes da clínica
-            </CardDescription>
+            <CardTitle className="text-xl text-blue-800">Ações Rápidas</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {alerts.map((alert, index) => (
-                <div key={index} className={`p-3 rounded-lg border-l-4 ${
-                  alert.type === 'urgent' ? 'bg-red-50 border-red-500' :
-                  alert.type === 'warning' ? 'bg-yellow-50 border-yellow-500' :
-                  'bg-blue-50 border-blue-500'
-                }`}>
-                  <p className="text-sm">{alert.message}</p>
-                </div>
-              ))}
-            </div>
-            <Button className="w-full mt-4 bg-gradient-to-r from-green-700 to-emerald-700 hover:from-green-800 hover:to-emerald-800">
-              Ver Todas as Notificações
+          <CardContent className="space-y-4">
+            <Button className="w-full justify-start h-12" variant="outline" onClick={() => onNavigate('triagem')}>
+              <Activity className="mr-3 h-5 w-5 text-red-600" />
+              Nova Triagem
+            </Button>
+            <Button className="w-full justify-start h-12" variant="outline" onClick={() => onNavigate('novo-atendimento')}>
+              <FileText className="mr-3 h-5 w-5 text-blue-600" />
+              Novo Atendimento
+            </Button>
+            <Button className="w-full justify-start h-12" variant="outline">
+              <BarChart3 className="mr-3 h-5 w-5 text-green-600" />
+              Relatórios
             </Button>
           </CardContent>
         </Card>
       </div>
-
-      {/* System Status */}
-      <Card className="border-green-200 bg-green-50">
-        <CardHeader>
-          <CardTitle className="flex items-center text-green-800">
-            <Activity className="mr-2 h-5 w-5" />
-            Status do Sistema
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center">
-              <Badge className="bg-green-500 text-white mb-2">✓ Triagem</Badge>
-              <p className="text-sm text-gray-600">Funcionando</p>
-            </div>
-            <div className="text-center">
-              <Badge className="bg-green-500 text-white mb-2">✓ Atendimento</Badge>
-              <p className="text-sm text-gray-600">Funcionando</p>
-            </div>
-            <div className="text-center">
-              <Badge className="bg-green-500 text-white mb-2">✓ Pacientes</Badge>
-              <p className="text-sm text-gray-600">Funcionando</p>
-            </div>
-            <div className="text-center">
-              <Badge className="bg-green-500 text-white mb-2">✓ Profissionais</Badge>
-              <p className="text-sm text-gray-600">Funcionando</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };
