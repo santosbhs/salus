@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, User, Search, Plus, Edit, Eye, Phone, Mail, Calendar, Trash2 } from 'lucide-react';
+import { ArrowLeft, User, Search, Plus, Edit, Eye, Phone, Mail, Calendar, Trash2, Database } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -19,7 +18,7 @@ const PatientManagement = ({ onBack }) => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [convenioFilter, setConvenioFilter] = useState('todos');
   const [statusFilter, setStatusFilter] = useState('ativo');
-  const { getPatients, deletePatient, loading } = usePatients();
+  const { getPatients, deletePatient, deleteAllPatients, loading } = usePatients();
 
   useEffect(() => {
     loadPatients();
@@ -47,6 +46,14 @@ const PatientManagement = ({ onBack }) => {
   const handleDeletePatient = async (patientId: string) => {
     console.log('Excluindo paciente:', patientId);
     const success = await deletePatient(patientId);
+    if (success) {
+      await loadPatients();
+    }
+  };
+
+  const handleClearDatabase = async () => {
+    console.log('Limpando base de dados...');
+    const success = await deleteAllPatients();
     if (success) {
       await loadPatients();
     }
@@ -108,13 +115,45 @@ const PatientManagement = ({ onBack }) => {
             </div>
           </div>
 
-          <Button 
-            onClick={() => setShowForm(true)}
-            className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Novo Paciente
-          </Button>
+          <div className="flex space-x-3">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button 
+                  variant="destructive"
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  <Database className="mr-2 h-4 w-4" />
+                  Limpar Base de Dados
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Confirmar limpeza da base de dados</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Tem certeza que deseja apagar todos os pacientes? Esta ação não pode ser desfeita.
+                    Todos os {patients.length} pacientes cadastrados serão removidos permanentemente.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction 
+                    onClick={handleClearDatabase}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    Confirmar Limpeza
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            
+            <Button 
+              onClick={() => setShowForm(true)}
+              className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Novo Paciente
+            </Button>
+          </div>
         </div>
 
         {/* Filtros e Busca */}
