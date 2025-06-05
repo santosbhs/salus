@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, User, Stethoscope, FileText, Save, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,6 +12,7 @@ import { useProfessionals, Professional } from '@/hooks/useProfessionals';
 import { useConsultations } from '@/hooks/useConsultations';
 import { useToast } from '@/hooks/use-toast';
 import MedicalPrescription from '@/components/MedicalPrescription';
+import MedicalCertificate from '@/components/MedicalCertificate';
 
 const NovoAtendimento = ({ onBack }) => {
   const [pacienteSelecionado, setPacienteSelecionado] = useState('');
@@ -21,7 +21,6 @@ const NovoAtendimento = ({ onBack }) => {
   const [objetivo, setObjetivo] = useState('');
   const [avaliacao, setAvaliacao] = useState('');
   const [plano, setPlano] = useState('');
-  const [atestados, setAtestados] = useState('');
   const [relatorioTitulo, setRelatorioTitulo] = useState('');
   const [relatorioConteudo, setRelatorioConteudo] = useState('');
   const [salvando, setSalvando] = useState(false);
@@ -51,31 +50,6 @@ const NovoAtendimento = ({ onBack }) => {
     loadData();
   }, []);
 
-  const preencherAtestadoAutomatico = () => {
-    const atestadoModelo = `ATESTADO MÉDICO
-
-Atesto para os devidos fins que o(a) Sr(a). ${patients.find(p => p.id === pacienteSelecionado)?.nome || '[Nome do Paciente]'}, portador(a) do CPF ${patients.find(p => p.id === pacienteSelecionado)?.cpf || '[CPF]'}, esteve sob meus cuidados médicos no dia ${new Date().toLocaleDateString('pt-BR')}.
-
-Diagnóstico: [Inserir diagnóstico]
-
-Recomendo afastamento de suas atividades habituais por [X] dias, a partir de ${new Date().toLocaleDateString('pt-BR')}.
-
-Por ser verdade, firmo o presente atestado.
-
-${new Date().toLocaleDateString('pt-BR')}
-
-_________________________________
-Dr(a). ${professionals.find(p => p.id === profissionalSelecionado)?.nome || '[Nome do Profissional]'}
-${professionals.find(p => p.id === profissionalSelecionado)?.especialidade || '[Especialidade]'}
-${professionals.find(p => p.id === profissionalSelecionado)?.registro || '[Registro Profissional]'}`;
-    
-    setAtestados(atestadoModelo);
-    toast({
-      title: "Modelo de atestado inserido",
-      description: "Edite conforme necessário.",
-    });
-  };
-
   const handleSalvar = async () => {
     if (!pacienteSelecionado || !profissionalSelecionado) {
       toast({
@@ -101,7 +75,7 @@ ${professionals.find(p => p.id === profissionalSelecionado)?.registro || '[Regis
       plano: plano || null,
       receitas: null, // Will be handled by MedicalPrescription component
       exames: null,
-      atestados: atestados || null,
+      atestados: null, // Will be handled by MedicalCertificate component
       relatorio: relatorioCompleto
     };
 
@@ -117,7 +91,6 @@ ${professionals.find(p => p.id === profissionalSelecionado)?.registro || '[Regis
       setObjetivo('');
       setAvaliacao('');
       setPlano('');
-      setAtestados('');
       setRelatorioTitulo('');
       setRelatorioConteudo('');
     }
@@ -130,6 +103,14 @@ ${professionals.find(p => p.id === profissionalSelecionado)?.registro || '[Regis
     toast({
       title: "Receita salva",
       description: "A receita foi adicionada ao atendimento.",
+    });
+  };
+
+  const handleCertificateSave = (certificate) => {
+    console.log('Atestado salvo:', certificate);
+    toast({
+      title: "Atestado gerado",
+      description: "O atestado foi criado com sucesso.",
     });
   };
 
@@ -324,27 +305,17 @@ ${professionals.find(p => p.id === profissionalSelecionado)?.registro || '[Regis
                     )}
                   </TabsContent>
 
-                  <TabsContent value="atestados" className="space-y-4 mt-6">
-                    <div className="flex justify-between items-center">
-                      <Label htmlFor="atestados">Atestados Médicos</Label>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={preencherAtestadoAutomatico}
-                        disabled={!pacienteSelecionado || !profissionalSelecionado}
-                      >
-                        Inserir Modelo
-                      </Button>
-                    </div>
-                    <Textarea
-                      id="atestados"
-                      value={atestados}
-                      onChange={(e) => setAtestados(e.target.value)}
-                      placeholder="Digite o atestado médico..."
-                      className="mt-1"
-                      rows={12}
-                    />
+                  <TabsContent value="atestados" className="mt-6">
+                    {pacienteSelecionadoObj ? (
+                      <MedicalCertificate 
+                        onSave={handleCertificateSave}
+                        patientName={pacienteSelecionadoObj.nome}
+                      />
+                    ) : (
+                      <div className="text-center py-8 text-gray-500">
+                        <p>Selecione um paciente para criar atestados</p>
+                      </div>
+                    )}
                   </TabsContent>
 
                   <TabsContent value="relatorios" className="space-y-4 mt-6">
