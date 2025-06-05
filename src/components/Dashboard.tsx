@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Calendar, Users, Clock, FileText, BarChart3, Activity, Plus, Search, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,8 +21,7 @@ const Dashboard = ({ onNavigate }) => {
       value: '8',
       icon: Users,
       color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
-      action: () => onNavigate('appointments')
+      bgColor: 'bg-blue-50'
     },
     {
       title: 'Próxima Consulta',
@@ -31,8 +29,7 @@ const Dashboard = ({ onNavigate }) => {
       subtitle: 'Maria Silva',
       icon: Clock,
       color: 'text-orange-600',
-      bgColor: 'bg-orange-50',
-      action: () => onNavigate('appointments')
+      bgColor: 'bg-orange-50'
     },
     {
       title: 'Atendimentos',
@@ -40,8 +37,7 @@ const Dashboard = ({ onNavigate }) => {
       subtitle: 'Este mês',
       icon: Activity,
       color: 'text-green-600',
-      bgColor: 'bg-green-50',
-      action: () => onNavigate('novo-atendimento')
+      bgColor: 'bg-green-50'
     },
     {
       title: 'Pendências',
@@ -49,8 +45,7 @@ const Dashboard = ({ onNavigate }) => {
       subtitle: 'Retornos',
       icon: AlertCircle,
       color: 'text-red-600',
-      bgColor: 'bg-red-50',
-      action: () => onNavigate('patients')
+      bgColor: 'bg-red-50'
     },
   ];
 
@@ -119,16 +114,12 @@ const Dashboard = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* Quick Stats */}
+      {/* Quick Stats - No click functionality */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <Card 
-              key={index} 
-              className="hover:shadow-lg transition-all duration-300 cursor-pointer"
-              onClick={stat.action}
-            >
+            <Card key={index} className="hover:shadow-lg transition-all duration-300">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-600">
                   {stat.title}
