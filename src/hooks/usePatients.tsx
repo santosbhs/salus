@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
@@ -302,12 +301,60 @@ export const usePatients = () => {
     }
   };
 
+  const deleteAllPatients = async (): Promise<boolean> => {
+    try {
+      setLoading(true);
+      
+      if (!user) {
+        console.error('Usuário não autenticado - não é possível excluir pacientes');
+        toast({
+          title: 'Erro de autenticação',
+          description: 'Você precisa estar logado para excluir pacientes',
+          variant: 'destructive',
+        });
+        return false;
+      }
+      
+      console.log('Excluindo todos os pacientes para usuário:', user.id);
+      
+      const { error } = await supabase
+        .from('patients')
+        .delete()
+        .eq('user_id', user.id);
+      
+      if (error) {
+        console.error('Erro do Supabase ao excluir todos os pacientes:', error);
+        throw error;
+      }
+      
+      console.log('Todos os pacientes foram excluídos com sucesso');
+      
+      toast({
+        title: 'Pacientes removidos com sucesso',
+        description: 'Todos os pacientes foram removidos do sistema.',
+      });
+      
+      return true;
+    } catch (error: any) {
+      console.error('Erro ao excluir todos os pacientes:', error);
+      toast({
+        title: 'Erro ao remover pacientes',
+        description: error.message || 'Não foi possível remover os pacientes',
+        variant: 'destructive',
+      });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     loading,
     getPatients,
     getPatientById,
     createPatient,
     updatePatient,
-    deletePatient
+    deletePatient,
+    deleteAllPatients
   };
 };
