@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Calendar, Users, Clock, FileText, BarChart3, Activity, Plus, Search, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,22 +19,22 @@ const Dashboard = ({ onNavigate }) => {
   const stats = [
     {
       title: 'Pacientes Hoje',
-      value: '8',
+      value: '0',
       icon: Users,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50'
     },
     {
       title: 'Próxima Consulta',
-      value: '14:30',
-      subtitle: 'Maria Silva',
+      value: '--:--',
+      subtitle: 'Nenhuma agendada',
       icon: Clock,
       color: 'text-orange-600',
       bgColor: 'bg-orange-50'
     },
     {
       title: 'Atendimentos',
-      value: '89',
+      value: '0',
       subtitle: 'Este mês',
       icon: Activity,
       color: 'text-green-600',
@@ -41,20 +42,12 @@ const Dashboard = ({ onNavigate }) => {
     },
     {
       title: 'Pendências',
-      value: '3',
+      value: '0',
       subtitle: 'Retornos',
       icon: AlertCircle,
       color: 'text-red-600',
       bgColor: 'bg-red-50'
     },
-  ];
-
-  const todaySchedule = [
-    { time: '09:00', patient: 'Maria Silva', type: 'Consulta', status: 'Em andamento', urgent: false },
-    { time: '10:30', patient: 'Pedro Santos', type: 'Retorno', status: 'Aguardando', urgent: false },
-    { time: '11:00', patient: 'Ana Costa', type: 'Urgência', status: 'Atrasado', urgent: true },
-    { time: '14:00', patient: 'José Oliveira', type: 'Consulta', status: 'Confirmado', urgent: false },
-    { time: '15:30', patient: 'Carla Lima', type: 'Exame', status: 'Confirmado', urgent: false },
   ];
 
   const quickActions = [
@@ -88,16 +81,6 @@ const Dashboard = ({ onNavigate }) => {
     },
   ];
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Em andamento': return 'bg-blue-100 text-blue-800';
-      case 'Atrasado': return 'bg-red-100 text-red-800';
-      case 'Aguardando': return 'bg-yellow-100 text-yellow-800';
-      case 'Confirmado': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -108,13 +91,13 @@ const Dashboard = ({ onNavigate }) => {
             <p className="text-blue-100">Terça-feira, 05 de Junho de 2025</p>
           </div>
           <div className="text-right">
-            <p className="text-sm text-blue-200">Próxima consulta em</p>
-            <p className="text-xl font-bold">25 min</p>
+            <p className="text-sm text-blue-200">Próxima consulta</p>
+            <p className="text-xl font-bold">Não agendada</p>
           </div>
         </div>
       </div>
 
-      {/* Quick Stats - No click functionality */}
+      {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, index) => {
           const Icon = stat.icon;
@@ -161,45 +144,31 @@ const Dashboard = ({ onNavigate }) => {
 
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Today's Schedule */}
+        {/* Today's Schedule - Empty State */}
         <Card className="lg:col-span-2 shadow-lg">
           <CardHeader>
             <CardTitle className="text-xl text-blue-800 flex items-center">
               <Calendar className="mr-2 h-5 w-5" />
               Agenda de Hoje
             </CardTitle>
-            <CardDescription>5 consultas agendadas</CardDescription>
+            <CardDescription>0 consultas agendadas</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {todaySchedule.map((appointment, index) => (
-                <div 
-                  key={index} 
-                  className={`flex items-center justify-between p-3 rounded-lg border-l-4 ${
-                    appointment.urgent ? 'border-l-red-500 bg-red-50' : 'border-l-blue-500 bg-blue-50'
-                  }`}
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className="text-sm font-bold text-blue-700 bg-white px-2 py-1 rounded min-w-[50px]">
-                      {appointment.time}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900">{appointment.patient}</p>
-                      <p className="text-sm text-gray-600">{appointment.type}</p>
-                    </div>
-                  </div>
-                  <Badge className={`text-xs ${getStatusColor(appointment.status)}`}>
-                    {appointment.status}
-                  </Badge>
-                </div>
-              ))}
+            <div className="text-center py-12">
+              <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Nenhuma consulta agendada para hoje
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Comece criando agendamentos para seus pacientes
+              </p>
+              <Button 
+                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800" 
+                onClick={() => onNavigate('appointments')}
+              >
+                Criar Primeiro Agendamento
+              </Button>
             </div>
-            <Button 
-              className="w-full mt-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800" 
-              onClick={() => onNavigate('appointments')}
-            >
-              Ver Agenda Completa
-            </Button>
           </CardContent>
         </Card>
 
@@ -210,19 +179,9 @@ const Dashboard = ({ onNavigate }) => {
             <CardHeader>
               <CardTitle className="text-lg text-blue-800">Atividade Recente</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center space-x-3 text-sm">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-gray-600">Consulta finalizada - Maria Silva</span>
-              </div>
-              <div className="flex items-center space-x-3 text-sm">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <span className="text-gray-600">Novo paciente cadastrado</span>
-              </div>
-              <div className="flex items-center space-x-3 text-sm">
-                <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                <span className="text-gray-600">Receita prescrita - Pedro Santos</span>
-              </div>
+            <CardContent className="text-center py-8">
+              <Activity className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+              <p className="text-gray-600 text-sm">Nenhuma atividade recente</p>
             </CardContent>
           </Card>
 

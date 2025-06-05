@@ -19,7 +19,7 @@ const ProfessionalDashboard = ({ onNavigate }) => {
   const professionalStats = [
     {
       title: 'Pacientes Cadastrados',
-      value: '145',
+      value: '0',
       limit: '200',
       icon: Users,
       color: 'text-blue-700',
@@ -27,7 +27,7 @@ const ProfessionalDashboard = ({ onNavigate }) => {
     },
     {
       title: 'Agendamentos Hoje',
-      value: '24',
+      value: '0',
       limit: '50',
       icon: Calendar,
       color: 'text-blue-700',
@@ -35,7 +35,7 @@ const ProfessionalDashboard = ({ onNavigate }) => {
     },
     {
       title: 'Consultas do Mês',
-      value: '180',
+      value: '0',
       limit: '300',
       icon: Activity,
       color: 'text-blue-600',
@@ -43,20 +43,12 @@ const ProfessionalDashboard = ({ onNavigate }) => {
     },
     {
       title: 'Equipe de Profissionais',
-      value: '3',
+      value: '0',
       limit: '5',
       icon: Stethoscope,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
     },
-  ];
-
-  const upcomingAppointments = [
-    { time: '09:00', patient: 'Maria Silva', doctor: 'Dr. João', type: 'Consulta', status: 'confirmado' },
-    { time: '10:30', patient: 'Pedro Santos', doctor: 'Dra. Ana', type: 'Retorno', status: 'confirmado' },
-    { time: '11:00', patient: 'Ana Costa', doctor: 'Dr. Carlos', type: 'Exame', status: 'pendente' },
-    { time: '14:00', patient: 'José Oliveira', doctor: 'Dr. João', type: 'Consulta', status: 'confirmado' },
-    { time: '15:30', patient: 'Lucia Santos', doctor: 'Dra. Ana', type: 'Retorno', status: 'confirmado' },
   ];
 
   const professionalFeatures = [
@@ -222,37 +214,28 @@ const ProfessionalDashboard = ({ onNavigate }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Agenda Detalhada */}
+        {/* Agenda Vazia */}
         <Card className="border-blue-200 shadow-lg">
           <CardHeader>
             <CardTitle className="text-xl text-blue-800 flex items-center">
               <Calendar className="mr-2 h-5 w-5" />
               Agenda de Hoje
             </CardTitle>
-            <CardDescription>Agendamentos com profissionais responsáveis</CardDescription>
+            <CardDescription>Nenhum agendamento para hoje</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {upcomingAppointments.map((appointment, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-100">
-                  <div className="flex items-center space-x-3">
-                    <div className="text-sm font-bold text-blue-700 bg-white px-2 py-1 rounded">
-                      {appointment.time}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900">{appointment.patient}</p>
-                      <p className="text-sm text-gray-600">{appointment.doctor} • {appointment.type}</p>
-                    </div>
-                  </div>
-                  <Badge variant={appointment.status === 'confirmado' ? 'default' : 'secondary'} className="text-xs">
-                    {appointment.status === 'confirmado' ? 'Confirmado' : 'Pendente'}
-                  </Badge>
-                </div>
-              ))}
+            <div className="text-center py-12">
+              <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Agenda vazia
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Comece agendando consultas para seus pacientes
+              </p>
+              <Button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800" onClick={() => onNavigate('appointments')}>
+                Criar Agendamento
+              </Button>
             </div>
-            <Button className="w-full mt-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800" onClick={() => onNavigate('appointments')}>
-              Ver Agenda Completa
-            </Button>
           </CardContent>
         </Card>
 
