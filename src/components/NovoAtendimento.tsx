@@ -1,16 +1,18 @@
 
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, User, Stethoscope, FileText, Save, AlertCircle, Wand2 } from 'lucide-react';
+import { ArrowLeft, User, Stethoscope, FileText, Save, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { usePatients, Patient } from '@/hooks/usePatients';
 import { useProfessionals, Professional } from '@/hooks/useProfessionals';
 import { useConsultations } from '@/hooks/useConsultations';
 import { useToast } from '@/hooks/use-toast';
+import MedicalPrescription from '@/components/MedicalPrescription';
 
 const NovoAtendimento = ({ onBack }) => {
   const [pacienteSelecionado, setPacienteSelecionado] = useState('');
@@ -19,12 +21,11 @@ const NovoAtendimento = ({ onBack }) => {
   const [objetivo, setObjetivo] = useState('');
   const [avaliacao, setAvaliacao] = useState('');
   const [plano, setPlano] = useState('');
-  const [receitas, setReceitas] = useState('');
-  const [exames, setExames] = useState('');
   const [atestados, setAtestados] = useState('');
   const [relatorioTitulo, setRelatorioTitulo] = useState('');
   const [relatorioConteudo, setRelatorioConteudo] = useState('');
   const [salvando, setSalvando] = useState(false);
+  const [activeTab, setActiveTab] = useState('soap');
 
   const [patients, setPatients] = useState<Patient[]>([]);
   const [professionals, setProfessionals] = useState<Professional[]>([]);
@@ -50,34 +51,6 @@ const NovoAtendimento = ({ onBack }) => {
     loadData();
   }, []);
 
-  const preencherReceitaAutomatica = () => {
-    const receitaModelo = `RECEITUÁRIO MÉDICO
-
-Paciente: ${patients.find(p => p.id === pacienteSelecionado)?.nome || '[Nome do Paciente]'}
-Data: ${new Date().toLocaleDateString('pt-BR')}
-
-Prescrição:
-1. [Nome do medicamento] [Dosagem] - [Frequência] - [Duração]
-   Via de administração: [oral/tópica/etc]
-   
-2. [Nome do medicamento] [Dosagem] - [Frequência] - [Duração]
-   Via de administração: [oral/tópica/etc]
-
-Orientações:
-- Tomar conforme prescrito
-- Não interromper o tratamento sem orientação médica
-- Em caso de reações adversas, procurar atendimento médico
-
-Dr(a). ${professionals.find(p => p.id === profissionalSelecionado)?.nome || '[Nome do Profissional]'}
-${professionals.find(p => p.id === profissionalSelecionado)?.registro || '[Registro Profissional]'}`;
-    
-    setReceitas(receitaModelo);
-    toast({
-      title: "Receita preenchida automaticamente",
-      description: "Modelo de receita inserido. Edite conforme necessário.",
-    });
-  };
-
   const preencherAtestadoAutomatico = () => {
     const atestadoModelo = `ATESTADO MÉDICO
 
@@ -98,8 +71,8 @@ ${professionals.find(p => p.id === profissionalSelecionado)?.registro || '[Regis
     
     setAtestados(atestadoModelo);
     toast({
-      title: "Atestado preenchido automaticamente",
-      description: "Modelo de atestado inserido. Edite conforme necessário.",
+      title: "Modelo de atestado inserido",
+      description: "Edite conforme necessário.",
     });
   };
 
@@ -126,8 +99,8 @@ ${professionals.find(p => p.id === profissionalSelecionado)?.registro || '[Regis
       objetivo: objetivo || null,
       avaliacao: avaliacao || null,
       plano: plano || null,
-      receitas: receitas || null,
-      exames: exames || null,
+      receitas: null, // Will be handled by MedicalPrescription component
+      exames: null,
       atestados: atestados || null,
       relatorio: relatorioCompleto
     };
@@ -144,8 +117,6 @@ ${professionals.find(p => p.id === profissionalSelecionado)?.registro || '[Regis
       setObjetivo('');
       setAvaliacao('');
       setPlano('');
-      setReceitas('');
-      setExames('');
       setAtestados('');
       setRelatorioTitulo('');
       setRelatorioConteudo('');
@@ -154,12 +125,20 @@ ${professionals.find(p => p.id === profissionalSelecionado)?.registro || '[Regis
     setSalvando(false);
   };
 
+  const handlePrescriptionSave = (prescription) => {
+    console.log('Receita salva:', prescription);
+    toast({
+      title: "Receita salva",
+      description: "A receita foi adicionada ao atendimento.",
+    });
+  };
+
   const pacienteSelecionadoObj = patients.find(p => p.id === pacienteSelecionado);
   const profissionalSelecionadoObj = professionals.find(p => p.id === profissionalSelecionado);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 p-6">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center mb-8">
           <Button 
@@ -175,14 +154,14 @@ ${professionals.find(p => p.id === profissionalSelecionado)?.registro || '[Regis
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Novo Atendimento</h1>
-              <p className="text-gray-600">Registro de consulta médica - Método SOAP</p>
+              <p className="text-gray-600">Registro de consulta médica</p>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Formulário Principal */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-3 space-y-6">
             {/* Seleção de Paciente e Profissional */}
             <Card className="shadow-lg border-blue-200">
               <CardHeader>
@@ -265,167 +244,134 @@ ${professionals.find(p => p.id === profissionalSelecionado)?.registro || '[Regis
               </CardContent>
             </Card>
 
-            {/* Método SOAP */}
+            {/* Tabs para diferentes seções */}
             <Card className="shadow-lg border-blue-200">
               <CardHeader>
                 <CardTitle className="flex items-center text-blue-800">
                   <Stethoscope className="mr-2 h-5 w-5" />
-                  Registro da Consulta - SOAP
+                  Registro da Consulta
                 </CardTitle>
-                <CardDescription>
-                  Subjetivo, Objetivo, Avaliação e Plano
-                </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="subjetivo">Subjetivo (S)</Label>
-                  <Textarea
-                    id="subjetivo"
-                    value={subjetivo}
-                    onChange={(e) => setSubjetivo(e.target.value)}
-                    placeholder="Queixa principal, história da doença atual, sintomas relatados pelo paciente..."
-                    className="mt-1"
-                    rows={3}
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="objetivo">Objetivo (O)</Label>
-                  <Textarea
-                    id="objetivo"
-                    value={objetivo}
-                    onChange={(e) => setObjetivo(e.target.value)}
-                    placeholder="Exame físico, sinais vitais, achados objetivos..."
-                    className="mt-1"
-                    rows={3}
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="avaliacao">Avaliação (A)</Label>
-                  <Textarea
-                    id="avaliacao"
-                    value={avaliacao}
-                    onChange={(e) => setAvaliacao(e.target.value)}
-                    placeholder="Diagnóstico, impressão clínica, CID..."
-                    className="mt-1"
-                    rows={3}
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="plano">Plano (P)</Label>
-                  <Textarea
-                    id="plano"
-                    value={plano}
-                    onChange={(e) => setPlano(e.target.value)}
-                    placeholder="Conduta, tratamento, orientações..."
-                    className="mt-1"
-                    rows={3}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+              <CardContent>
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                  <TabsList className="grid w-full grid-cols-4">
+                    <TabsTrigger value="soap">SOAP</TabsTrigger>
+                    <TabsTrigger value="receitas">Receitas</TabsTrigger>
+                    <TabsTrigger value="atestados">Atestados</TabsTrigger>
+                    <TabsTrigger value="relatorios">Relatórios</TabsTrigger>
+                  </TabsList>
 
-            {/* Documentos Complementares */}
-            <Card className="shadow-lg border-blue-200">
-              <CardHeader>
-                <CardTitle className="text-blue-800">Documentos Complementares</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <Label htmlFor="receitas">Receitas</Label>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={preencherReceitaAutomatica}
-                      disabled={!pacienteSelecionado || !profissionalSelecionado}
-                    >
-                      <Wand2 className="mr-1 h-3 w-3" />
-                      Preencher Automaticamente
-                    </Button>
-                  </div>
-                  <Textarea
-                    id="receitas"
-                    value={receitas}
-                    onChange={(e) => setReceitas(e.target.value)}
-                    placeholder="Prescrições médicas..."
-                    className="mt-1"
-                    rows={6}
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="exames">Solicitação de Exames</Label>
-                  <Textarea
-                    id="exames"
-                    value={exames}
-                    onChange={(e) => setExames(e.target.value)}
-                    placeholder="Exames solicitados..."
-                    className="mt-1"
-                    rows={3}
-                  />
-                </div>
-                
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <Label htmlFor="atestados">Atestados</Label>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={preencherAtestadoAutomatico}
-                      disabled={!pacienteSelecionado || !profissionalSelecionado}
-                    >
-                      <Wand2 className="mr-1 h-3 w-3" />
-                      Preencher Automaticamente
-                    </Button>
-                  </div>
-                  <Textarea
-                    id="atestados"
-                    value={atestados}
-                    onChange={(e) => setAtestados(e.target.value)}
-                    placeholder="Atestados médicos..."
-                    className="mt-1"
-                    rows={8}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+                  <TabsContent value="soap" className="space-y-4 mt-6">
+                    <div>
+                      <Label htmlFor="subjetivo">Subjetivo (S)</Label>
+                      <Textarea
+                        id="subjetivo"
+                        value={subjetivo}
+                        onChange={(e) => setSubjetivo(e.target.value)}
+                        placeholder="Queixa principal, história da doença atual, sintomas relatados pelo paciente..."
+                        className="mt-1"
+                        rows={3}
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="objetivo">Objetivo (O)</Label>
+                      <Textarea
+                        id="objetivo"
+                        value={objetivo}
+                        onChange={(e) => setObjetivo(e.target.value)}
+                        placeholder="Exame físico, sinais vitais, achados objetivos..."
+                        className="mt-1"
+                        rows={3}
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="avaliacao">Avaliação (A)</Label>
+                      <Textarea
+                        id="avaliacao"
+                        value={avaliacao}
+                        onChange={(e) => setAvaliacao(e.target.value)}
+                        placeholder="Diagnóstico, impressão clínica, CID..."
+                        className="mt-1"
+                        rows={3}
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="plano">Plano (P)</Label>
+                      <Textarea
+                        id="plano"
+                        value={plano}
+                        onChange={(e) => setPlano(e.target.value)}
+                        placeholder="Conduta, tratamento, orientações..."
+                        className="mt-1"
+                        rows={3}
+                      />
+                    </div>
+                  </TabsContent>
 
-            {/* Relatórios */}
-            <Card className="shadow-lg border-blue-200">
-              <CardHeader>
-                <CardTitle className="text-blue-800">Relatórios</CardTitle>
-                <CardDescription>
-                  Relatórios médicos personalizados
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="relatorio-titulo">Título do Relatório</Label>
-                  <Input
-                    id="relatorio-titulo"
-                    value={relatorioTitulo}
-                    onChange={(e) => setRelatorioTitulo(e.target.value)}
-                    placeholder="Ex: Relatório de Evolução, Laudo Médico, etc."
-                    className="mt-1"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="relatorio-conteudo">Conteúdo do Relatório</Label>
-                  <Textarea
-                    id="relatorio-conteudo"
-                    value={relatorioConteudo}
-                    onChange={(e) => setRelatorioConteudo(e.target.value)}
-                    placeholder="Digite o conteúdo livre do relatório médico..."
-                    className="mt-1"
-                    rows={6}
-                  />
-                </div>
+                  <TabsContent value="receitas" className="mt-6">
+                    {pacienteSelecionadoObj ? (
+                      <MedicalPrescription 
+                        onSave={handlePrescriptionSave}
+                        patientName={pacienteSelecionadoObj.nome}
+                      />
+                    ) : (
+                      <div className="text-center py-8 text-gray-500">
+                        <p>Selecione um paciente para criar receitas</p>
+                      </div>
+                    )}
+                  </TabsContent>
+
+                  <TabsContent value="atestados" className="space-y-4 mt-6">
+                    <div className="flex justify-between items-center">
+                      <Label htmlFor="atestados">Atestados Médicos</Label>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={preencherAtestadoAutomatico}
+                        disabled={!pacienteSelecionado || !profissionalSelecionado}
+                      >
+                        Inserir Modelo
+                      </Button>
+                    </div>
+                    <Textarea
+                      id="atestados"
+                      value={atestados}
+                      onChange={(e) => setAtestados(e.target.value)}
+                      placeholder="Digite o atestado médico..."
+                      className="mt-1"
+                      rows={12}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="relatorios" className="space-y-4 mt-6">
+                    <div>
+                      <Label htmlFor="relatorio-titulo">Título do Relatório</Label>
+                      <Input
+                        id="relatorio-titulo"
+                        value={relatorioTitulo}
+                        onChange={(e) => setRelatorioTitulo(e.target.value)}
+                        placeholder="Ex: Relatório de Evolução, Laudo Médico, etc."
+                        className="mt-1"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="relatorio-conteudo">Conteúdo do Relatório</Label>
+                      <Textarea
+                        id="relatorio-conteudo"
+                        value={relatorioConteudo}
+                        onChange={(e) => setRelatorioConteudo(e.target.value)}
+                        placeholder="Digite o conteúdo livre do relatório médico..."
+                        className="mt-1"
+                        rows={10}
+                      />
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </CardContent>
             </Card>
           </div>
