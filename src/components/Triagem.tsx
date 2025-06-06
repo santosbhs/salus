@@ -7,10 +7,10 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { usePatients, Patient } from '@/hooks/usePatients';
 import { useTriagem } from '@/hooks/useTriagem';
 import { useToast } from '@/hooks/use-toast';
+import PatientSearchInput from '@/components/PatientSearchInput';
 
 const Triagem = ({ onBack }) => {
   const [pacienteSelecionado, setPacienteSelecionado] = useState('');
@@ -66,7 +66,7 @@ const Triagem = ({ onBack }) => {
     return () => {
       isMounted = false;
     };
-  }, []); // Removido dependencies que causavam loops
+  }, []);
 
   const classificacoesManchester = [
     { nivel: 'vermelho', nome: 'Emergência', tempo: 'Imediato', cor: 'bg-red-500' },
@@ -120,8 +120,6 @@ const Triagem = ({ onBack }) => {
     setSalvando(false);
   };
 
-  const pacienteSelecionadoObj = patients.find(p => p.id === pacienteSelecionado);
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-red-50 p-6">
       <div className="max-w-4xl mx-auto">
@@ -157,45 +155,14 @@ const Triagem = ({ onBack }) => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="paciente">Selecionar Paciente</Label>
-                  {loading ? (
-                    <div className="mt-1 p-2 text-gray-500">Carregando pacientes...</div>
-                  ) : (
-                    <Select value={pacienteSelecionado} onValueChange={setPacienteSelecionado}>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder={
-                          patients.length === 0 
-                            ? "Nenhum paciente cadastrado" 
-                            : "Selecione um paciente cadastrado"
-                        } />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {patients.length === 0 ? (
-                          <SelectItem value="no-patients" disabled>
-                            Nenhum paciente cadastrado
-                          </SelectItem>
-                        ) : (
-                          patients.map((patient) => (
-                            <SelectItem key={patient.id} value={patient.id}>
-                              {patient.nome} - {patient.idade} anos - {patient.telefone}
-                            </SelectItem>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
-                  )}
-                </div>
-                
-                {pacienteSelecionadoObj && (
-                  <div className="p-4 bg-red-50 rounded-lg">
-                    <h4 className="font-semibold text-red-800">Informações do Paciente</h4>
-                    <p><strong>Nome:</strong> {pacienteSelecionadoObj.nome}</p>
-                    <p><strong>Idade:</strong> {pacienteSelecionadoObj.idade} anos</p>
-                    <p><strong>Telefone:</strong> {pacienteSelecionadoObj.telefone}</p>
-                    <p><strong>Convênio:</strong> {pacienteSelecionadoObj.convenio || 'Particular'}</p>
-                  </div>
-                )}
+                <PatientSearchInput
+                  patients={patients}
+                  selectedPatient={pacienteSelecionado}
+                  onSelectPatient={setPacienteSelecionado}
+                  loading={loading}
+                  label="Paciente"
+                  placeholder="Digite o nome, telefone ou CPF do paciente..."
+                />
                 
                 <div>
                   <Label htmlFor="queixa">Queixa Principal *</Label>

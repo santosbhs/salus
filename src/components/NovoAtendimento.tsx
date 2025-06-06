@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, User, Stethoscope, FileText, Save, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ import { usePatients, Patient } from '@/hooks/usePatients';
 import { useProfessionals, Professional } from '@/hooks/useProfessionals';
 import { useConsultations } from '@/hooks/useConsultations';
 import { useToast } from '@/hooks/use-toast';
+import PatientSearchInput from '@/components/PatientSearchInput';
 import MedicalPrescription from '@/components/MedicalPrescription';
 import MedicalCertificate from '@/components/MedicalCertificate';
 
@@ -28,6 +30,7 @@ const NovoAtendimento = ({ onBack }) => {
 
   const [patients, setPatients] = useState<Patient[]>([]);
   const [professionals, setProfessionals] = useState<Professional[]>([]);
+  const [loadingPatients, setLoadingPatients] = useState(true);
 
   const { getPatients } = usePatients();
   const { getProfessionals } = useProfessionals();
@@ -37,14 +40,24 @@ const NovoAtendimento = ({ onBack }) => {
   useEffect(() => {
     const loadData = async () => {
       console.log('Carregando pacientes e profissionais...');
-      const patientsData = await getPatients();
-      const professionalsData = await getProfessionals();
+      setLoadingPatients(true);
       
-      console.log('Pacientes encontrados:', patientsData);
-      console.log('Profissionais encontrados:', professionalsData);
-      
-      setPatients(patientsData);
-      setProfessionals(professionalsData);
+      try {
+        const [patientsData, professionalsData] = await Promise.all([
+          getPatients(),
+          getProfessionals()
+        ]);
+        
+        console.log('Pacientes encontrados:', patientsData);
+        console.log('Profissionais encontrados:', professionalsData);
+        
+        setPatients(patientsData);
+        setProfessionals(professionalsData);
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+      } finally {
+        setLoadingPatients(false);
+      }
     };
     
     loadData();
@@ -153,27 +166,14 @@ const NovoAtendimento = ({ onBack }) => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="paciente">Paciente *</Label>
-                    <Select value={pacienteSelecionado} onValueChange={setPacienteSelecionado}>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder="Selecione um paciente" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {patients.length === 0 ? (
-                          <SelectItem value="no-patients" disabled>
-                            Nenhum paciente cadastrado
-                          </SelectItem>
-                        ) : (
-                          patients.map((patient) => (
-                            <SelectItem key={patient.id} value={patient.id}>
-                              {patient.nome} - {patient.idade} anos - {patient.telefone}
-                            </SelectItem>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <PatientSearchInput
+                    patients={patients}
+                    selectedPatient={pacienteSelecionado}
+                    onSelectPatient={setPacienteSelecionado}
+                    loading={loadingPatients}
+                    label="Paciente"
+                    placeholder="Digite o nome, telefone ou CPF do paciente..."
+                  />
                   
                   <div>
                     <Label htmlFor="profissional">Profissional *</Label>
@@ -197,19 +197,6 @@ const NovoAtendimento = ({ onBack }) => {
                     </Select>
                   </div>
                 </div>
-                
-                {/* Informações do Paciente Selecionado */}
-                {pacienteSelecionadoObj && (
-                  <div className="p-4 bg-blue-50 rounded-lg">
-                    <h4 className="font-semibold text-blue-800 mb-2">Informações do Paciente</h4>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <p><strong>Nome:</strong> {pacienteSelecionadoObj.nome}</p>
-                      <p><strong>Idade:</strong> {pacienteSelecionadoObj.idade} anos</p>
-                      <p><strong>Telefone:</strong> {pacienteSelecionadoObj.telefone}</p>
-                      <p><strong>Convênio:</strong> {pacienteSelecionadoObj.convenio || 'Particular'}</p>
-                    </div>
-                  </div>
-                )}
                 
                 {/* Aviso se não há dados */}
                 {patients.length === 0 && (
