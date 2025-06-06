@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useAuth } from './useAuth';
 import { useToast } from './use-toast';
@@ -25,18 +24,21 @@ export const usePatients = () => {
       const currentUser = user || session?.user;
       
       if (!currentUser) {
-        console.log('DEBUG: Usuário não autenticado para buscar pacientes');
-        console.log('DEBUG: user =', user);
-        console.log('DEBUG: session =', session);
+        console.log('❌ DEBUG: Usuário não autenticado para buscar pacientes');
+        console.log('📊 DEBUG: user =', user);
+        console.log('📊 DEBUG: session =', session);
         return [];
       }
       
-      console.log('DEBUG: Buscando pacientes para usuário:', currentUser.id);
+      console.log('🔍 DEBUG: Buscando pacientes para usuário:', currentUser.id);
+      console.log('🔍 DEBUG: Email do usuário:', currentUser.email);
       const patients = await fetchPatients(currentUser.id);
-      console.log('DEBUG: Pacientes retornados:', patients);
+      console.log('✅ DEBUG: Pacientes retornados:', patients);
+      console.log('📊 DEBUG: Quantidade de pacientes:', patients.length);
       return patients;
     } catch (error: any) {
-      console.error('DEBUG: Erro ao buscar pacientes:', error);
+      console.error('❌ DEBUG: Erro ao buscar pacientes:', error);
+      console.error('❌ DEBUG: Stack do erro:', error.stack);
       toast({
         title: 'Erro ao carregar pacientes',
         description: error.message || 'Não foi possível carregar a lista de pacientes',
@@ -55,9 +57,10 @@ export const usePatients = () => {
       const currentUser = user || session?.user;
       
       if (!currentUser) {
-        console.error('DEBUG: Usuário não autenticado - não é possível criar paciente');
-        console.log('DEBUG: user =', user);
-        console.log('DEBUG: session =', session);
+        console.error('❌ DEBUG: Usuário não autenticado - não é possível criar paciente');
+        console.log('📊 DEBUG: user =', user);
+        console.log('📊 DEBUG: session =', session);
+        console.log('📊 DEBUG: session?.user =', session?.user);
         toast({
           title: 'Erro de autenticação',
           description: 'Você precisa estar logado para cadastrar pacientes',
@@ -66,13 +69,29 @@ export const usePatients = () => {
         return null;
       }
       
-      console.log('DEBUG: Iniciando criação de paciente');
-      console.log('DEBUG: Dados do paciente:', patientData);
-      console.log('DEBUG: ID do usuário:', currentUser.id);
+      console.log('🚀 DEBUG: Iniciando criação de paciente');
+      console.log('📝 DEBUG: Dados do paciente recebidos:', patientData);
+      console.log('👤 DEBUG: ID do usuário autenticado:', currentUser.id);
+      console.log('📧 DEBUG: Email do usuário:', currentUser.email);
       
+      // Validar dados obrigatórios
+      if (!patientData.nome || !patientData.cpf || !patientData.telefone) {
+        console.error('❌ DEBUG: Dados obrigatórios faltando');
+        console.log('📊 DEBUG: Nome:', patientData.nome);
+        console.log('📊 DEBUG: CPF:', patientData.cpf);
+        console.log('📊 DEBUG: Telefone:', patientData.telefone);
+        toast({
+          title: 'Dados incompletos',
+          description: 'Nome, CPF e telefone são obrigatórios',
+          variant: 'destructive',
+        });
+        return null;
+      }
+      
+      console.log('✅ DEBUG: Dados validados, chamando insertPatient...');
       const result = await insertPatient(patientData, currentUser.id);
       
-      console.log('DEBUG: Paciente criado com sucesso:', result);
+      console.log('🎉 DEBUG: Paciente criado com sucesso:', result);
       
       toast({
         title: 'Paciente cadastrado com sucesso!',
@@ -81,11 +100,27 @@ export const usePatients = () => {
       
       return result;
     } catch (error: any) {
-      console.error('DEBUG: Erro ao criar paciente:', error);
-      console.error('DEBUG: Stack trace:', error.stack);
+      console.error('❌ DEBUG: Erro detalhado ao criar paciente:', error);
+      console.error('❌ DEBUG: Tipo do erro:', typeof error);
+      console.error('❌ DEBUG: Error message:', error.message);
+      console.error('❌ DEBUG: Error code:', error.code);
+      console.error('❌ DEBUG: Error details:', error.details);
+      console.error('❌ DEBUG: Error hint:', error.hint);
+      console.error('❌ DEBUG: Stack trace completo:', error.stack);
+      
+      let errorMessage = 'Não foi possível cadastrar o paciente';
+      
+      if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      if (error.code === '23505') {
+        errorMessage = 'Já existe um paciente com este CPF';
+      }
+      
       toast({
         title: 'Erro ao cadastrar paciente',
-        description: error.message || 'Não foi possível cadastrar o paciente',
+        description: errorMessage,
         variant: 'destructive',
       });
       return null;
