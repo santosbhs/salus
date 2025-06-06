@@ -1,10 +1,12 @@
+
 import React from 'react';
 import { Calendar, Users, Clock, FileText, BarChart3, Activity, Stethoscope, UserPlus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-const ProfessionalDashboard = ({ onNavigate }) => {
+const ProfessionalDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
   const handleNavigate = (section) => {
     if (section === 'pacientes') {
       onNavigate('patients');
@@ -70,9 +72,24 @@ const ProfessionalDashboard = ({ onNavigate }) => {
             <p className="text-blue-200 text-sm mt-2">Até 200 pacientes • Até 5 profissionais</p>
           </div>
           <div className="text-right">
-            <Badge className="bg-white text-blue-700 hover:bg-gray-100 text-lg px-4 py-2">
-              Ativo
-            </Badge>
+            <div className="flex items-center space-x-4">
+              <Badge className="bg-white text-blue-700 hover:bg-gray-100 text-lg px-4 py-2">
+                Demonstração
+              </Badge>
+              {/* Seletor de Plano para demonstração */}
+              <div className="bg-white/10 rounded-lg p-2">
+                <Select value={selectedPlan} onValueChange={onPlanChange}>
+                  <SelectTrigger className="w-[180px] bg-transparent border-white/20 text-white">
+                    <SelectValue placeholder="Ver Plano" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="basic">Plano Básico</SelectItem>
+                    <SelectItem value="professional">Plano Profissional</SelectItem>
+                    <SelectItem value="enterprise">Plano Enterprise</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
             <p className="text-blue-100 text-sm mt-2">R$ 197/mês</p>
           </div>
         </div>
