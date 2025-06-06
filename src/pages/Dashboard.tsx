@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { useSubscription } from '@/hooks/useSubscription';
 import Dashboard from '@/components/Dashboard';
 import BasicDashboard from '@/components/BasicDashboard';
 import ProfessionalDashboard from '@/components/ProfessionalDashboard';
@@ -15,9 +14,8 @@ import AuthRequired from '@/components/AuthRequired';
 
 const DashboardPage = () => {
   const [currentView, setCurrentView] = useState('dashboard');
-  const [selectedPlan, setSelectedPlan] = useState('basic'); // Estado para o plano selecionado
+  const [selectedPlan, setSelectedPlan] = useState('basic'); // Para demonstração
   const { user } = useAuth();
-  const { status } = useSubscription();
 
   const handleNavigate = (view: string) => {
     setCurrentView(view);
@@ -29,6 +27,7 @@ const DashboardPage = () => {
 
   const handlePlanChange = (plan: string) => {
     setSelectedPlan(plan);
+    setCurrentView('dashboard'); // Volta para o dashboard quando muda o plano
   };
 
   if (!user) {
@@ -54,16 +53,16 @@ const DashboardPage = () => {
       case 'consultation-history':
         return <ConsultationHistory onBack={handleBack} />;
       default:
-        // Renderizar dashboard baseado no plano selecionado
+        // Renderizar dashboard baseado no plano selecionado para demonstração
         switch (selectedPlan) {
           case 'basic':
-            return <BasicDashboard onNavigate={handleNavigate} />;
+            return <BasicDashboard onNavigate={handleNavigate} selectedPlan={selectedPlan} onPlanChange={handlePlanChange} />;
           case 'professional':
-            return <ProfessionalDashboard onNavigate={handleNavigate} />;
+            return <ProfessionalDashboard onNavigate={handleNavigate} selectedPlan={selectedPlan} onPlanChange={handlePlanChange} />;
           case 'enterprise':
             return <Dashboard onNavigate={handleNavigate} selectedPlan={selectedPlan} onPlanChange={handlePlanChange} />;
           default:
-            return <Dashboard onNavigate={handleNavigate} selectedPlan={selectedPlan} onPlanChange={handlePlanChange} />;
+            return <BasicDashboard onNavigate={handleNavigate} selectedPlan={selectedPlan} onPlanChange={handlePlanChange} />;
         }
     }
   };
