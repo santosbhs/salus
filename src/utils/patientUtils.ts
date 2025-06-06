@@ -13,15 +13,22 @@ export const calculateAge = (birthDate: string): number => {
 };
 
 export const processPatientData = (patientData: any) => {
-  return {
+  console.log('DEBUG: processPatientData - Processando dados:', patientData);
+  const processed = {
     ...patientData,
     idade: calculateAge(patientData.nascimento),
     ultimaConsulta: 'Nunca'
   };
+  console.log('DEBUG: processPatientData - Dados processados:', processed);
+  return processed;
 };
 
 export const preparePatientForInsert = (patientData: any, userId: string) => {
-  return {
+  console.log('DEBUG: preparePatientForInsert - Preparando dados para inserção');
+  console.log('DEBUG: preparePatientForInsert - Dados originais:', patientData);
+  console.log('DEBUG: preparePatientForInsert - User ID:', userId);
+  
+  const prepared = {
     nome: patientData.nome?.trim(),
     cpf: patientData.cpf?.trim(),
     telefone: patientData.telefone?.trim(),
@@ -35,6 +42,9 @@ export const preparePatientForInsert = (patientData: any, userId: string) => {
     status: patientData.status || 'Ativo',
     user_id: userId
   };
+  
+  console.log('DEBUG: preparePatientForInsert - Dados preparados:', prepared);
+  return prepared;
 };
 
 export const preparePatientForUpdate = (patientData: any) => {

@@ -1,10 +1,9 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { Patient } from '@/types/patient';
 import { processPatientData, preparePatientForInsert, preparePatientForUpdate } from '@/utils/patientUtils';
 
 export const fetchPatients = async (userId: string): Promise<Patient[]> => {
-  console.log('Buscando pacientes para usuário:', userId);
+  console.log('DEBUG: fetchPatients - Buscando pacientes para usuário:', userId);
   
   const { data, error } = await supabase
     .from('patients')
@@ -13,24 +12,25 @@ export const fetchPatients = async (userId: string): Promise<Patient[]> => {
     .order('nome', { ascending: true });
   
   if (error) {
-    console.error('Erro ao buscar pacientes:', error);
+    console.error('DEBUG: fetchPatients - Erro ao buscar pacientes:', error);
     throw error;
   }
   
-  console.log('Pacientes encontrados:', data);
+  console.log('DEBUG: fetchPatients - Dados brutos do Supabase:', data);
   
   const processedPatients = data.map(processPatientData);
-  console.log('Pacientes processados:', processedPatients);
+  console.log('DEBUG: fetchPatients - Pacientes processados:', processedPatients);
   
   return processedPatients;
 };
 
 export const insertPatient = async (patientData: Omit<Patient, 'id' | 'idade' | 'ultimaConsulta'>, userId: string): Promise<Patient> => {
-  console.log('Criando paciente para usuário:', userId);
-  console.log('Dados do paciente:', patientData);
+  console.log('DEBUG: insertPatient - Iniciando inserção');
+  console.log('DEBUG: insertPatient - Dados recebidos:', patientData);
+  console.log('DEBUG: insertPatient - ID do usuário:', userId);
   
   const insertData = preparePatientForInsert(patientData, userId);
-  console.log('Dados preparados para inserção:', insertData);
+  console.log('DEBUG: insertPatient - Dados preparados para inserção:', insertData);
   
   const { data, error } = await supabase
     .from('patients')
@@ -39,12 +39,18 @@ export const insertPatient = async (patientData: Omit<Patient, 'id' | 'idade' | 
     .single();
   
   if (error) {
-    console.error('Erro do Supabase ao criar paciente:', error);
+    console.error('DEBUG: insertPatient - Erro do Supabase:', error);
+    console.error('DEBUG: insertPatient - Detalhes do erro:', error.details);
+    console.error('DEBUG: insertPatient - Hint do erro:', error.hint);
+    console.error('DEBUG: insertPatient - Código do erro:', error.code);
     throw error;
   }
   
-  console.log('Paciente criado com sucesso:', data);
-  return processPatientData(data);
+  console.log('DEBUG: insertPatient - Paciente inserido com sucesso:', data);
+  const processedPatient = processPatientData(data);
+  console.log('DEBUG: insertPatient - Paciente processado:', processedPatient);
+  
+  return processedPatient;
 };
 
 export const fetchPatientById = async (id: string, userId: string): Promise<Patient | null> => {
