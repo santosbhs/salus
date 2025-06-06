@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Calendar, Users, Clock, FileText, BarChart3, Activity, Stethoscope, UserPlus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,7 +11,7 @@ const ProfessionalDashboard = ({ onNavigate }) => {
     } else if (section === 'agenda') {
       onNavigate('appointments');
     } else if (section === 'relatorios') {
-      onNavigate('novo-atendimento');
+      onNavigate('consultation-history');
     }
   };
 
@@ -102,10 +101,10 @@ const ProfessionalDashboard = ({ onNavigate }) => {
         <Card>
           <CardHeader>
             <CardTitle>Relatórios</CardTitle>
-            <CardDescription>Atestados, receitas e mais</CardDescription>
+            <CardDescription>Histórico de consultas realizadas</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => handleNavigate('relatorios')}>Acessar</Button>
+            <Button onClick={() => handleNavigate('relatorios')}>Ver Histórico</Button>
           </CardContent>
         </Card>
       </div>
