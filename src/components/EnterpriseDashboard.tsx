@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-const EnterpriseDashboard = ({ onNavigate }) => {
+const EnterpriseDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
   const [selectedUnit, setSelectedUnit] = useState('unidade-1');
   const [units, setUnits] = useState([
     { id: 'unidade-1', name: 'Unidade Centro', address: 'Rua Principal, 123' },
@@ -115,24 +115,35 @@ const EnterpriseDashboard = ({ onNavigate }) => {
             <p className="text-purple-200 text-sm mt-2">Recursos ilimitados • Múltiplas unidades</p>
           </div>
           <div className="text-right">
-            <div className="flex items-center space-x-2 mb-2">
-              <Shield className="h-5 w-5" />
+            <div className="flex items-center space-x-4">
               <Badge className="bg-white text-purple-700 hover:bg-gray-100 text-lg px-4 py-2">
-                Premium
+                Demonstração
               </Badge>
+              <div className="bg-white/10 rounded-lg p-2">
+                <Select value={selectedPlan} onValueChange={onPlanChange}>
+                  <SelectTrigger className="w-[180px] bg-transparent border-white/20 text-white">
+                    <SelectValue placeholder="Ver Plano" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="basic">Plano Básico</SelectItem>
+                    <SelectItem value="professional">Plano Profissional</SelectItem>
+                    <SelectItem value="enterprise">Plano Enterprise</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <p className="text-purple-100 text-sm">R$ 397/mês</p>
+            <p className="text-purple-100 text-sm mt-2">R$ 397/mês</p>
           </div>
         </div>
       </div>
 
-      {/* Unit Selector */}
+      {/* Unit Selector - Enterprise Feature */}
       <div className="bg-white rounded-xl p-6 shadow-lg border border-purple-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Building className="h-6 w-6 text-purple-600" />
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Unidade Ativa</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Gestão de Unidades</h3>
               <p className="text-sm text-gray-600">Selecione a unidade para visualizar dados específicos</p>
             </div>
           </div>
@@ -199,16 +210,16 @@ const EnterpriseDashboard = ({ onNavigate }) => {
         )}
       </div>
 
-      {/* Quick Actions - All Active */}
+      {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="hover:shadow-lg transition-shadow cursor-pointer border-red-200" onClick={() => onNavigate('triagem')}>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
               <Stethoscope className="mr-2 h-5 w-5 text-red-600" />
-              Triagem Avançada
+              Triagem com IA
             </CardTitle>
             <CardDescription>
-              Protocolo Manchester com IA
+              Protocolo Manchester com inteligência artificial
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -222,10 +233,10 @@ const EnterpriseDashboard = ({ onNavigate }) => {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
               <FileText className="mr-2 h-5 w-5 text-purple-600" />
-              Atendimento
+              Atendimento Completo
             </CardTitle>
             <CardDescription>
-              Anamnese SOAP com templates personalizados
+              SOAP com templates personalizados e IA
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -239,10 +250,10 @@ const EnterpriseDashboard = ({ onNavigate }) => {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
               <UserPlus className="mr-2 h-5 w-5 text-purple-600" />
-              Equipe de Profissionais
+              Gestão da Equipe
             </CardTitle>
             <CardDescription>
-              Gestão completa da equipe médica
+              Controle completo de profissionais e permissões
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -256,10 +267,10 @@ const EnterpriseDashboard = ({ onNavigate }) => {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
               <Users className="mr-2 h-5 w-5 text-purple-600" />
-              Pacientes
+              Base de Pacientes
             </CardTitle>
             <CardDescription>
-              Base de dados unificada
+              Dados unificados entre todas as unidades
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -271,9 +282,13 @@ const EnterpriseDashboard = ({ onNavigate }) => {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
         {enterpriseStats.map((stat, index) => {
           const Icon = stat.icon;
+          const percentage = stat.title === 'Taxa de Ocupação' ? 
+            parseFloat(stat.value.replace('%', '')) : 
+            (parseInt(stat.value.replace(',', '')) / (stat.limit === 'Ilimitado' ? 100 : parseInt(stat.limit))) * 100;
+          
           return (
             <Card key={index} className="border-purple-200 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -287,16 +302,17 @@ const EnterpriseDashboard = ({ onNavigate }) => {
               <CardContent>
                 <div className="text-2xl font-bold">{stat.value}</div>
                 <p className="text-xs text-gray-600">
-                  {stat.limit !== 'Ilimitado' && `Limite: ${stat.limit}`}
-                  {stat.limit === 'Ilimitado' && (
+                  {stat.limit === 'Ilimitado' ? (
                     <span className="text-purple-600 font-medium">Ilimitado</span>
+                  ) : (
+                    `Limite: ${stat.limit}`
                   )}
                 </p>
-                {stat.limit !== 'Ilimitado' && stat.title === 'Taxa de Ocupação' && (
+                {stat.title === 'Taxa de Ocupação' && (
                   <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
                     <div 
                       className="bg-purple-600 h-2 rounded-full" 
-                      style={{ width: stat.value }}
+                      style={{ width: `${percentage}%` }}
                     ></div>
                   </div>
                 )}
@@ -307,7 +323,7 @@ const EnterpriseDashboard = ({ onNavigate }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Agenda Centralizada */}
+        {/* Agenda Consolidada */}
         <Card className="lg:col-span-2 border-purple-200 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center text-xl text-purple-800">
