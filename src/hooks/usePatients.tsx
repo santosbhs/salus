@@ -14,19 +14,23 @@ import {
 
 export const usePatients = () => {
   const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const { toast } = useToast();
 
   const getPatients = async (): Promise<Patient[]> => {
     try {
       setLoading(true);
       
-      if (!user) {
+      // Verificar tanto user quanto session para autenticação
+      const currentUser = user || session?.user;
+      
+      if (!currentUser) {
         console.log('Usuário não autenticado para buscar pacientes');
         return [];
       }
       
-      return await fetchPatients(user.id);
+      console.log('Buscando pacientes para usuário:', currentUser.id);
+      return await fetchPatients(currentUser.id);
     } catch (error: any) {
       console.error('Erro ao buscar pacientes:', error);
       toast({
@@ -44,7 +48,9 @@ export const usePatients = () => {
     try {
       setLoading(true);
       
-      if (!user) {
+      const currentUser = user || session?.user;
+      
+      if (!currentUser) {
         console.error('Usuário não autenticado - não é possível criar paciente');
         toast({
           title: 'Erro de autenticação',
@@ -54,7 +60,7 @@ export const usePatients = () => {
         return null;
       }
       
-      const result = await insertPatient(patientData, user.id);
+      const result = await insertPatient(patientData, currentUser.id);
       
       toast({
         title: 'Paciente cadastrado com sucesso!',
@@ -79,11 +85,13 @@ export const usePatients = () => {
     try {
       setLoading(true);
       
-      if (!user) {
+      const currentUser = user || session?.user;
+      
+      if (!currentUser) {
         throw new Error('Usuário não autenticado');
       }
       
-      return await fetchPatientById(id, user.id);
+      return await fetchPatientById(id, currentUser.id);
     } catch (error: any) {
       console.error('Erro ao buscar paciente:', error);
       toast({
@@ -101,11 +109,13 @@ export const usePatients = () => {
     try {
       setLoading(true);
       
-      if (!user) {
+      const currentUser = user || session?.user;
+      
+      if (!currentUser) {
         throw new Error('Usuário não autenticado');
       }
       
-      const result = await updatePatientById(id, patientData, user.id);
+      const result = await updatePatientById(id, patientData, currentUser.id);
       
       toast({
         title: 'Paciente atualizado com sucesso!',
@@ -130,11 +140,13 @@ export const usePatients = () => {
     try {
       setLoading(true);
       
-      if (!user) {
+      const currentUser = user || session?.user;
+      
+      if (!currentUser) {
         throw new Error('Usuário não autenticado');
       }
       
-      await removePatient(id, user.id);
+      await removePatient(id, currentUser.id);
       
       toast({
         title: 'Paciente removido com sucesso',
@@ -159,7 +171,9 @@ export const usePatients = () => {
     try {
       setLoading(true);
       
-      if (!user) {
+      const currentUser = user || session?.user;
+      
+      if (!currentUser) {
         console.error('Usuário não autenticado - não é possível excluir pacientes');
         toast({
           title: 'Erro de autenticação',
@@ -169,7 +183,7 @@ export const usePatients = () => {
         return false;
       }
       
-      await removeAllPatients(user.id);
+      await removeAllPatients(currentUser.id);
       
       toast({
         title: 'Pacientes removidos com sucesso',
