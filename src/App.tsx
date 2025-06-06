@@ -10,6 +10,9 @@ import Sales from "./pages/Sales";
 import Subscription from "./pages/Subscription";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
+import BasicDashboard from "./pages/BasicDashboard";
+import ProfessionalDashboard from "./pages/ProfessionalDashboard";
+import EnterpriseDashboard from "./pages/EnterpriseDashboard";
 import AuthRequired from "./components/AuthRequired";
 
 const queryClient = new QueryClient();
@@ -27,6 +30,21 @@ const App = () => (
           <Route path="/dashboard" element={
             <AuthRequired>
               <Dashboard />
+            </AuthRequired>
+          } />
+          <Route path="/dashboard-basico" element={
+            <AuthRequired>
+              <BasicDashboard />
+            </AuthRequired>
+          } />
+          <Route path="/dashboard-profissional" element={
+            <AuthRequired>
+              <ProfessionalDashboard />
+            </AuthRequired>
+          } />
+          <Route path="/dashboard-enterprise" element={
+            <AuthRequired>
+              <EnterpriseDashboard />
             </AuthRequired>
           } />
           <Route path="/agendar" element={<ClientBooking />} />

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Lock, Mail, Eye, EyeOff, Zap, ArrowLeft } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff, Zap, ArrowLeft, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -19,6 +19,30 @@ const Login = () => {
   });
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const testUsers = [
+    { 
+      email: 'admin.basico@teste.com', 
+      password: '123456',
+      plan: 'Básico',
+      redirect: '/dashboard-basico',
+      color: 'text-blue-600'
+    },
+    { 
+      email: 'admin.profissional@teste.com', 
+      password: '123456',
+      plan: 'Profissional',
+      redirect: '/dashboard-profissional',
+      color: 'text-green-600'
+    },
+    { 
+      email: 'admin.enterprise@teste.com', 
+      password: '123456',
+      plan: 'Enterprise',
+      redirect: '/dashboard-enterprise',
+      color: 'text-purple-600'
+    }
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,12 +66,6 @@ const Login = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Verificar se é usuário teste e criar/confirmar se necessário
-      const testUsers = [
-        { email: 'admin.basico@teste.com', password: '123456' },
-        { email: 'admin.profissional@teste.com', password: '123456' },
-        { email: 'admin.enterprise@teste.com', password: '123456' }
-      ];
-      
       const isTestUser = testUsers.find(user => 
         user.email === formData.email && user.password === formData.password
       );
@@ -61,7 +79,7 @@ const Login = () => {
             email: formData.email,
             password: formData.password,
             options: {
-              emailRedirectTo: `${window.location.origin}/dashboard`
+              emailRedirectTo: `${window.location.origin}${isTestUser.redirect}`
             }
           });
           
@@ -103,9 +121,10 @@ const Login = () => {
           description: "Redirecionando para o dashboard...",
         });
         
-        // Aguardar um pouco e redirecionar
+        // Redirecionar para o dashboard específico do plano
+        const redirectPath = isTestUser ? isTestUser.redirect : '/dashboard';
         setTimeout(() => {
-          window.location.href = '/dashboard';
+          window.location.href = redirectPath;
         }, 1000);
       } else {
         throw new Error('Dados de login inválidos');
@@ -139,6 +158,13 @@ const Login = () => {
       ...prev,
       [name]: value
     }));
+  };
+
+  const fillTestUser = (user: typeof testUsers[0]) => {
+    setFormData({
+      email: user.email,
+      password: user.password
+    });
   };
 
   const isFormValid = formData.email.trim() !== '' && formData.password.trim() !== '';
@@ -186,6 +212,31 @@ const Login = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Usuários de Teste */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center mb-3">
+                  <Info className="h-4 w-4 text-blue-600 mr-2" />
+                  <span className="text-sm font-medium text-blue-800">Usuários de Teste</span>
+                </div>
+                <div className="space-y-2">
+                  {testUsers.map((user, index) => (
+                    <button
+                      key={index}
+                      onClick={() => fillTestUser(user)}
+                      className="w-full text-left p-2 rounded border border-gray-200 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">{user.email}</p>
+                          <p className={`text-xs ${user.color} font-medium`}>Plano {user.plan}</p>
+                        </div>
+                        <span className="text-xs text-gray-500">Senha: {user.password}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-gray-700 font-medium">E-mail</Label>
