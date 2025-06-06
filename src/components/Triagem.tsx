@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, User, Heart, Thermometer, Activity, AlertTriangle, Clock, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -32,28 +33,40 @@ const Triagem = ({ onBack }) => {
   const { toast } = useToast();
 
   useEffect(() => {
+    let isMounted = true;
+    
     const loadPatients = async () => {
       console.log('Carregando pacientes para triagem...');
       setLoading(true);
       try {
         const data = await getPatients();
         console.log('Pacientes carregados para triagem:', data);
-        setPatients(data || []);
+        if (isMounted) {
+          setPatients(data || []);
+        }
       } catch (error) {
         console.error('Erro ao carregar pacientes:', error);
-        toast({
-          title: "Erro ao carregar pacientes",
-          description: "Não foi possível carregar a lista de pacientes",
-          variant: "destructive",
-        });
-        setPatients([]);
+        if (isMounted) {
+          toast({
+            title: "Erro ao carregar pacientes",
+            description: "Não foi possível carregar a lista de pacientes",
+            variant: "destructive",
+          });
+          setPatients([]);
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
     
     loadPatients();
-  }, [getPatients, toast]);
+    
+    return () => {
+      isMounted = false;
+    };
+  }, []); // Removido dependencies que causavam loops
 
   const classificacoesManchester = [
     { nivel: 'vermelho', nome: 'Emergência', tempo: 'Imediato', cor: 'bg-red-500' },
