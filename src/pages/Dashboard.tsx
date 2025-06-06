@@ -14,7 +14,7 @@ import AuthRequired from '@/components/AuthRequired';
 const DashboardPage = () => {
   const [currentView, setCurrentView] = useState('dashboard');
   const { user } = useAuth();
-  const { subscription } = useSubscription();
+  const { status } = useSubscription();
 
   const handleNavigate = (view: string) => {
     setCurrentView(view);
@@ -25,7 +25,11 @@ const DashboardPage = () => {
   };
 
   if (!user) {
-    return <AuthRequired />;
+    return (
+      <AuthRequired>
+        <div>Loading...</div>
+      </AuthRequired>
+    );
   }
 
   const renderCurrentView = () => {
@@ -43,7 +47,7 @@ const DashboardPage = () => {
       case 'consultation-history':
         return <ConsultationHistory onBack={handleBack} />;
       default:
-        return <Dashboard onNavigate={handleNavigate} subscription={subscription} />;
+        return <Dashboard onNavigate={handleNavigate} />;
     }
   };
 
