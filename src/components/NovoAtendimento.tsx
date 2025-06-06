@@ -12,6 +12,7 @@ import { usePatients, Patient } from '@/hooks/usePatients';
 import { useProfessionals, Professional } from '@/hooks/useProfessionals';
 import { useConsultations } from '@/hooks/useConsultations';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 import PatientSearchInput from '@/components/PatientSearchInput';
 import MedicalPrescription from '@/components/MedicalPrescription';
 import MedicalCertificate from '@/components/MedicalCertificate';
@@ -31,15 +32,40 @@ const NovoAtendimento = ({ onBack }) => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [professionals, setProfessionals] = useState<Professional[]>([]);
   const [loadingPatients, setLoadingPatients] = useState(true);
+  const [authReady, setAuthReady] = useState(false);
 
   const { getPatients } = usePatients();
   const { getProfessionals } = useProfessionals();
   const { createConsultation } = useConsultations();
   const { toast } = useToast();
+  const { user, session } = useAuth();
 
+  // Aguardar autenticação estar pronta
   useEffect(() => {
+    console.log('🔐 DEBUG: NovoAtendimento - Verificando estado de autenticação');
+    console.log('👤 DEBUG: NovoAtendimento - user:', user);
+    console.log('🎫 DEBUG: NovoAtendimento - session:', session);
+    
+    const currentUser = user || session?.user;
+    
+    if (currentUser) {
+      console.log('✅ DEBUG: NovoAtendimento - Usuário autenticado:', currentUser.id);
+      setAuthReady(true);
+    } else {
+      console.log('⏳ DEBUG: NovoAtendimento - Aguardando autenticação...');
+      setAuthReady(false);
+    }
+  }, [user, session]);
+
+  // Carregar dados apenas quando autenticação estiver pronta
+  useEffect(() => {
+    if (!authReady) {
+      console.log('⏳ DEBUG: NovoAtendimento - Autenticação não está pronta, não carregando dados');
+      return;
+    }
+
     const loadData = async () => {
-      console.log('Carregando pacientes e profissionais...');
+      console.log('📥 DEBUG: NovoAtendimento - Carregando pacientes e profissionais...');
       setLoadingPatients(true);
       
       try {
@@ -48,20 +74,25 @@ const NovoAtendimento = ({ onBack }) => {
           getProfessionals()
         ]);
         
-        console.log('Pacientes encontrados:', patientsData);
-        console.log('Profissionais encontrados:', professionalsData);
+        console.log('✅ DEBUG: NovoAtendimento - Pacientes encontrados:', patientsData);
+        console.log('✅ DEBUG: NovoAtendimento - Profissionais encontrados:', professionalsData);
         
         setPatients(patientsData);
         setProfessionals(professionalsData);
       } catch (error) {
-        console.error('Erro ao carregar dados:', error);
+        console.error('❌ DEBUG: NovoAtendimento - Erro ao carregar dados:', error);
+        toast({
+          title: "Erro ao carregar dados",
+          description: "Não foi possível carregar pacientes e profissionais. Tente novamente.",
+          variant: "destructive",
+        });
       } finally {
         setLoadingPatients(false);
       }
     };
     
     loadData();
-  }, []);
+  }, [authReady, getPatients, getProfessionals, toast]);
 
   const handleSalvar = async () => {
     if (!pacienteSelecionado || !profissionalSelecionado) {
@@ -92,7 +123,7 @@ const NovoAtendimento = ({ onBack }) => {
       relatorio: relatorioCompleto
     };
 
-    console.log('Dados da consulta a serem salvos:', consultaData);
+    console.log('💾 DEBUG: NovoAtendimento - Dados da consulta a serem salvos:', consultaData);
     
     const resultado = await createConsultation(consultaData);
     
@@ -112,7 +143,7 @@ const NovoAtendimento = ({ onBack }) => {
   };
 
   const handlePrescriptionSave = (prescription) => {
-    console.log('Receita salva:', prescription);
+    console.log('📝 DEBUG: NovoAtendimento - Receita salva:', prescription);
     toast({
       title: "Receita salva",
       description: "A receita foi adicionada ao atendimento.",
@@ -120,7 +151,7 @@ const NovoAtendimento = ({ onBack }) => {
   };
 
   const handleCertificateSave = (certificate) => {
-    console.log('Atestado salvo:', certificate);
+    console.log('📋 DEBUG: NovoAtendimento - Atestado salvo:', certificate);
     toast({
       title: "Atestado gerado",
       description: "O atestado foi criado com sucesso.",
@@ -129,6 +160,22 @@ const NovoAtendimento = ({ onBack }) => {
 
   const pacienteSelecionadoObj = patients.find(p => p.id === pacienteSelecionado);
   const profissionalSelecionadoObj = professionals.find(p => p.id === profissionalSelecionado);
+
+  // Mostrar loading enquanto autenticação não estiver pronta
+  if (!authReady) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Carregando...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 p-6">
@@ -199,7 +246,7 @@ const NovoAtendimento = ({ onBack }) => {
                 </div>
                 
                 {/* Aviso se não há dados */}
-                {patients.length === 0 && (
+                {!loadingPatients && patients.length === 0 && (
                   <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <div className="flex items-center">
                       <AlertCircle className="h-5 w-5 text-yellow-600 mr-2" />
