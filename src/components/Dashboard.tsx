@@ -1,18 +1,19 @@
 
 import React from 'react';
-import { Calendar, Users, Clock, FileText, BarChart3, Activity, Plus, Search, AlertCircle } from 'lucide-react';
+import { Calendar, Users, Clock, FileText, BarChart3, Activity, Plus, Search, AlertCircle, ChevronDown } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-const Dashboard = ({ onNavigate }) => {
+const Dashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
   const handleNavigate = (section) => {
     if (section === 'pacientes') {
       onNavigate('patients');
     } else if (section === 'agenda') {
       onNavigate('appointments');
     } else if (section === 'relatorios') {
-      onNavigate('novo-atendimento');
+      onNavigate('consultation-history');
     }
   };
 
@@ -52,18 +53,18 @@ const Dashboard = ({ onNavigate }) => {
 
   const quickActions = [
     {
-      title: 'Novo Atendimento',
-      description: 'Iniciar consulta',
-      icon: FileText,
-      color: 'bg-blue-600 hover:bg-blue-700',
-      action: () => onNavigate('novo-atendimento')
-    },
-    {
       title: 'Triagem',
       description: 'Classificar paciente',
       icon: Activity,
       color: 'bg-red-600 hover:bg-red-700',
       action: () => onNavigate('triagem')
+    },
+    {
+      title: 'Novo Atendimento',
+      description: 'Iniciar consulta',
+      icon: FileText,
+      color: 'bg-blue-600 hover:bg-blue-700',
+      action: () => onNavigate('novo-atendimento')
     },
     {
       title: 'Cadastrar Paciente',
@@ -81,6 +82,24 @@ const Dashboard = ({ onNavigate }) => {
     },
   ];
 
+  // Mock data para pacientes aguardando atendimento
+  const pacientesAguardando = [
+    { nome: 'Maria Silva', classificacao: 'amarelo', tempo: '15 min', queixa: 'Dor abdominal' },
+    { nome: 'João Santos', classificacao: 'verde', tempo: '45 min', queixa: 'Consulta de rotina' },
+    { nome: 'Ana Costa', classificacao: 'laranja', tempo: '8 min', queixa: 'Dificuldade respiratória' },
+  ];
+
+  const getClassificacaoColor = (classificacao) => {
+    switch (classificacao) {
+      case 'vermelho': return 'bg-red-500';
+      case 'laranja': return 'bg-orange-500';
+      case 'amarelo': return 'bg-yellow-500';
+      case 'verde': return 'bg-green-500';
+      case 'azul': return 'bg-blue-500';
+      default: return 'bg-gray-500';
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -90,9 +109,24 @@ const Dashboard = ({ onNavigate }) => {
             <h2 className="text-2xl font-bold mb-1">Painel de Controle</h2>
             <p className="text-blue-100">Terça-feira, 05 de Junho de 2025</p>
           </div>
-          <div className="text-right">
-            <p className="text-sm text-blue-200">Próxima consulta</p>
-            <p className="text-xl font-bold">Não agendada</p>
+          <div className="flex items-center space-x-4">
+            <div className="text-right">
+              <p className="text-sm text-blue-200">Próxima consulta</p>
+              <p className="text-xl font-bold">Não agendada</p>
+            </div>
+            {/* Seletor de Plano */}
+            <div className="bg-white/10 rounded-lg p-2">
+              <Select value={selectedPlan} onValueChange={onPlanChange}>
+                <SelectTrigger className="w-[180px] bg-transparent border-white/20 text-white">
+                  <SelectValue placeholder="Selecionar Plano" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="basic">Plano Básico</SelectItem>
+                  <SelectItem value="professional">Plano Profissional</SelectItem>
+                  <SelectItem value="enterprise">Plano Enterprise</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
       </div>
@@ -122,7 +156,7 @@ const Dashboard = ({ onNavigate }) => {
         })}
       </div>
 
-      {/* Quick Actions */}
+      {/* Quick Actions - Triagem primeiro */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {quickActions.map((action, index) => {
           const Icon = action.icon;
@@ -174,14 +208,50 @@ const Dashboard = ({ onNavigate }) => {
 
         {/* Right Sidebar */}
         <div className="space-y-6">
-          {/* Recent Activity */}
+          {/* Pacientes Aguardando Atendimento */}
           <Card className="shadow-lg">
             <CardHeader>
-              <CardTitle className="text-lg text-blue-800">Atividade Recente</CardTitle>
+              <CardTitle className="text-lg text-blue-800">Pacientes Aguardando</CardTitle>
+              <CardDescription>Triagens realizadas, prontos para atendimento</CardDescription>
             </CardHeader>
-            <CardContent className="text-center py-8">
-              <Activity className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-              <p className="text-gray-600 text-sm">Nenhuma atividade recente</p>
+            <CardContent>
+              {pacientesAguardando.length > 0 ? (
+                <div className="space-y-3">
+                  {pacientesAguardando.map((paciente, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
+                      <div className="flex items-center space-x-3">
+                        <div className={`w-4 h-4 ${getClassificacaoColor(paciente.classificacao)} rounded-full`}></div>
+                        <div>
+                          <p className="font-semibold text-gray-900 text-sm">{paciente.nome}</p>
+                          <p className="text-xs text-gray-600">{paciente.queixa}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs text-gray-500">Aguardando</p>
+                        <p className="text-xs font-medium text-blue-600">{paciente.tempo}</p>
+                      </div>
+                    </div>
+                  ))}
+                  <Button 
+                    className="w-full mt-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800" 
+                    onClick={() => onNavigate('novo-atendimento')}
+                  >
+                    Iniciar Próximo Atendimento
+                  </Button>
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <Users className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                  <p className="text-gray-600 text-sm">Nenhum paciente aguardando</p>
+                  <Button 
+                    variant="outline" 
+                    className="mt-2 text-xs"
+                    onClick={() => onNavigate('triagem')}
+                  >
+                    Realizar Triagem
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
 

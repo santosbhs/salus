@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import Dashboard from '@/components/Dashboard';
+import BasicDashboard from '@/components/BasicDashboard';
+import ProfessionalDashboard from '@/components/ProfessionalDashboard';
 import PatientManagement from '@/components/PatientManagement';
 import ProfessionalManagement from '@/components/ProfessionalManagement';
 import AppointmentManagement from '@/components/AppointmentManagement';
@@ -13,6 +15,7 @@ import AuthRequired from '@/components/AuthRequired';
 
 const DashboardPage = () => {
   const [currentView, setCurrentView] = useState('dashboard');
+  const [selectedPlan, setSelectedPlan] = useState('basic'); // Estado para o plano selecionado
   const { user } = useAuth();
   const { status } = useSubscription();
 
@@ -22,6 +25,10 @@ const DashboardPage = () => {
 
   const handleBack = () => {
     setCurrentView('dashboard');
+  };
+
+  const handlePlanChange = (plan: string) => {
+    setSelectedPlan(plan);
   };
 
   if (!user) {
@@ -47,7 +54,17 @@ const DashboardPage = () => {
       case 'consultation-history':
         return <ConsultationHistory onBack={handleBack} />;
       default:
-        return <Dashboard onNavigate={handleNavigate} />;
+        // Renderizar dashboard baseado no plano selecionado
+        switch (selectedPlan) {
+          case 'basic':
+            return <BasicDashboard onNavigate={handleNavigate} />;
+          case 'professional':
+            return <ProfessionalDashboard onNavigate={handleNavigate} />;
+          case 'enterprise':
+            return <Dashboard onNavigate={handleNavigate} selectedPlan={selectedPlan} onPlanChange={handlePlanChange} />;
+          default:
+            return <Dashboard onNavigate={handleNavigate} selectedPlan={selectedPlan} onPlanChange={handlePlanChange} />;
+        }
     }
   };
 
