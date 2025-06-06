@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Calendar, Users, Clock, FileText, BarChart3, Activity } from 'lucide-react';
+import { Calendar, Users, Clock, FileText, BarChart3, Activity, Stethoscope, UserPlus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -41,6 +42,14 @@ const BasicDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
       color: 'text-green-600',
       bgColor: 'bg-green-50',
     },
+    {
+      title: 'Taxa de Ocupação',
+      value: '85%',
+      limit: '100%',
+      icon: BarChart3,
+      color: 'text-green-600',
+      bgColor: 'bg-green-50',
+    },
   ];
 
   const upcomingAppointments = [
@@ -54,6 +63,8 @@ const BasicDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
     'Agendamentos básicos',
     'Prontuário eletrônico simples',
     'Relatórios básicos',
+    'Suporte por email',
+    'Backup semanal',
   ];
 
   return (
@@ -71,7 +82,6 @@ const BasicDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
               <Badge className="bg-white text-green-700 hover:bg-gray-100 text-lg px-4 py-2">
                 Demonstração
               </Badge>
-              {/* Seletor de Plano para demonstração */}
               <div className="bg-white/10 rounded-lg p-2">
                 <Select value={selectedPlan} onValueChange={onPlanChange}>
                   <SelectTrigger className="w-[180px] bg-transparent border-white/20 text-white">
@@ -90,74 +100,119 @@ const BasicDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
         </div>
       </div>
 
-      {/* Navigation Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Pacientes</CardTitle>
-            <CardDescription>Cadastrar e editar</CardDescription>
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-green-200" onClick={() => onNavigate('novo-atendimento')}>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center text-lg">
+              <FileText className="mr-2 h-5 w-5 text-green-600" />
+              Atendimento Básico
+            </CardTitle>
+            <CardDescription>
+              Anamnese simples e prescrições
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => handleNavigate('pacientes')}>Gerenciar</Button>
+            <Button className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800">
+              Novo Atendimento
+            </Button>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Agenda</CardTitle>
-            <CardDescription>Agendamentos e horários</CardDescription>
+
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-green-200" onClick={() => onNavigate('patients')}>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center text-lg">
+              <Users className="mr-2 h-5 w-5 text-green-600" />
+              Pacientes
+            </CardTitle>
+            <CardDescription>
+              Cadastro e gestão básica
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => handleNavigate('agenda')}>Ver agenda</Button>
+            <Button variant="outline" className="w-full border-green-600 text-green-600 hover:bg-green-600 hover:text-white">
+              Gerenciar Pacientes
+            </Button>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Relatórios</CardTitle>
-            <CardDescription>Atestados, receitas e mais</CardDescription>
+
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-green-200" onClick={() => onNavigate('appointments')}>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center text-lg">
+              <Calendar className="mr-2 h-5 w-5 text-green-600" />
+              Agenda
+            </CardTitle>
+            <CardDescription>
+              Agendamentos simples
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => handleNavigate('relatorios')}>Acessar</Button>
+            <Button variant="outline" className="w-full border-green-600 text-green-600 hover:bg-green-600 hover:text-white">
+              Ver Agenda
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-gray-300 opacity-60">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center text-lg">
+              <Stethoscope className="mr-2 h-5 w-5 text-gray-500" />
+              Triagem Avançada
+            </CardTitle>
+            <CardDescription>
+              Disponível no Plano Profissional
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button disabled className="w-full">
+              Fazer Upgrade
+            </Button>
           </CardContent>
         </Card>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {basicStats.map((stat, index) => {
           const Icon = stat.icon;
-          const percentage = (parseInt(stat.value) / parseInt(stat.limit)) * 100;
+          const percentage = stat.title === 'Taxa de Ocupação' ? 
+            parseFloat(stat.value.replace('%', '')) : 
+            (parseInt(stat.value) / parseInt(stat.limit)) * 100;
+          
           return (
-            <Card key={index} className="hover:shadow-lg transition-all duration-300 border-green-200">
+            <Card key={index} className="border-green-200 hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-600">
                   {stat.title}
                 </CardTitle>
-                <div className={`p-3 rounded-xl ${stat.bgColor}`}>
-                  <Icon className={`h-5 w-5 ${stat.color}`} />
+                <div className={`p-2 rounded-lg ${stat.bgColor}`}>
+                  <Icon className={`h-4 w-4 ${stat.color}`} />
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-gray-900">{stat.value}</div>
-                <p className="text-sm text-gray-600 mb-3">
-                  Limite: {stat.limit} ({percentage.toFixed(0)}% usado)
+                <div className="text-2xl font-bold">{stat.value}</div>
+                <p className="text-xs text-gray-600">
+                  {stat.limit !== 'Ilimitado' && `Limite: ${stat.limit}`}
                 </p>
-                <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div 
-                    className="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full transition-all duration-500" 
-                    style={{ width: `${Math.min(percentage, 100)}%` }}
-                  ></div>
-                </div>
+                {stat.title === 'Taxa de Ocupação' && (
+                  <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                    <div 
+                      className="bg-green-600 h-2 rounded-full" 
+                      style={{ width: `${percentage}%` }}
+                    ></div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           );
         })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Agenda */}
-        <Card className="border-green-200 shadow-lg">
+        <Card className="lg:col-span-2 border-green-200 shadow-lg">
           <CardHeader>
-            <CardTitle className="text-xl text-green-800 flex items-center">
+            <CardTitle className="flex items-center text-xl text-green-800">
               <Calendar className="mr-2 h-5 w-5" />
               Agenda de Hoje
             </CardTitle>
@@ -188,20 +243,25 @@ const BasicDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
           </CardContent>
         </Card>
 
-        {/* Quick Actions and Features */}
+        {/* Analytics and Features */}
         <div className="space-y-6">
           <Card className="border-green-200 shadow-lg">
             <CardHeader>
-              <CardTitle className="text-xl text-green-800">Ações Rápidas</CardTitle>
+              <CardTitle className="text-xl text-green-800">Relatórios Básicos</CardTitle>
+              <CardDescription>Análises disponíveis no plano básico</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <Button className="w-full justify-start h-12 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800" onClick={() => onNavigate('novo-atendimento')}>
-                <FileText className="mr-3 h-5 w-5" />
-                Novo Atendimento
+            <CardContent className="space-y-3">
+              <Button className="w-full justify-start" variant="outline">
+                <BarChart3 className="mr-2 h-4 w-4" />
+                Relatórios Mensais
               </Button>
-              <Button className="w-full justify-start h-12" variant="outline" onClick={() => onNavigate('patients')}>
-                <Users className="mr-3 h-5 w-5 text-green-600" />
-                Gerenciar Pacientes
+              <Button className="w-full justify-start" variant="outline">
+                <Activity className="mr-2 h-4 w-4" />
+                Estatísticas Básicas
+              </Button>
+              <Button className="w-full justify-start" variant="outline">
+                <FileText className="mr-2 h-4 w-4" />
+                Histórico Simples
               </Button>
             </CardContent>
           </Card>
@@ -209,15 +269,24 @@ const BasicDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
           <Card className="border-green-200 shadow-lg">
             <CardHeader>
               <CardTitle className="text-xl text-green-800">Recursos Incluídos</CardTitle>
+              <CardDescription>No plano básico</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {basicFeatures.map((feature, index) => (
-                  <div key={index} className="flex items-center space-x-3">
-                    <div className="w-3 h-3 bg-green-600 rounded-full"></div>
-                    <span className="text-sm text-gray-700">{feature}</span>
+                  <div key={index} className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                    <span className="text-sm">{feature}</span>
                   </div>
                 ))}
+              </div>
+              <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <Clock className="h-4 w-4 text-green-600" />
+                  <span className="text-sm text-green-800 font-medium">
+                    Suporte em horário comercial
+                  </span>
+                </div>
               </div>
             </CardContent>
           </Card>
