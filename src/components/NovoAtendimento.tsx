@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, User, Stethoscope, FileText, Save, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -33,6 +32,7 @@ const NovoAtendimento = ({ onBack }) => {
   const [professionals, setProfessionals] = useState<Professional[]>([]);
   const [loadingPatients, setLoadingPatients] = useState(true);
   const [authReady, setAuthReady] = useState(false);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   const { getPatients } = usePatients();
   const { getProfessionals } = useProfessionals();
@@ -57,10 +57,10 @@ const NovoAtendimento = ({ onBack }) => {
     }
   }, [user, session]);
 
-  // Carregar dados apenas quando autenticação estiver pronta
+  // Carregar dados apenas quando autenticação estiver pronta e uma única vez
   useEffect(() => {
-    if (!authReady) {
-      console.log('⏳ DEBUG: NovoAtendimento - Autenticação não está pronta, não carregando dados');
+    if (!authReady || hasLoadedOnce) {
+      console.log('⏳ DEBUG: NovoAtendimento - Autenticação não está pronta ou já carregou uma vez');
       return;
     }
 
@@ -79,20 +79,25 @@ const NovoAtendimento = ({ onBack }) => {
         
         setPatients(patientsData);
         setProfessionals(professionalsData);
+        setHasLoadedOnce(true);
       } catch (error) {
         console.error('❌ DEBUG: NovoAtendimento - Erro ao carregar dados:', error);
-        toast({
-          title: "Erro ao carregar dados",
-          description: "Não foi possível carregar pacientes e profissionais. Tente novamente.",
-          variant: "destructive",
-        });
+        
+        // Só mostrar toast se não for erro de rede
+        if (!error?.message?.includes('Failed to fetch')) {
+          toast({
+            title: "Erro ao carregar dados",
+            description: "Não foi possível carregar pacientes e profissionais. Tente novamente.",
+            variant: "destructive",
+          });
+        }
       } finally {
         setLoadingPatients(false);
       }
     };
     
     loadData();
-  }, [authReady, getPatients, getProfessionals, toast]);
+  }, [authReady, hasLoadedOnce, getPatients, getProfessionals, toast]);
 
   const handleSalvar = async () => {
     if (!pacienteSelecionado || !profissionalSelecionado) {

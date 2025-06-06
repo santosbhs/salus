@@ -7,6 +7,14 @@ export const fetchPatients = async (userId: string): Promise<Patient[]> => {
   console.log('👤 DEBUG: fetchPatients - User ID:', userId);
   
   try {
+    // Verificar se o usuário está autenticado antes de fazer a requisição
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      console.log('❌ DEBUG: fetchPatients - Usuário não autenticado:', authError);
+      return [];
+    }
+    
     const { data, error } = await supabase
       .from('patients')
       .select('*')
@@ -17,7 +25,13 @@ export const fetchPatients = async (userId: string): Promise<Patient[]> => {
       console.error('❌ DEBUG: fetchPatients - Erro do Supabase:', error);
       console.error('❌ DEBUG: fetchPatients - Error code:', error.code);
       console.error('❌ DEBUG: fetchPatients - Error message:', error.message);
-      console.error('❌ DEBUG: fetchPatients - Error details:', error.details);
+      
+      // Se for erro de rede, retornar array vazio sem throw
+      if (error.message?.includes('Failed to fetch') || error.message?.includes('fetch')) {
+        console.log('🌐 DEBUG: fetchPatients - Erro de rede detectado, retornando array vazio');
+        return [];
+      }
+      
       throw error;
     }
     
@@ -35,6 +49,13 @@ export const fetchPatients = async (userId: string): Promise<Patient[]> => {
     return processedPatients;
   } catch (error) {
     console.error('❌ DEBUG: fetchPatients - Erro na operação:', error);
+    
+    // Para erros de rede, não fazer throw para evitar erro contínuo
+    if (error instanceof Error && error.message?.includes('Failed to fetch')) {
+      console.log('🌐 DEBUG: fetchPatients - Tratando erro de rede graciosamente');
+      return [];
+    }
+    
     throw error;
   }
 };

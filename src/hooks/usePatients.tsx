@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useAuth } from './useAuth';
 import { useToast } from './use-toast';
@@ -32,6 +33,7 @@ export const usePatients = () => {
       
       console.log('🔍 DEBUG: Buscando pacientes para usuário:', currentUser.id);
       console.log('🔍 DEBUG: Email do usuário:', currentUser.email);
+      
       const patients = await fetchPatients(currentUser.id);
       console.log('✅ DEBUG: Pacientes retornados:', patients);
       console.log('📊 DEBUG: Quantidade de pacientes:', patients.length);
@@ -39,11 +41,15 @@ export const usePatients = () => {
     } catch (error: any) {
       console.error('❌ DEBUG: Erro ao buscar pacientes:', error);
       console.error('❌ DEBUG: Stack do erro:', error.stack);
-      toast({
-        title: 'Erro ao carregar pacientes',
-        description: error.message || 'Não foi possível carregar a lista de pacientes',
-        variant: 'destructive',
-      });
+      
+      // Não mostrar toast de erro para problemas de rede comum
+      if (!error.message?.includes('Failed to fetch')) {
+        toast({
+          title: 'Erro ao carregar pacientes',
+          description: error.message || 'Não foi possível carregar a lista de pacientes',
+          variant: 'destructive',
+        });
+      }
       return [];
     } finally {
       setLoading(false);
