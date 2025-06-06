@@ -10,12 +10,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { usePatients, Patient } from '@/hooks/usePatients';
 import { useTriagem } from '@/hooks/useTriagem';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 import PatientSearchInput from '@/components/PatientSearchInput';
 
 const Triagem = ({ onBack }) => {
   const [pacienteSelecionado, setPacienteSelecionado] = useState('');
   const [patients, setPatients] = useState<Patient[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingPatients, setLoadingPatients] = useState(true);
+  const [authReady, setAuthReady] = useState(false);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const [queixaPrincipal, setQueixaPrincipal] = useState('');
   const [sintomas, setSintomas] = useState('');
   const [sinaisVitais, setSinaisVitais] = useState({
@@ -31,42 +34,61 @@ const Triagem = ({ onBack }) => {
   const { getPatients } = usePatients();
   const { createTriagem } = useTriagem();
   const { toast } = useToast();
+  const { user, session } = useAuth();
 
+  // Aguardar autenticação estar pronta
   useEffect(() => {
-    let isMounted = true;
+    console.log('🔐 DEBUG: Triagem - Verificando estado de autenticação');
+    console.log('👤 DEBUG: Triagem - user:', user);
+    console.log('🎫 DEBUG: Triagem - session:', session);
     
+    const currentUser = user || session?.user;
+    
+    if (currentUser) {
+      console.log('✅ DEBUG: Triagem - Usuário autenticado:', currentUser.id);
+      setAuthReady(true);
+    } else {
+      console.log('⏳ DEBUG: Triagem - Aguardando autenticação...');
+      setAuthReady(false);
+    }
+  }, [user, session]);
+
+  // Carregar dados apenas quando autenticação estiver pronta e uma única vez
+  useEffect(() => {
+    if (!authReady || hasLoadedOnce) {
+      console.log('⏳ DEBUG: Triagem - Autenticação não está pronta ou já carregou uma vez');
+      return;
+    }
+
     const loadPatients = async () => {
-      console.log('Carregando pacientes para triagem...');
-      setLoading(true);
+      console.log('📥 DEBUG: Triagem - Carregando pacientes...');
+      setLoadingPatients(true);
+      
       try {
         const data = await getPatients();
-        console.log('Pacientes carregados para triagem:', data);
-        if (isMounted) {
-          setPatients(data || []);
-        }
+        console.log('✅ DEBUG: Triagem - Pacientes encontrados:', data);
+        
+        setPatients(data);
+        setHasLoadedOnce(true);
       } catch (error) {
-        console.error('Erro ao carregar pacientes:', error);
-        if (isMounted) {
+        console.error('❌ DEBUG: Triagem - Erro ao carregar pacientes:', error);
+        
+        // Só mostrar toast se não for erro de rede
+        if (!error?.message?.includes('Failed to fetch')) {
           toast({
             title: "Erro ao carregar pacientes",
             description: "Não foi possível carregar a lista de pacientes",
             variant: "destructive",
           });
-          setPatients([]);
         }
+        setPatients([]);
       } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+        setLoadingPatients(false);
       }
     };
     
     loadPatients();
-    
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  }, [authReady, hasLoadedOnce, getPatients, toast]);
 
   const classificacoesManchester = [
     { nivel: 'vermelho', nome: 'Emergência', tempo: 'Imediato', cor: 'bg-red-500' },
@@ -120,6 +142,22 @@ const Triagem = ({ onBack }) => {
     setSalvando(false);
   };
 
+  // Mostrar loading enquanto autenticação não estiver pronta
+  if (!authReady) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-red-50 p-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Carregando...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-red-50 p-6">
       <div className="max-w-4xl mx-auto">
@@ -159,7 +197,7 @@ const Triagem = ({ onBack }) => {
                   patients={patients}
                   selectedPatient={pacienteSelecionado}
                   onSelectPatient={setPacienteSelecionado}
-                  loading={loading}
+                  loading={loadingPatients}
                   label="Paciente"
                   placeholder="Digite o nome, telefone ou CPF do paciente..."
                 />
@@ -349,9 +387,9 @@ const Triagem = ({ onBack }) => {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600">
-                  {loading ? 'Carregando...' : `${patients.length} pacientes disponíveis para triagem`}
+                  {loadingPatients ? 'Carregando...' : `${patients.length} pacientes disponíveis para triagem`}
                 </p>
-                {!loading && patients.length === 0 && (
+                {!loadingPatients && patients.length === 0 && (
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
                       Cadastre pacientes primeiro na gestão de pacientes
