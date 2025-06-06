@@ -23,8 +23,6 @@ const NovoAtendimento = ({ onBack }) => {
   const [objetivo, setObjetivo] = useState('');
   const [avaliacao, setAvaliacao] = useState('');
   const [plano, setPlano] = useState('');
-  const [relatorioTitulo, setRelatorioTitulo] = useState('');
-  const [relatorioConteudo, setRelatorioConteudo] = useState('');
   const [salvando, setSalvando] = useState(false);
   const [activeTab, setActiveTab] = useState('soap');
 
@@ -111,10 +109,6 @@ const NovoAtendimento = ({ onBack }) => {
 
     setSalvando(true);
     
-    const relatorioCompleto = relatorioTitulo && relatorioConteudo 
-      ? `${relatorioTitulo}\n\n${relatorioConteudo}` 
-      : null;
-    
     const consultaData = {
       patient_id: pacienteSelecionado,
       professional_id: profissionalSelecionado,
@@ -124,8 +118,7 @@ const NovoAtendimento = ({ onBack }) => {
       plano: plano || null,
       receitas: null, // Will be handled by MedicalPrescription component
       exames: null,
-      atestados: null, // Will be handled by MedicalCertificate component
-      relatorio: relatorioCompleto
+      atestados: null // Will be handled by MedicalCertificate component
     };
 
     console.log('💾 DEBUG: NovoAtendimento - Dados da consulta a serem salvos:', consultaData);
@@ -140,8 +133,6 @@ const NovoAtendimento = ({ onBack }) => {
       setObjetivo('');
       setAvaliacao('');
       setPlano('');
-      setRelatorioTitulo('');
-      setRelatorioConteudo('');
     }
     
     setSalvando(false);
@@ -274,11 +265,10 @@ const NovoAtendimento = ({ onBack }) => {
               </CardHeader>
               <CardContent>
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                  <TabsList className="grid w-full grid-cols-4">
+                  <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="soap">SOAP</TabsTrigger>
                     <TabsTrigger value="receitas">Receitas</TabsTrigger>
                     <TabsTrigger value="atestados">Atestados</TabsTrigger>
-                    <TabsTrigger value="relatorios">Relatórios</TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="soap" className="space-y-4 mt-6">
@@ -355,31 +345,6 @@ const NovoAtendimento = ({ onBack }) => {
                         <p>Selecione um paciente para criar atestados</p>
                       </div>
                     )}
-                  </TabsContent>
-
-                  <TabsContent value="relatorios" className="space-y-4 mt-6">
-                    <div>
-                      <Label htmlFor="relatorio-titulo">Título do Relatório</Label>
-                      <Input
-                        id="relatorio-titulo"
-                        value={relatorioTitulo}
-                        onChange={(e) => setRelatorioTitulo(e.target.value)}
-                        placeholder="Ex: Relatório de Evolução, Laudo Médico, etc."
-                        className="mt-1"
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="relatorio-conteudo">Conteúdo do Relatório</Label>
-                      <Textarea
-                        id="relatorio-conteudo"
-                        value={relatorioConteudo}
-                        onChange={(e) => setRelatorioConteudo(e.target.value)}
-                        placeholder="Digite o conteúdo livre do relatório médico..."
-                        className="mt-1"
-                        rows={10}
-                      />
-                    </div>
                   </TabsContent>
                 </Tabs>
               </CardContent>
