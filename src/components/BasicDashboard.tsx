@@ -1,47 +1,15 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Calendar, Users, Clock, FileText, BarChart3, Activity, Stethoscope, UserPlus, LogOut } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
-import { useTriagem } from '@/hooks/useTriagem';
+import { useTriagemList } from '@/hooks/useTriagemList';
 
 const BasicDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
-  const [pacientesAguardando, setPacientesAguardando] = useState([]);
-  const [loadingTriagens, setLoadingTriagens] = useState(true);
   const { logout } = useAuth();
-  const { getTriagens } = useTriagem();
-
-  useEffect(() => {
-    const loadTriagens = async () => {
-      setLoadingTriagens(true);
-      try {
-        const triagens = await getTriagens();
-        // Ordenar por prioridade da classificação Manchester
-        const ordemPrioridade = {
-          'vermelho': 1,
-          'laranja': 2,
-          'amarelo': 3,
-          'verde': 4,
-          'azul': 5
-        };
-        
-        const triagensSorted = triagens.sort((a, b) => {
-          return ordemPrioridade[a.classificacao_manchester] - ordemPrioridade[b.classificacao_manchester];
-        });
-        
-        setPacientesAguardando(triagensSorted);
-      } catch (error) {
-        console.error('Erro ao carregar triagens:', error);
-      } finally {
-        setLoadingTriagens(false);
-      }
-    };
-
-    loadTriagens();
-  }, [getTriagens]);
+  const { pacientesAguardando, loading: loadingTriagens } = useTriagemList();
 
   const handleNavigate = (section) => {
     if (section === 'pacientes') {
