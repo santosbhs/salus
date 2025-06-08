@@ -1,12 +1,48 @@
 
-import React from 'react';
-import { Calendar, Users, Clock, FileText, BarChart3, Activity, Stethoscope, UserPlus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Calendar, Users, Clock, FileText, BarChart3, Activity, Stethoscope, UserPlus, LogOut } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useAuth } from '@/hooks/useAuth';
+import { useTriagem } from '@/hooks/useTriagem';
 
 const BasicDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
+  const [pacientesAguardando, setPacientesAguardando] = useState([]);
+  const [loadingTriagens, setLoadingTriagens] = useState(true);
+  const { logout } = useAuth();
+  const { getTriagens } = useTriagem();
+
+  useEffect(() => {
+    const loadTriagens = async () => {
+      setLoadingTriagens(true);
+      try {
+        const triagens = await getTriagens();
+        // Ordenar por prioridade da classificação Manchester
+        const ordemPrioridade = {
+          'vermelho': 1,
+          'laranja': 2,
+          'amarelo': 3,
+          'verde': 4,
+          'azul': 5
+        };
+        
+        const triagensSorted = triagens.sort((a, b) => {
+          return ordemPrioridade[a.classificacao_manchester] - ordemPrioridade[b.classificacao_manchester];
+        });
+        
+        setPacientesAguardando(triagensSorted);
+      } catch (error) {
+        console.error('Erro ao carregar triagens:', error);
+      } finally {
+        setLoadingTriagens(false);
+      }
+    };
+
+    loadTriagens();
+  }, [getTriagens]);
+
   const handleNavigate = (section) => {
     if (section === 'pacientes') {
       onNavigate('patients');
@@ -14,6 +50,37 @@ const BasicDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
       onNavigate('appointments');
     } else if (section === 'relatorios') {
       onNavigate('novo-atendimento');
+    }
+  };
+
+  const handleIniciarAtendimento = (paciente) => {
+    // Navegar para o atendimento com o paciente selecionado
+    onNavigate('novo-atendimento');
+  };
+
+  const getClassificacaoColor = (classificacao) => {
+    switch (classificacao) {
+      case 'vermelho': return 'bg-red-500';
+      case 'laranja': return 'bg-orange-500';
+      case 'amarelo': return 'bg-yellow-500';
+      case 'verde': return 'bg-green-500';
+      case 'azul': return 'bg-blue-500';
+      default: return 'bg-gray-500';
+    }
+  };
+
+  const getTempoEspera = (createdAt) => {
+    const agora = new Date();
+    const criacao = new Date(createdAt);
+    const diffMs = agora.getTime() - criacao.getTime();
+    const diffMinutos = Math.floor(diffMs / (1000 * 60));
+    
+    if (diffMinutos < 60) {
+      return `${diffMinutos} min`;
+    } else {
+      const horas = Math.floor(diffMinutos / 60);
+      const minutos = diffMinutos % 60;
+      return `${horas}h ${minutos}min`;
     }
   };
 
@@ -94,8 +161,15 @@ const BasicDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
                   </SelectContent>
                 </Select>
               </div>
+              <Button
+                onClick={logout}
+                variant="ghost"
+                className="text-white hover:bg-white/10"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sair
+              </Button>
             </div>
-            <p className="text-green-100 text-sm mt-2">R$ 97/mês</p>
           </div>
         </div>
       </div>
@@ -210,7 +284,7 @@ const BasicDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Agenda */}
-        <Card className="lg:col-span-2 border-green-200 shadow-lg">
+        <Card className="border-green-200 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center text-xl text-green-800">
               <Calendar className="mr-2 h-5 w-5" />
@@ -243,54 +317,82 @@ const BasicDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
           </CardContent>
         </Card>
 
-        {/* Analytics and Features */}
-        <div className="space-y-6">
-          <Card className="border-green-200 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-xl text-green-800">Relatórios Básicos</CardTitle>
-              <CardDescription>Análises disponíveis no plano básico</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button className="w-full justify-start" variant="outline">
-                <BarChart3 className="mr-2 h-4 w-4" />
-                Relatórios Mensais
-              </Button>
-              <Button className="w-full justify-start" variant="outline">
-                <Activity className="mr-2 h-4 w-4" />
-                Estatísticas Básicas
-              </Button>
-              <Button className="w-full justify-start" variant="outline">
-                <FileText className="mr-2 h-4 w-4" />
-                Histórico Simples
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="border-green-200 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-xl text-green-800">Recursos Incluídos</CardTitle>
-              <CardDescription>No plano básico</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {basicFeatures.map((feature, index) => (
-                  <div key={index} className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                    <span className="text-sm">{feature}</span>
+        {/* Pacientes Aguardando Atendimento */}
+        <Card className="border-green-200 shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-xl text-green-800">Pacientes Aguardando</CardTitle>
+            <CardDescription>Fila de atendimento por prioridade</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {loadingTriagens ? (
+              <div className="text-center py-4">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-green-600 mx-auto"></div>
+                <p className="text-sm text-gray-600 mt-2">Carregando...</p>
+              </div>
+            ) : pacientesAguardando.length > 0 ? (
+              <div className="space-y-3 max-h-64 overflow-y-auto">
+                {pacientesAguardando.map((triagem, index) => (
+                  <div 
+                    key={triagem.id} 
+                    className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-100 cursor-pointer hover:bg-green-100 transition-colors"
+                    onClick={() => handleIniciarAtendimento(triagem)}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-4 h-4 ${getClassificacaoColor(triagem.classificacao_manchester)} rounded-full`}></div>
+                      <div>
+                        <p className="font-semibold text-gray-900 text-sm">{triagem.patientName}</p>
+                        <p className="text-xs text-gray-600">{triagem.queixa_principal}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-500">Aguardando</p>
+                      <p className="text-xs font-medium text-green-600">{getTempoEspera(triagem.created_at)}</p>
+                    </div>
                   </div>
                 ))}
               </div>
-              <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                <div className="flex items-center space-x-2">
-                  <Clock className="h-4 w-4 text-green-600" />
-                  <span className="text-sm text-green-800 font-medium">
-                    Suporte em horário comercial
-                  </span>
-                </div>
+            ) : (
+              <div className="text-center py-6">
+                <Users className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-gray-600 text-sm">Nenhum paciente aguardando</p>
+                <Button 
+                  variant="outline" 
+                  className="mt-2 text-xs"
+                  onClick={() => onNavigate('triagem')}
+                  disabled
+                >
+                  Triagem (Upgrade necessário)
+                </Button>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Analytics and Features */}
+        <Card className="border-green-200 shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-xl text-green-800">Recursos Incluídos</CardTitle>
+            <CardDescription>No plano básico</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {basicFeatures.map((feature, index) => (
+                <div key={index} className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                  <span className="text-sm">{feature}</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <Clock className="h-4 w-4 text-green-600" />
+                <span className="text-sm text-green-800 font-medium">
+                  Suporte em horário comercial
+                </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
