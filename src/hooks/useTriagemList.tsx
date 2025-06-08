@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useTriagem, Triagem } from './useTriagem';
 
 export const useTriagemList = () => {
@@ -7,7 +7,7 @@ export const useTriagemList = () => {
   const [loading, setLoading] = useState(true);
   const { getTriagens } = useTriagem();
 
-  const loadTriagens = useCallback(async () => {
+  const loadTriagens = async () => {
     console.log('🔄 Carregando triagens...');
     setLoading(true);
     
@@ -35,15 +35,15 @@ export const useTriagemList = () => {
     } finally {
       setLoading(false);
     }
-  }, [getTriagens]);
+  };
 
   useEffect(() => {
     loadTriagens();
-  }, [loadTriagens]);
+  }, []);
 
-  const refreshTriagens = useCallback(() => {
+  const refreshTriagens = () => {
     loadTriagens();
-  }, [loadTriagens]);
+  };
 
   return {
     pacientesAguardando,
