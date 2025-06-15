@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, User, Search, Plus, Edit, Eye, Phone, Mail, Calendar, Trash2, Database } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,6 +10,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import PatientForm from './PatientForm';
 import PatientEditForm from './PatientEditForm';
 import { usePatients, Patient } from '@/hooks/usePatients';
+import { useAuth } from '@/hooks/useAuth';
 
 const PatientManagement = ({ onBack }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,20 +21,35 @@ const PatientManagement = ({ onBack }) => {
   const [convenioFilter, setConvenioFilter] = useState('todos');
   const [statusFilter, setStatusFilter] = useState('ativo');
   const { getPatients, deletePatient, deleteAllPatients, loading } = usePatients();
+  const { user, session } = useAuth();
 
   useEffect(() => {
-    loadPatients();
-  }, []);
+    const loadPatients = async () => {
+      // Verificar tanto user quanto session para autenticação
+      const currentUser = user || session?.user;
+      
+      if (!currentUser) {
+        console.log('🔄 Aguardando autenticação para carregar pacientes...');
+        return;
+      }
 
-  const loadPatients = async () => {
-    console.log('Carregando pacientes...');
-    const data = await getPatients();
-    console.log('Pacientes carregados:', data);
-    setPatients(data);
-  };
+      console.log('✅ Carregando pacientes para usuário autenticado:', currentUser.email);
+      
+      try {
+        const data = await getPatients();
+        console.log('📋 Pacientes carregados no PatientManagement:', data);
+        setPatients(data);
+      } catch (error) {
+        console.error('❌ Erro ao carregar pacientes no PatientManagement:', error);
+      }
+    };
+    
+    loadPatients();
+  }, [user, session, getPatients]);
 
   const handleSavePatient = async () => {
-    await loadPatients();
+    const data = await getPatients();
+    setPatients(data);
     setShowForm(false);
     setShowEditForm(false);
     setSelectedPatient(null);
@@ -47,7 +64,8 @@ const PatientManagement = ({ onBack }) => {
     console.log('Excluindo paciente:', patientId);
     const success = await deletePatient(patientId);
     if (success) {
-      await loadPatients();
+      const data = await getPatients();
+      setPatients(data);
     }
   };
 
@@ -55,7 +73,8 @@ const PatientManagement = ({ onBack }) => {
     console.log('Limpando base de dados...');
     const success = await deleteAllPatients();
     if (success) {
-      await loadPatients();
+      const data = await getPatients();
+      setPatients(data);
     }
   };
 
@@ -89,6 +108,21 @@ const PatientManagement = ({ onBack }) => {
       onBack={() => { setShowEditForm(false); setSelectedPatient(null); }} 
       onSave={handleSavePatient} 
     />;
+  }
+
+  // Mostrar loading enquanto autentica
+  const currentUser = user || session?.user;
+  if (!currentUser) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-green-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center py-8">
+            <div className="w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600 text-lg">Autenticando...</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

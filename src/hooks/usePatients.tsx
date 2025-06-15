@@ -35,11 +35,11 @@ export const usePatients = () => {
       console.log('🔍 DEBUG: Email do usuário:', currentUser.email);
       
       const patients = await fetchPatients(currentUser.id);
-      console.log('✅ DEBUG: Pacientes retornados:', patients);
-      console.log('📊 DEBUG: Quantidade de pacientes:', patients.length);
+      console.log('✅ DEBUG: Pacientes retornados no usePatients:', patients);
+      console.log('📊 DEBUG: Quantidade de pacientes no usePatients:', patients.length);
       return patients;
     } catch (error: any) {
-      console.error('❌ DEBUG: Erro ao buscar pacientes:', error);
+      console.error('❌ DEBUG: Erro ao buscar pacientes no usePatients:', error);
       console.error('❌ DEBUG: Stack do erro:', error.stack);
       
       // Não mostrar toast de erro para problemas de rede comum
