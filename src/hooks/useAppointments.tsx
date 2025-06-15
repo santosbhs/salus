@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
@@ -64,6 +65,7 @@ export const useAppointments = () => {
       console.error('Erro ao buscar agendamentos:', error);
       
       // Só mostrar toast se o usuário estiver autenticado
+      const currentUser = user || session?.user;
       if (currentUser) {
         toast({
           title: 'Erro ao carregar agendamentos',
@@ -181,7 +183,9 @@ export const useAppointments = () => {
     try {
       setLoading(true);
       
-      if (authLoading || !user) {
+      const currentUser = user || session?.user;
+      
+      if (!currentUser) {
         throw new Error('Usuário não autenticado');
       }
       
@@ -192,6 +196,7 @@ export const useAppointments = () => {
         .from('appointments')
         .update(dataToUpdate)
         .eq('id', id)
+        .eq('user_id', currentUser.id)
         .select()
         .single();
       
@@ -207,12 +212,14 @@ export const useAppointments = () => {
         .from('patients')
         .select('nome')
         .eq('id', data.patient_id)
+        .eq('user_id', currentUser.id)
         .single();
         
       const professionalRes = await supabase
         .from('professionals')
         .select('nome')
         .eq('id', data.professional_id)
+        .eq('user_id', currentUser.id)
         .single();
       
       return {
@@ -237,14 +244,17 @@ export const useAppointments = () => {
     try {
       setLoading(true);
       
-      if (authLoading || !user) {
+      const currentUser = user || session?.user;
+      
+      if (!currentUser) {
         throw new Error('Usuário não autenticado');
       }
       
       const { error } = await supabase
         .from('appointments')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
+        .eq('user_id', currentUser.id);
       
       if (error) throw error;
       
