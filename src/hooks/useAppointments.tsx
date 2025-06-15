@@ -19,16 +19,25 @@ export interface Appointment {
 
 export const useAppointments = () => {
   const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
 
   const getAppointments = async (): Promise<Appointment[]> => {
     try {
       setLoading(true);
       
-      if (!user) {
-        throw new Error('Usuário não autenticado');
+      // Aguardar autenticação estar completa
+      if (authLoading) {
+        console.log('🔄 Aguardando autenticação completar...');
+        return [];
       }
+      
+      if (!user) {
+        console.log('❌ Usuário não autenticado para buscar agendamentos');
+        return [];
+      }
+      
+      console.log('✅ Usuário autenticado, buscando agendamentos:', user.email);
       
       // Buscar agendamentos com dados de pacientes e profissionais
       const { data, error } = await supabase
@@ -42,6 +51,8 @@ export const useAppointments = () => {
       
       if (error) throw error;
       
+      console.log('📊 Agendamentos encontrados:', data?.length || 0);
+      
       // Formatar dados para uso no front-end
       return data.map(item => ({
         ...item,
@@ -50,11 +61,16 @@ export const useAppointments = () => {
       }));
     } catch (error: any) {
       console.error('Erro ao buscar agendamentos:', error);
-      toast({
-        title: 'Erro ao carregar agendamentos',
-        description: error.message || 'Não foi possível carregar a lista de agendamentos',
-        variant: 'destructive',
-      });
+      
+      // Não mostrar toast se for problema de autenticação em carregamento
+      if (!authLoading && user) {
+        toast({
+          title: 'Erro ao carregar agendamentos',
+          description: error.message || 'Não foi possível carregar a lista de agendamentos',
+          variant: 'destructive',
+        });
+      }
+      
       return [];
     } finally {
       setLoading(false);
@@ -65,8 +81,8 @@ export const useAppointments = () => {
     try {
       setLoading(true);
       
-      if (!user) {
-        throw new Error('Usuário não autenticado');
+      if (authLoading || !user) {
+        return null;
       }
       
       const { data, error } = await supabase
@@ -105,7 +121,7 @@ export const useAppointments = () => {
     try {
       setLoading(true);
       
-      if (!user) {
+      if (authLoading || !user) {
         throw new Error('Usuário não autenticado');
       }
       
@@ -157,7 +173,7 @@ export const useAppointments = () => {
     try {
       setLoading(true);
       
-      if (!user) {
+      if (authLoading || !user) {
         throw new Error('Usuário não autenticado');
       }
       
@@ -213,7 +229,7 @@ export const useAppointments = () => {
     try {
       setLoading(true);
       
-      if (!user) {
+      if (authLoading || !user) {
         throw new Error('Usuário não autenticado');
       }
       

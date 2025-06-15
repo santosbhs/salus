@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAppointments, Appointment } from '@/hooks/useAppointments';
 import { usePatients, Patient } from '@/hooks/usePatients';
 import { useProfessionals, Professional } from '@/hooks/useProfessionals';
+import { useAuth } from '@/hooks/useAuth';
 import AgendamentoForm from './AgendamentoForm';
 
 const AppointmentManagement = ({ onBack }) => {
@@ -23,9 +24,18 @@ const AppointmentManagement = ({ onBack }) => {
   const { getAppointments, updateAppointment, loading } = useAppointments();
   const { getPatients } = usePatients();
   const { getProfessionals } = useProfessionals();
+  const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
     const loadData = async () => {
+      // Aguardar autenticação estar completa
+      if (authLoading || !user) {
+        console.log('🔄 Aguardando autenticação para carregar gestão de agendamentos...');
+        return;
+      }
+
+      console.log('✅ Carregando dados da gestão de agendamentos...');
+      
       const appointmentsData = await getAppointments();
       const patientsData = await getPatients();
       const professionalsData = await getProfessionals();
@@ -36,7 +46,7 @@ const AppointmentManagement = ({ onBack }) => {
     };
     
     loadData();
-  }, []);
+  }, [user, authLoading]);
 
   const handleSaveAppointment = async () => {
     const data = await getAppointments();
@@ -102,6 +112,20 @@ const AppointmentManagement = ({ onBack }) => {
 
   if (showForm) {
     return <AgendamentoForm onBack={() => setShowForm(false)} onSave={handleSaveAppointment} />;
+  }
+
+  // Mostrar loading enquanto autentica
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center py-8">
+            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600 text-lg">Autenticando...</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

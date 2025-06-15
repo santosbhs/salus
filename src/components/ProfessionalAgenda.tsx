@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { useAppointments, Appointment } from '@/hooks/useAppointments';
 import { usePatients, Patient } from '@/hooks/usePatients';
 import { Professional } from '@/hooks/useProfessionals';
+import { useAuth } from '@/hooks/useAuth';
 
 interface ProfessionalAgendaProps {
   professional: Professional;
@@ -18,9 +19,18 @@ const ProfessionalAgenda = ({ professional, onBack }: ProfessionalAgendaProps) =
   const [patients, setPatients] = useState<Patient[]>([]);
   const { getAppointments, updateAppointment, loading } = useAppointments();
   const { getPatients } = usePatients();
+  const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
     const loadData = async () => {
+      // Aguardar autenticação estar completa
+      if (authLoading || !user) {
+        console.log('🔄 Aguardando autenticação para carregar agenda...');
+        return;
+      }
+
+      console.log('✅ Carregando dados da agenda...');
+      
       const appointmentsData = await getAppointments();
       const patientsData = await getPatients();
       
@@ -34,7 +44,7 @@ const ProfessionalAgenda = ({ professional, onBack }: ProfessionalAgendaProps) =
     };
     
     loadData();
-  }, [professional.id]);
+  }, [professional.id, user, authLoading]);
 
   const handleStatusChange = async (appointmentId: string, newStatus: string) => {
     const success = await updateAppointment(appointmentId, { status: newStatus });
@@ -62,6 +72,20 @@ const ProfessionalAgenda = ({ professional, onBack }: ProfessionalAgendaProps) =
     const aptDate = new Date(apt.data_agendamento).toDateString();
     return today === aptDate;
   });
+
+  // Mostrar loading enquanto autentica
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 p-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center py-8">
+            <div className="w-12 h-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600 text-lg">Autenticando...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 p-6">
