@@ -30,18 +30,14 @@ const PatientSearchInput = ({
 
   const selectedPatientObj = patients.find(p => p.id === selectedPatient);
 
-  // Debug para verificar os dados recebidos
-  console.log('🔍 DEBUG PatientSearchInput - Pacientes recebidos:', patients);
-  console.log('🔍 DEBUG PatientSearchInput - Loading:', loading);
-  console.log('🔍 DEBUG PatientSearchInput - Selected patient ID:', selectedPatient);
-  console.log('🔍 DEBUG PatientSearchInput - Selected patient obj:', selectedPatientObj);
-
+  // Update search term when selected patient changes
   useEffect(() => {
     if (selectedPatientObj && !searchTerm) {
       setSearchTerm(selectedPatientObj.nome);
     }
-  }, [selectedPatientObj]);
+  }, [selectedPatientObj?.nome]); // Only depend on the name, not the whole object
 
+  // Filter patients based on search term
   useEffect(() => {
     if (searchTerm.length > 0) {
       const filtered = patients.filter(patient =>
@@ -53,7 +49,7 @@ const PatientSearchInput = ({
     } else {
       setFilteredPatients(patients);
     }
-  }, [searchTerm, patients]);
+  }, [searchTerm, patients.length]); // Only depend on search term and patients length
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

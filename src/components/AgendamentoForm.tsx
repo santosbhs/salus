@@ -72,8 +72,12 @@ const AgendamentoForm = ({ onBack, onSave }: AgendamentoFormProps) => {
       }
     };
     
-    loadData();
-  }, [user, session, getPatients, getProfessionals, toast]);
+    // Only run once when user or session becomes available
+    const currentUser = user || session?.user;
+    if (currentUser && loadingData) {
+      loadData();
+    }
+  }, [user?.id, session?.user?.id]); // Only depend on user ID changes
 
   const handleSalvar = async () => {
     if (!pacienteSelecionado || !profissionalSelecionado || !dataAgendamento || !horaAgendamento || !tipoConsulta) {
