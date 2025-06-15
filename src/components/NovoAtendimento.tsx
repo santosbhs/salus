@@ -30,7 +30,6 @@ const NovoAtendimento = ({ onBack }) => {
   const [professionals, setProfessionals] = useState<Professional[]>([]);
   const [loadingPatients, setLoadingPatients] = useState(true);
   const [authReady, setAuthReady] = useState(false);
-  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   const { getPatients } = usePatients();
   const { getProfessionals } = useProfessionals();
@@ -55,10 +54,10 @@ const NovoAtendimento = ({ onBack }) => {
     }
   }, [user, session]);
 
-  // Carregar dados apenas quando autenticação estiver pronta e uma única vez
+  // Carregar dados apenas quando autenticação estiver pronta
   useEffect(() => {
-    if (!authReady || hasLoadedOnce) {
-      console.log('⏳ DEBUG: NovoAtendimento - Autenticação não está pronta ou já carregou uma vez');
+    if (!authReady) {
+      console.log('⏳ DEBUG: NovoAtendimento - Autenticação não está pronta');
       return;
     }
 
@@ -77,7 +76,6 @@ const NovoAtendimento = ({ onBack }) => {
         
         setPatients(patientsData);
         setProfessionals(professionalsData);
-        setHasLoadedOnce(true);
       } catch (error) {
         console.error('❌ DEBUG: NovoAtendimento - Erro ao carregar dados:', error);
         
@@ -95,7 +93,7 @@ const NovoAtendimento = ({ onBack }) => {
     };
     
     loadData();
-  }, [authReady, hasLoadedOnce, getPatients, getProfessionals, toast]);
+  }, [authReady, getPatients, getProfessionals, toast]);
 
   const handleSalvar = async () => {
     if (!pacienteSelecionado || !profissionalSelecionado) {

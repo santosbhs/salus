@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Calendar, Clock, User, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,6 +10,7 @@ import { usePatients, Patient } from '@/hooks/usePatients';
 import { useProfessionals, Professional } from '@/hooks/useProfessionals';
 import { useAppointments } from '@/hooks/useAppointments';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 interface AgendamentoFormProps {
   onBack: () => void;
@@ -28,22 +28,52 @@ const AgendamentoForm = ({ onBack, onSave }: AgendamentoFormProps) => {
 
   const [patients, setPatients] = useState<Patient[]>([]);
   const [professionals, setProfessionals] = useState<Professional[]>([]);
+  const [loadingData, setLoadingData] = useState(true);
 
   const { getPatients } = usePatients();
   const { getProfessionals } = useProfessionals();
   const { createAppointment } = useAppointments();
   const { toast } = useToast();
+  const { user, session } = useAuth();
 
   useEffect(() => {
     const loadData = async () => {
-      const patientsData = await getPatients();
-      const professionalsData = await getProfessionals();
-      setPatients(patientsData);
-      setProfessionals(professionalsData);
+      // Verificar tanto user quanto session para autenticação
+      const currentUser = user || session?.user;
+      
+      if (!currentUser) {
+        console.log('⏳ DEBUG: AgendamentoForm - Aguardando autenticação...');
+        return;
+      }
+
+      console.log('📥 DEBUG: AgendamentoForm - Carregando dados para usuário:', currentUser.email);
+      setLoadingData(true);
+      
+      try {
+        const [patientsData, professionalsData] = await Promise.all([
+          getPatients(),
+          getProfessionals()
+        ]);
+        
+        console.log('✅ DEBUG: AgendamentoForm - Pacientes carregados:', patientsData);
+        console.log('✅ DEBUG: AgendamentoForm - Profissionais carregados:', professionalsData);
+        
+        setPatients(patientsData);
+        setProfessionals(professionalsData);
+      } catch (error) {
+        console.error('❌ DEBUG: AgendamentoForm - Erro ao carregar dados:', error);
+        toast({
+          title: "Erro ao carregar dados",
+          description: "Não foi possível carregar pacientes e profissionais. Tente novamente.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoadingData(false);
+      }
     };
     
     loadData();
-  }, []);
+  }, [user, session, getPatients, getProfessionals, toast]);
 
   const handleSalvar = async () => {
     if (!pacienteSelecionado || !profissionalSelecionado || !dataAgendamento || !horaAgendamento || !tipoConsulta) {
@@ -68,6 +98,8 @@ const AgendamentoForm = ({ onBack, onSave }: AgendamentoFormProps) => {
       observacoes: observacoes || null
     };
 
+    console.log('💾 DEBUG: AgendamentoForm - Dados do agendamento:', agendamentoData);
+    
     const resultado = await createAppointment(agendamentoData);
     
     if (resultado) {
@@ -85,6 +117,25 @@ const AgendamentoForm = ({ onBack, onSave }: AgendamentoFormProps) => {
     'Exame Clínico',
     'Procedimento'
   ];
+
+  // Mostrar loading enquanto autentica ou carrega dados
+  const currentUser = user || session?.user;
+  if (!currentUser || loadingData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 p-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">
+                {!currentUser ? 'Autenticando...' : 'Carregando dados...'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 p-6">
@@ -129,11 +180,17 @@ const AgendamentoForm = ({ onBack, onSave }: AgendamentoFormProps) => {
                         <SelectValue placeholder="Selecione um paciente" />
                       </SelectTrigger>
                       <SelectContent>
-                        {patients.map((patient) => (
-                          <SelectItem key={patient.id} value={patient.id}>
-                            {patient.nome} - {patient.telefone}
+                        {patients.length === 0 ? (
+                          <SelectItem value="no-patients" disabled>
+                            Nenhum paciente cadastrado
                           </SelectItem>
-                        ))}
+                        ) : (
+                          patients.map((patient) => (
+                            <SelectItem key={patient.id} value={patient.id}>
+                              {patient.nome} - {patient.telefone}
+                            </SelectItem>
+                          ))
+                        )}
                       </SelectContent>
                     </Select>
                   </div>
@@ -145,11 +202,17 @@ const AgendamentoForm = ({ onBack, onSave }: AgendamentoFormProps) => {
                         <SelectValue placeholder="Selecione um profissional" />
                       </SelectTrigger>
                       <SelectContent>
-                        {professionals.map((professional) => (
-                          <SelectItem key={professional.id} value={professional.id}>
-                            {professional.nome} - {professional.especialidade}
+                        {professionals.length === 0 ? (
+                          <SelectItem value="no-professionals" disabled>
+                            Nenhum profissional cadastrado
                           </SelectItem>
-                        ))}
+                        ) : (
+                          professionals.map((professional) => (
+                            <SelectItem key={professional.id} value={professional.id}>
+                              {professional.nome} - {professional.especialidade}
+                            </SelectItem>
+                          ))
+                        )}
                       </SelectContent>
                     </Select>
                   </div>
@@ -222,7 +285,7 @@ const AgendamentoForm = ({ onBack, onSave }: AgendamentoFormProps) => {
                 <Button 
                   className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
                   onClick={handleSalvar}
-                  disabled={salvando}
+                  disabled={salvando || patients.length === 0 || professionals.length === 0}
                 >
                   <Save className="mr-2 h-4 w-4" />
                   {salvando ? 'Salvando...' : 'Agendar Consulta'}

@@ -30,8 +30,14 @@ const PatientSearchInput = ({
 
   const selectedPatientObj = patients.find(p => p.id === selectedPatient);
 
+  // Debug para verificar os dados recebidos
+  console.log('🔍 DEBUG PatientSearchInput - Pacientes recebidos:', patients);
+  console.log('🔍 DEBUG PatientSearchInput - Loading:', loading);
+  console.log('🔍 DEBUG PatientSearchInput - Selected patient ID:', selectedPatient);
+  console.log('🔍 DEBUG PatientSearchInput - Selected patient obj:', selectedPatientObj);
+
   useEffect(() => {
-    if (selectedPatientObj) {
+    if (selectedPatientObj && !searchTerm) {
       setSearchTerm(selectedPatientObj.nome);
     }
   }, [selectedPatientObj]);
@@ -39,9 +45,9 @@ const PatientSearchInput = ({
   useEffect(() => {
     if (searchTerm.length > 0) {
       const filtered = patients.filter(patient =>
-        patient.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        patient.telefone.includes(searchTerm) ||
-        patient.cpf.includes(searchTerm)
+        patient.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        patient.telefone?.includes(searchTerm) ||
+        patient.cpf?.includes(searchTerm)
       );
       setFilteredPatients(filtered);
     } else {
@@ -61,16 +67,18 @@ const PatientSearchInput = ({
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+    const value = e.target.value;
+    setSearchTerm(value);
     setIsOpen(true);
     
     // Se o campo foi limpo, limpar seleção
-    if (e.target.value === '') {
+    if (value === '') {
       onSelectPatient('');
     }
   };
 
   const handleSelectPatient = (patient: Patient) => {
+    console.log('✅ DEBUG PatientSearchInput - Paciente selecionado:', patient);
     setSearchTerm(patient.nome);
     onSelectPatient(patient.id);
     setIsOpen(false);
@@ -79,6 +87,22 @@ const PatientSearchInput = ({
   const handleInputFocus = () => {
     setIsOpen(true);
   };
+
+  // Não mostrar o componente se estiver carregando indefinidamente
+  if (loading && patients.length === 0) {
+    return (
+      <div>
+        <Label htmlFor="patient-search">{label} *</Label>
+        <div className="relative mt-1">
+          <Input
+            disabled
+            placeholder="Carregando pacientes..."
+            className="pr-10"
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -90,8 +114,8 @@ const PatientSearchInput = ({
           value={searchTerm}
           onChange={handleInputChange}
           onFocus={handleInputFocus}
-          placeholder={loading ? "Carregando pacientes..." : placeholder}
-          disabled={loading}
+          placeholder={patients.length === 0 ? "Nenhum paciente cadastrado" : placeholder}
+          disabled={patients.length === 0}
           className="pr-10"
         />
         <ChevronDown 
@@ -102,11 +126,7 @@ const PatientSearchInput = ({
 
       {isOpen && (
         <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
-          {loading ? (
-            <div className="p-3 text-center text-gray-500">
-              Carregando pacientes...
-            </div>
-          ) : filteredPatients.length === 0 ? (
+          {filteredPatients.length === 0 ? (
             <div className="p-3 text-center text-gray-500">
               {patients.length === 0 ? 'Nenhum paciente cadastrado' : 'Nenhum paciente encontrado'}
             </div>
