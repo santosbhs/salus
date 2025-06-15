@@ -24,29 +24,40 @@ const AppointmentManagement = ({ onBack }) => {
   const { getAppointments, updateAppointment, loading } = useAppointments();
   const { getPatients } = usePatients();
   const { getProfessionals } = useProfessionals();
-  const { user, loading: authLoading } = useAuth();
+  const { user, session } = useAuth();
 
   useEffect(() => {
     const loadData = async () => {
-      // Aguardar autenticação estar completa
-      if (authLoading || !user) {
+      // Verificar tanto user quanto session para autenticação
+      const currentUser = user || session?.user;
+      
+      if (!currentUser) {
         console.log('🔄 Aguardando autenticação para carregar gestão de agendamentos...');
         return;
       }
 
       console.log('✅ Carregando dados da gestão de agendamentos...');
       
-      const appointmentsData = await getAppointments();
-      const patientsData = await getPatients();
-      const professionalsData = await getProfessionals();
-      
-      setAppointments(appointmentsData);
-      setPatients(patientsData);
-      setProfessionals(professionalsData);
+      try {
+        const appointmentsData = await getAppointments();
+        const patientsData = await getPatients();
+        const professionalsData = await getProfessionals();
+        
+        console.log('📋 Dados carregados:');
+        console.log('- Agendamentos:', appointmentsData.length);
+        console.log('- Pacientes:', patientsData.length);
+        console.log('- Profissionais:', professionalsData.length);
+        
+        setAppointments(appointmentsData);
+        setPatients(patientsData);
+        setProfessionals(professionalsData);
+      } catch (error) {
+        console.error('❌ Erro ao carregar dados:', error);
+      }
     };
     
     loadData();
-  }, [user, authLoading]);
+  }, [user, session]);
 
   const handleSaveAppointment = async () => {
     const data = await getAppointments();
@@ -79,10 +90,13 @@ const AppointmentManagement = ({ onBack }) => {
     const patient = patients.find(p => p.id === appointment.patient_id);
     const professional = professionals.find(p => p.id === appointment.professional_id);
     
-    // Filtro de busca
+    // Filtro de busca - usar o nome do paciente do agendamento ou buscar na lista
+    const patientName = appointment.patientName || patient?.nome || '';
+    const professionalName = appointment.professionalName || professional?.nome || '';
+    
     const matchesSearch = (
-      patient?.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      professional?.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      professionalName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       appointment.tipo.toLowerCase().includes(searchTerm.toLowerCase())
     );
     
@@ -115,7 +129,8 @@ const AppointmentManagement = ({ onBack }) => {
   }
 
   // Mostrar loading enquanto autentica
-  if (authLoading) {
+  const currentUser = user || session?.user;
+  if (!currentUser) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 p-6">
         <div className="max-w-7xl mx-auto">
@@ -230,6 +245,15 @@ const AppointmentManagement = ({ onBack }) => {
               const professional = professionals.find(p => p.id === appointment.professional_id);
               const appointmentDate = new Date(appointment.data_agendamento);
               
+              // Debug para verificar nomes dos pacientes
+              console.log('🔍 Debug agendamento na lista:', {
+                appointmentId: appointment.id,
+                patientIdFromAppointment: appointment.patient_id,
+                patientNameFromAppointment: appointment.patientName,
+                patientFromList: patient?.nome,
+                finalPatientName: appointment.patientName || patient?.nome || 'Paciente não encontrado'
+              });
+              
               return (
                 <Card key={appointment.id} className="shadow-lg hover:shadow-xl transition-all duration-300 border-blue-200">
                   <CardContent className="p-6">
@@ -240,10 +264,10 @@ const AppointmentManagement = ({ onBack }) => {
                         </div>
                         <div>
                           <h3 className="text-lg font-semibold text-gray-900">
-                            {patient?.nome || 'Paciente não encontrado'}
+                            {appointment.patientName || patient?.nome || 'Paciente não encontrado'}
                           </h3>
                           <p className="text-gray-600">
-                            {professional?.nome || 'Profissional não encontrado'} • {appointment.tipo}
+                            {appointment.professionalName || professional?.nome || 'Profissional não encontrado'} • {appointment.tipo}
                           </p>
                           <div className="flex items-center text-gray-500 text-sm mt-1">
                             <Calendar className="h-4 w-4 mr-1" />

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
@@ -19,25 +18,22 @@ export interface Appointment {
 
 export const useAppointments = () => {
   const [loading, setLoading] = useState(false);
-  const { user, loading: authLoading } = useAuth();
+  const { user, session } = useAuth();
   const { toast } = useToast();
 
   const getAppointments = async (): Promise<Appointment[]> => {
     try {
       setLoading(true);
       
-      // Aguardar autenticação estar completa
-      if (authLoading) {
-        console.log('🔄 Aguardando autenticação completar...');
-        return [];
-      }
+      // Verificar tanto user quanto session para autenticação
+      const currentUser = user || session?.user;
       
-      if (!user) {
+      if (!currentUser) {
         console.log('❌ Usuário não autenticado para buscar agendamentos');
         return [];
       }
       
-      console.log('✅ Usuário autenticado, buscando agendamentos:', user.email);
+      console.log('✅ Usuário autenticado, buscando agendamentos:', currentUser.email);
       
       // Buscar agendamentos com dados de pacientes e profissionais
       const { data, error } = await supabase
@@ -47,23 +43,28 @@ export const useAppointments = () => {
           patient:patients(nome),
           professional:professionals(nome)
         `)
+        .eq('user_id', currentUser.id)
         .order('data_agendamento', { ascending: true });
       
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Erro ao buscar agendamentos:', error);
+        throw error;
+      }
       
       console.log('📊 Agendamentos encontrados:', data?.length || 0);
+      console.log('📄 Dados dos agendamentos:', data);
       
       // Formatar dados para uso no front-end
-      return data.map(item => ({
+      return data?.map(item => ({
         ...item,
         patientName: item.patient?.nome,
         professionalName: item.professional?.nome
-      }));
+      })) || [];
     } catch (error: any) {
       console.error('Erro ao buscar agendamentos:', error);
       
-      // Não mostrar toast se for problema de autenticação em carregamento
-      if (!authLoading && user) {
+      // Só mostrar toast se o usuário estiver autenticado
+      if (currentUser) {
         toast({
           title: 'Erro ao carregar agendamentos',
           description: error.message || 'Não foi possível carregar a lista de agendamentos',
@@ -81,7 +82,9 @@ export const useAppointments = () => {
     try {
       setLoading(true);
       
-      if (authLoading || !user) {
+      const currentUser = user || session?.user;
+      
+      if (!currentUser) {
         return null;
       }
       
@@ -93,6 +96,7 @@ export const useAppointments = () => {
           professional:professionals(nome)
         `)
         .eq('id', id)
+        .eq('user_id', currentUser.id)
         .single();
       
       if (error) throw error;
@@ -121,13 +125,15 @@ export const useAppointments = () => {
     try {
       setLoading(true);
       
-      if (authLoading || !user) {
+      const currentUser = user || session?.user;
+      
+      if (!currentUser) {
         throw new Error('Usuário não autenticado');
       }
       
       const { data, error } = await supabase
         .from('appointments')
-        .insert([{ ...appointmentData, user_id: user.id }])
+        .insert([{ ...appointmentData, user_id: currentUser.id }])
         .select()
         .single();
       
@@ -143,12 +149,14 @@ export const useAppointments = () => {
         .from('patients')
         .select('nome')
         .eq('id', appointmentData.patient_id)
+        .eq('user_id', currentUser.id)
         .single();
         
       const professionalRes = await supabase
         .from('professionals')
         .select('nome')
         .eq('id', appointmentData.professional_id)
+        .eq('user_id', currentUser.id)
         .single();
       
       return {

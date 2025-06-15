@@ -19,32 +19,43 @@ const ProfessionalAgenda = ({ professional, onBack }: ProfessionalAgendaProps) =
   const [patients, setPatients] = useState<Patient[]>([]);
   const { getAppointments, updateAppointment, loading } = useAppointments();
   const { getPatients } = usePatients();
-  const { user, loading: authLoading } = useAuth();
+  const { user, session } = useAuth();
 
   useEffect(() => {
     const loadData = async () => {
-      // Aguardar autenticação estar completa
-      if (authLoading || !user) {
+      // Verificar tanto user quanto session para autenticação
+      const currentUser = user || session?.user;
+      
+      if (!currentUser) {
         console.log('🔄 Aguardando autenticação para carregar agenda...');
         return;
       }
 
       console.log('✅ Carregando dados da agenda...');
       
-      const appointmentsData = await getAppointments();
-      const patientsData = await getPatients();
-      
-      // Filtrar agendamentos deste profissional
-      const professionalAppointments = appointmentsData.filter(
-        apt => apt.professional_id === professional.id
-      );
-      
-      setAppointments(professionalAppointments);
-      setPatients(patientsData);
+      try {
+        const appointmentsData = await getAppointments();
+        const patientsData = await getPatients();
+        
+        console.log('📋 Agendamentos carregados:', appointmentsData.length);
+        console.log('👥 Pacientes carregados:', patientsData.length);
+        
+        // Filtrar agendamentos deste profissional
+        const professionalAppointments = appointmentsData.filter(
+          apt => apt.professional_id === professional.id
+        );
+        
+        console.log('📅 Agendamentos deste profissional:', professionalAppointments.length);
+        
+        setAppointments(professionalAppointments);
+        setPatients(patientsData);
+      } catch (error) {
+        console.error('❌ Erro ao carregar dados da agenda:', error);
+      }
     };
     
     loadData();
-  }, [professional.id, user, authLoading]);
+  }, [professional.id, user, session]);
 
   const handleStatusChange = async (appointmentId: string, newStatus: string) => {
     const success = await updateAppointment(appointmentId, { status: newStatus });
@@ -74,7 +85,8 @@ const ProfessionalAgenda = ({ professional, onBack }: ProfessionalAgendaProps) =
   });
 
   // Mostrar loading enquanto autentica
-  if (authLoading) {
+  const currentUser = user || session?.user;
+  if (!currentUser) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 p-6">
         <div className="max-w-6xl mx-auto">
@@ -172,6 +184,13 @@ const ProfessionalAgenda = ({ professional, onBack }: ProfessionalAgendaProps) =
                 const patient = patients.find(p => p.id === appointment.patient_id);
                 const appointmentTime = new Date(appointment.data_agendamento);
                 
+                console.log('🔍 Debug agendamento:', {
+                  appointmentId: appointment.id,
+                  patientId: appointment.patient_id,
+                  patientName: appointment.patientName,
+                  patientFound: patient?.nome
+                });
+                
                 return (
                   <Card key={appointment.id} className="shadow-lg hover:shadow-xl transition-all duration-300 border-emerald-200">
                     <CardContent className="p-6">
@@ -182,7 +201,7 @@ const ProfessionalAgenda = ({ professional, onBack }: ProfessionalAgendaProps) =
                           </div>
                           <div>
                             <h3 className="text-lg font-semibold text-gray-900">
-                              {patient?.nome || 'Paciente não encontrado'}
+                              {appointment.patientName || patient?.nome || 'Paciente não encontrado'}
                             </h3>
                             <div className="flex items-center text-gray-600">
                               <Clock className="h-4 w-4 mr-1" />
