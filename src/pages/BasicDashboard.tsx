@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import BasicDashboard from '@/components/BasicDashboard';
 import PatientManagement from '@/components/PatientManagement';
+import ProfessionalManagement from '@/components/ProfessionalManagement';
 import AppointmentManagement from '@/components/AppointmentManagement';
 import NovoAtendimento from '@/components/NovoAtendimento';
 import Triagem from '@/components/Triagem';
@@ -33,6 +34,8 @@ const BasicDashboardPage = () => {
     switch (currentView) {
       case 'patients':
         return <PatientManagement onBack={handleBack} />;
+      case 'professionals':
+        return <ProfessionalManagement onBack={handleBack} />;
       case 'appointments':
         return <AppointmentManagement onBack={handleBack} />;
       case 'novo-atendimento':

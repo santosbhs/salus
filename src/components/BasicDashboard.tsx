@@ -18,6 +18,8 @@ const BasicDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
       onNavigate('appointments');
     } else if (section === 'relatorios') {
       onNavigate('novo-atendimento');
+    } else if (section === 'professionals') {
+      onNavigate('professionals');
     }
   };
 
@@ -97,6 +99,7 @@ const BasicDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
     'Cadastro de até 50 pacientes',
     'Agendamentos básicos',
     'Prontuário eletrônico simples',
+    'Cadastro de profissionais',
     'Relatórios básicos',
     'Suporte por email',
     'Backup semanal',
@@ -178,6 +181,23 @@ const BasicDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
           </CardContent>
         </Card>
 
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-green-200" onClick={() => handleNavigate('professionals')}>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center text-lg">
+              <UserPlus className="mr-2 h-5 w-5 text-green-600" />
+              Profissionais
+            </CardTitle>
+            <CardDescription>
+              Cadastro de profissionais
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" className="w-full border-green-600 text-green-600 hover:bg-green-600 hover:text-white">
+              Gerenciar Profissionais
+            </Button>
+          </CardContent>
+        </Card>
+
         <Card className="hover:shadow-lg transition-shadow cursor-pointer border-green-200" onClick={() => onNavigate('appointments')}>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
@@ -191,23 +211,6 @@ const BasicDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
           <CardContent>
             <Button variant="outline" className="w-full border-green-600 text-green-600 hover:bg-green-600 hover:text-white">
               Ver Agenda
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-gray-300 opacity-60">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center text-lg">
-              <Stethoscope className="mr-2 h-5 w-5 text-gray-500" />
-              Triagem Avançada
-            </CardTitle>
-            <CardDescription>
-              Disponível no Plano Profissional
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button disabled className="w-full">
-              Fazer Upgrade
             </Button>
           </CardContent>
         </Card>
