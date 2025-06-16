@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Lock, Mail, Eye, EyeOff, Zap, ArrowLeft, Info } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff, Zap, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -25,22 +24,19 @@ const Login = () => {
       email: 'admin.basico@teste.com', 
       password: '123456',
       plan: 'Básico',
-      redirect: '/dashboard-basico',
-      color: 'text-blue-600'
+      redirect: '/dashboard-basico'
     },
     { 
       email: 'admin.profissional@teste.com', 
       password: '123456',
       plan: 'Profissional',
-      redirect: '/dashboard-profissional',
-      color: 'text-green-600'
+      redirect: '/dashboard-profissional'
     },
     { 
       email: 'admin.enterprise@teste.com', 
       password: '123456',
       plan: 'Enterprise',
-      redirect: '/dashboard-enterprise',
-      color: 'text-purple-600'
+      redirect: '/dashboard-enterprise'
     }
   ];
 
@@ -170,148 +166,132 @@ const Login = () => {
   const isFormValid = formData.email.trim() !== '' && formData.password.trim() !== '';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-green-900 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-green-400/20 to-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-blue-400/20 to-green-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Back button */}
+        <div className="mb-6">
+          <Link to="/">
+            <Button variant="ghost" className="text-white hover:bg-white/10 p-2">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Voltar
+            </Button>
+          </Link>
+        </div>
 
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          {/* Back to home button */}
-          <div className="mb-6">
-            <Link to="/">
-              <Button variant="ghost" className="text-white hover:bg-white/10 p-2">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Voltar ao início
-              </Button>
-            </Link>
-          </div>
-
-          {/* Logo */}
-          <div className="flex items-center justify-center mb-8">
-            <div className="flex items-center space-x-4 bg-white/10 backdrop-blur-md rounded-2xl px-8 py-4 border border-white/20">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-400 rounded-xl flex items-center justify-center">
-                <Zap className="text-white h-7 w-7" />
-              </div>
-              <div className="text-left">
-                <h1 className="text-3xl font-bold text-white">SALUS</h1>
-                <p className="text-green-200 text-sm">Healthcare Platform</p>
-              </div>
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center space-x-3 bg-white/10 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/20">
+            <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-400 rounded-lg flex items-center justify-center">
+              <Zap className="text-white h-6 w-6" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-white">SALUS</h1>
+              <p className="text-green-200 text-xs">Healthcare Platform</p>
             </div>
           </div>
+        </div>
 
-          <Card className="bg-white/95 backdrop-blur-md shadow-2xl border-0">
-            <CardHeader className="space-y-1 text-center pb-6">
-              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                Acesso à Plataforma
-              </CardTitle>
-              <CardDescription className="text-gray-600 text-lg">
-                Entre com suas credenciais de assinante
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Usuários de Teste */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex items-center mb-3">
-                  <Info className="h-4 w-4 text-blue-600 mr-2" />
-                  <span className="text-sm font-medium text-blue-800">Usuários de Teste</span>
-                </div>
-                <div className="space-y-2">
-                  {testUsers.map((user, index) => (
-                    <button
-                      key={index}
-                      onClick={() => fillTestUser(user)}
-                      className="w-full text-left p-2 rounded border border-gray-200 hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">{user.email}</p>
-                          <p className={`text-xs ${user.color} font-medium`}>Plano {user.plan}</p>
-                        </div>
-                        <span className="text-xs text-gray-500">Senha: {user.password}</span>
-                      </div>
-                    </button>
-                  ))}
+        <Card className="bg-white/95 backdrop-blur-sm shadow-xl border-0">
+          <CardHeader className="text-center pb-4">
+            <CardTitle className="text-2xl font-bold text-gray-900">
+              Entrar
+            </CardTitle>
+            <CardDescription className="text-gray-600">
+              Acesse sua conta
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent className="space-y-6">
+            {/* Test users - simplified */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <p className="text-xs font-medium text-blue-800 mb-2">Contas de teste:</p>
+              <div className="space-y-1">
+                {testUsers.map((user, index) => (
+                  <button
+                    key={index}
+                    onClick={() => fillTestUser(user)}
+                    className="w-full text-left p-2 rounded text-xs hover:bg-blue-100 transition-colors"
+                  >
+                    <span className="font-medium">{user.plan}:</span> {user.email}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-gray-700">E-mail</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="seu@email.com"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="pl-10 h-11 border-gray-300 focus:border-green-500 focus:ring-green-500"
+                    required
+                  />
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-700 font-medium">E-mail</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="seu@email.com"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className="pl-12 h-12 text-lg border-gray-300 focus:border-green-500 focus:ring-green-500"
-                      required
-                    />
-                  </div>
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-gray-700">Senha</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Sua senha"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="pl-10 pr-10 h-11 border-gray-300 focus:border-green-500 focus:ring-green-500"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
+              </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-gray-700 font-medium">Senha</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                    <Input
-                      id="password"
-                      name="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Sua senha"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      className="pl-12 pr-12 h-12 text-lg border-gray-300 focus:border-green-500 focus:ring-green-500"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                    </button>
-                  </div>
-                </div>
+              <Button 
+                type="submit" 
+                className="w-full h-11 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-medium rounded-lg"
+                disabled={loading || !isFormValid}
+              >
+                {loading ? "Entrando..." : "Entrar"}
+              </Button>
+            </form>
 
-                <Button 
-                  type="submit" 
-                  className="w-full h-12 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white text-lg font-bold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
-                  disabled={loading || !isFormValid}
-                >
-                  {loading ? "Entrando..." : "Entrar na Plataforma"}
-                </Button>
-              </form>
-
-              <div className="text-center space-y-6">
-                <Link to="/forgot-password" className="text-green-600 hover:text-green-700 font-medium">
-                  Esqueci minha senha
+            <div className="text-center space-y-4">
+              <Link to="/forgot-password" className="text-green-600 hover:text-green-700 text-sm">
+                Esqueci minha senha
+              </Link>
+              
+              <div className="border-t pt-4">
+                <p className="text-gray-600 mb-3 text-sm">
+                  Ainda não é assinante?
+                </p>
+                <Link to="/subscription">
+                  <Button variant="outline" className="w-full h-11 border-green-600 text-green-600 hover:bg-green-600 hover:text-white font-medium rounded-lg">
+                    Assinar SALUS
+                  </Button>
                 </Link>
-                
-                <div className="border-t pt-6">
-                  <p className="text-gray-600 mb-4 text-lg">
-                    Ainda não é assinante?
-                  </p>
-                  <Link to="/subscription">
-                    <Button variant="outline" className="w-full h-12 border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white text-lg font-bold rounded-xl transform hover:scale-105 transition-all duration-300">
-                      Assinar SALUS - 30 dias grátis
-                    </Button>
-                  </Link>
-                </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </CardContent>
+        </Card>
 
-          <div className="mt-8 text-center">
-            <p className="text-white/70 text-sm">
-              © 2024 SALUS - Healthcare Platform. Todos os direitos reservados.
-            </p>
-          </div>
+        <div className="mt-6 text-center">
+          <p className="text-white/70 text-xs">
+            © 2024 SALUS Healthcare Platform
+          </p>
         </div>
       </div>
     </div>
