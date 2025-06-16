@@ -57,9 +57,26 @@ export const SalesHero = () => {
               </div>
             </div>
 
-            {/* Mockup do sistema */}
+            {/* Mockup do sistema com imagem profissional */}
             <div className="relative">
               <div className="bg-gradient-to-br from-blue-100 to-green-100 rounded-3xl p-8">
+                {/* Imagem do profissional de saúde */}
+                <div className="relative mb-6">
+                  <img 
+                    src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    alt="Profissional de saúde usando laptop - Sistema SALUS"
+                    className="w-full h-48 object-cover rounded-2xl shadow-xl"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent rounded-2xl"></div>
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <div className="bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2">
+                      <p className="text-sm font-semibold text-blue-900">Sistema SALUS em uso</p>
+                      <p className="text-xs text-gray-700">Gestão moderna para sua clínica</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mockup cards do sistema */}
                 <div className="bg-white rounded-2xl shadow-2xl p-6 mb-4 transform rotate-2">
                   <div className="h-4 bg-gray-200 rounded mb-3"></div>
                   <div className="h-3 bg-gray-100 rounded mb-2"></div>
