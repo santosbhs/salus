@@ -1,8 +1,77 @@
+
 import React from 'react';
-import { Check, ChevronRight, Play, Calendar, FileText, MessageSquare, BarChart3, FileCheck } from 'lucide-react';
+import { Check, ChevronRight, Play, Calendar, FileText, MessageSquare, BarChart3, FileCheck, Star, Rocket, Crown, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
+
 export const SalesHero = () => {
+  const plans = [
+    {
+      id: 'basic',
+      name: 'Básico',
+      price: 'R$ 97',
+      period: '/mês',
+      description: 'Para consultórios pequenos',
+      icon: Star,
+      features: [
+        'Até 50 pacientes',
+        '1 profissional',
+        'Agenda básica',
+        'Prontuário eletrônico',
+        'Anamnese SOAP',
+        'Sistema de triagem',
+        'Suporte por email'
+      ],
+      popular: false,
+      gradient: "from-gray-600 to-gray-700",
+      bgColor: "bg-white"
+    },
+    {
+      id: 'professional',
+      name: 'Profissional',
+      price: 'R$ 197',
+      period: '/mês',
+      description: 'Para clínicas em crescimento',
+      icon: Rocket,
+      features: [
+        'Até 200 pacientes',
+        'Até 5 profissionais',
+        'Agenda avançada',
+        'Prontuário completo',
+        'Relatórios detalhados',
+        'Integração WhatsApp',
+        'Sistema de triagem avançado',
+        'Suporte prioritário'
+      ],
+      popular: true,
+      gradient: "from-green-600 to-emerald-600",
+      bgColor: "bg-gradient-to-br from-green-50 to-emerald-50"
+    },
+    {
+      id: 'enterprise',
+      name: 'Enterprise',
+      price: 'R$ 397',
+      period: '/mês',
+      description: 'Para grandes clínicas',
+      icon: Crown,
+      features: [
+        'Pacientes ilimitados',
+        'Profissionais ilimitados',
+        'Múltiplas unidades',
+        'Funcionalidades avançadas',
+        'API personalizada',
+        'Backup automático',
+        'Treinamento incluído',
+        'Suporte 24/7'
+      ],
+      popular: false,
+      gradient: "from-blue-600 to-indigo-600",
+      bgColor: "bg-gradient-to-br from-blue-50 to-indigo-50"
+    }
+  ];
+
   return <div className="bg-white">
       {/* Hero Section */}
       <section className="py-20 px-4 bg-white">
@@ -108,6 +177,116 @@ export const SalesHero = () => {
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Receitas</h3>
               <p className="text-sm text-gray-600">e atestados fáceis</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Seção de Planos Detalhada */}
+      <section className="py-20 px-6 bg-white">
+        <div className="container mx-auto max-w-7xl">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Experimente 30 dias grátis
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+              Comece sua jornada digital na medicina agora mesmo. Durante o checkout você pode criar sua conta.
+            </p>
+            <div className="p-4 bg-green-50 border border-green-200 rounded-2xl inline-block">
+              <p className="text-green-800 font-medium">
+                ⚡ <strong>30 dias gratuitos</strong> → Cadastre-se durante a compra → Cobrança automática após o período de teste
+              </p>
+            </div>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
+            {plans.map((plan, index) => (
+              <Card key={index} className={`relative ${plan.bgColor} border-2 ${plan.popular ? 'border-green-500 scale-105 shadow-xl' : 'border-gray-200 hover:border-gray-300'} transition-all duration-300 hover:shadow-lg`}>
+                {plan.popular && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <Badge className="bg-green-600 text-white px-4 py-2 text-sm font-semibold">
+                      Mais Popular
+                    </Badge>
+                  </div>
+                )}
+
+                <CardHeader className="text-center pb-6">
+                  <div className={`w-16 h-16 bg-gradient-to-r ${plan.gradient} rounded-xl flex items-center justify-center mx-auto mb-4`}>
+                    <plan.icon className="h-8 w-8 text-white" />
+                  </div>
+                  <CardTitle className="text-2xl font-bold text-gray-900">{plan.name}</CardTitle>
+                  <div className="mt-4">
+                    <div className="text-sm text-gray-500 mb-1">30 dias grátis, depois:</div>
+                    <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                    <span className="text-gray-600 text-lg">{plan.period}</span>
+                  </div>
+                  <CardDescription className="text-gray-600 mt-2">
+                    {plan.description}
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent className="space-y-6">
+                  <ul className="space-y-3">
+                    {plan.features.map((feature, featureIndex) => (
+                      <li key={featureIndex} className="flex items-center space-x-3 text-gray-700">
+                        <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Check className="h-3 w-3 text-white" />
+                        </div>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Link to="/subscription" className="block w-full">
+                    <Button 
+                      className={`w-full py-3 text-lg font-semibold rounded-lg transition-all duration-300 ${
+                        plan.popular 
+                          ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl' 
+                          : 'bg-gray-900 hover:bg-gray-800 text-white'
+                      }`}
+                    >
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      Começar teste grátis
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <p className="text-gray-600 mb-8">
+              Todos os planos incluem 30 dias de teste gratuito • Cancele a qualquer momento
+            </p>
+            
+            <div className="bg-gray-50 rounded-2xl p-8 max-w-4xl mx-auto">
+              <h3 className="text-2xl font-bold text-gray-900 mb-8">
+                Como funciona o teste gratuito:
+              </h3>
+              
+              <div className="grid md:grid-cols-2 gap-8 text-left">
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-4">Processo simples:</h4>
+                  <ul className="text-gray-600 space-y-2">
+                    <li>• Escolha seu plano e clique em "Começar teste grátis"</li>
+                    <li>• Complete seu cadastro e dados de pagamento no Stripe</li>
+                    <li>• Acesso imediato por 30 dias sem cobrança</li>
+                    <li>• Após 30 dias, cobrança automática do plano escolhido</li>
+                    <li>• Cancele a qualquer momento sem penalidades</li>
+                  </ul>
+                </div>
+                
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-4">Benefícios inclusos:</h4>
+                  <ul className="text-gray-600 space-y-2">
+                    <li>• Dados protegidos com criptografia de ponta</li>
+                    <li>• Backup automático</li>
+                    <li>• Suporte dedicado durante o teste</li>
+                    <li>• Acesso completo às funcionalidades</li>
+                    <li>• Sem taxa de setup ou configuração</li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
