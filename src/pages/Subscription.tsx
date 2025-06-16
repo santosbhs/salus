@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Check, Zap, CreditCard, Shield, Clock, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,101 +6,74 @@ import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-
 const Subscription = () => {
   const [selectedPlan, setSelectedPlan] = useState('professional');
   const [loading, setLoading] = useState(false);
   const [subscriptionStatus, setSubscriptionStatus] = useState(null);
-  const { toast } = useToast();
-
-  const plans = [
-    {
-      id: 'basic',
-      name: 'Básico',
-      price: 'R$ 97',
-      period: '/mês',
-      description: 'Para consultórios pequenos',
-      features: [
-        'Até 50 pacientes',
-        '1 profissional',
-        'Agenda básica',
-        'Prontuário eletrônico',
-        'Anamnese SOAP',
-        'Sistema de triagem',
-        'Suporte por email'
-      ],
-      popular: false
-    },
-    {
-      id: 'professional',
-      name: 'Profissional',
-      price: 'R$ 197',
-      period: '/mês',
-      description: 'Para clínicas em crescimento',
-      features: [
-        'Até 200 pacientes',
-        'Até 5 profissionais',
-        'Agenda avançada',
-        'Prontuário completo',
-        'Relatórios detalhados',
-        'Integração WhatsApp',
-        'Sistema de triagem avançado',
-        'Suporte prioritário'
-      ],
-      popular: true
-    },
-    {
-      id: 'enterprise',
-      name: 'Enterprise',
-      price: 'R$ 397',
-      period: '/mês',
-      description: 'Para grandes clínicas',
-      features: [
-        'Pacientes ilimitados',
-        'Profissionais ilimitados',
-        'Múltiplas unidades',
-        'Funcionalidades avançadas',
-        'API personalizada',
-        'Backup automático',
-        'Treinamento incluído',
-        'Suporte 24/7'
-      ],
-      popular: false
-    }
-  ];
-
+  const {
+    toast
+  } = useToast();
+  const plans = [{
+    id: 'basic',
+    name: 'Básico',
+    price: 'R$ 97',
+    period: '/mês',
+    description: 'Para consultórios pequenos',
+    features: ['Até 50 pacientes', '1 profissional', 'Agenda básica', 'Prontuário eletrônico', 'Anamnese SOAP', 'Sistema de triagem', 'Suporte por email'],
+    popular: false
+  }, {
+    id: 'professional',
+    name: 'Profissional',
+    price: 'R$ 197',
+    period: '/mês',
+    description: 'Para clínicas em crescimento',
+    features: ['Até 200 pacientes', 'Até 5 profissionais', 'Agenda avançada', 'Prontuário completo', 'Relatórios detalhados', 'Integração WhatsApp', 'Sistema de triagem avançado', 'Suporte prioritário'],
+    popular: true
+  }, {
+    id: 'enterprise',
+    name: 'Enterprise',
+    price: 'R$ 397',
+    period: '/mês',
+    description: 'Para grandes clínicas',
+    features: ['Pacientes ilimitados', 'Profissionais ilimitados', 'Múltiplas unidades', 'Funcionalidades avançadas', 'API personalizada', 'Backup automático', 'Treinamento incluído', 'Suporte 24/7'],
+    popular: false
+  }];
   useEffect(() => {
     checkSubscriptionStatus();
   }, []);
-
   const checkSubscriptionStatus = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: {
+          session
+        }
+      } = await supabase.auth.getSession();
       if (!session) return;
-
-      const { data, error } = await supabase.functions.invoke('check-subscription', {
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke('check-subscription', {
         headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
+          Authorization: `Bearer ${session.access_token}`
+        }
       });
-
       if (error) {
         console.error('Error checking subscription:', error);
         return;
       }
-
       setSubscriptionStatus(data);
     } catch (error) {
       console.error('Error:', error);
     }
   };
-
   const handleSubscribe = async (planId: string) => {
     try {
       setLoading(true);
-      
-      const { data: { session } } = await supabase.auth.getSession();
-      
+      const {
+        data: {
+          session
+        }
+      } = await supabase.auth.getSession();
       if (session && subscriptionStatus?.has_used_trial && !subscriptionStatus?.subscribed) {
         toast({
           title: "Teste já utilizado",
@@ -110,18 +82,20 @@ const Subscription = () => {
         });
         return;
       }
-
-      const { data, error } = await supabase.functions.invoke('create-trial-checkout', {
-        body: { planId },
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke('create-trial-checkout', {
+        body: {
+          planId
+        },
         headers: session ? {
-          Authorization: `Bearer ${session.access_token}`,
-        } : {},
+          Authorization: `Bearer ${session.access_token}`
+        } : {}
       });
-
       if (error) {
         throw error;
       }
-
       if (data?.url) {
         window.open(data.url, '_blank');
       }
@@ -136,20 +110,23 @@ const Subscription = () => {
       setLoading(false);
     }
   };
-
   const handleManageSubscription = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: {
+          session
+        }
+      } = await supabase.auth.getSession();
       if (!session) return;
-
-      const { data, error } = await supabase.functions.invoke('customer-portal', {
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke('customer-portal', {
         headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
+          Authorization: `Bearer ${session.access_token}`
+        }
       });
-
       if (error) throw error;
-
       if (data?.url) {
         window.open(data.url, '_blank');
       }
@@ -162,7 +139,6 @@ const Subscription = () => {
       });
     }
   };
-
   const getTrialDaysLeft = () => {
     if (!subscriptionStatus?.trial_ends_at) return 0;
     const trialEnd = new Date(subscriptionStatus.trial_ends_at);
@@ -171,9 +147,7 @@ const Subscription = () => {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return Math.max(0, diffDays);
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-green-900 relative overflow-hidden">
+  return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-green-900 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-green-400/20 to-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
@@ -210,8 +184,7 @@ const Subscription = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-12">
         {/* Trial Status Banner */}
-        {subscriptionStatus?.is_trial_active && (
-          <div className="mb-8 p-4 bg-blue-50/90 backdrop-blur-md border border-blue-200 rounded-lg">
+        {subscriptionStatus?.is_trial_active && <div className="mb-8 p-4 bg-blue-50/90 backdrop-blur-md border border-blue-200 rounded-lg">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-blue-900">
@@ -225,27 +198,10 @@ const Subscription = () => {
                 Gerenciar Assinatura
               </Button>
             </div>
-          </div>
-        )}
+          </div>}
 
         {/* Subscription Status Banner */}
-        {subscriptionStatus?.subscribed && (
-          <div className="mb-8 p-4 bg-green-50/90 backdrop-blur-md border border-green-200 rounded-lg">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold text-green-900">
-                  ✅ Assinatura Ativa
-                </h3>
-                <p className="text-green-700">
-                  Plano {subscriptionStatus.subscription_tier} ativo
-                </p>
-              </div>
-              <Button onClick={handleManageSubscription} variant="outline">
-                Gerenciar Assinatura
-              </Button>
-            </div>
-          </div>
-        )}
+        {subscriptionStatus?.subscribed}
 
         {/* Hero Section */}
         <div className="text-center mb-16">
@@ -264,18 +220,10 @@ const Subscription = () => {
 
         {/* Plans Grid */}
         <div className="grid md:grid-cols-3 gap-8 mb-16">
-          {plans.map((plan) => (
-            <Card 
-              key={plan.id}
-              className={`relative hover:shadow-2xl transition-all duration-300 bg-white/95 backdrop-blur-md ${
-                plan.popular ? 'ring-2 ring-green-400 scale-105 shadow-2xl' : 'hover:scale-105'
-              }`}
-            >
-              {plan.popular && (
-                <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-1">
+          {plans.map(plan => <Card key={plan.id} className={`relative hover:shadow-2xl transition-all duration-300 bg-white/95 backdrop-blur-md ${plan.popular ? 'ring-2 ring-green-400 scale-105 shadow-2xl' : 'hover:scale-105'}`}>
+              {plan.popular && <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-1">
                   Mais Popular
-                </Badge>
-              )}
+                </Badge>}
               
               <CardHeader className="text-center pb-4">
                 <CardTitle className="text-2xl font-bold text-gray-900">
@@ -293,30 +241,18 @@ const Subscription = () => {
 
               <CardContent className="space-y-6">
                 <ul className="space-y-3">
-                  {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-center">
+                  {plan.features.map((feature, index) => <li key={index} className="flex items-center">
                       <Check className="h-4 w-4 text-green-600 mr-3 flex-shrink-0" />
                       <span className="text-gray-700">{feature}</span>
-                    </li>
-                  ))}
+                    </li>)}
                 </ul>
 
-                <Button 
-                  onClick={() => handleSubscribe(plan.id)}
-                  disabled={loading}
-                  className={`w-full h-12 font-bold rounded-xl transform hover:scale-105 transition-all duration-300 ${
-                    plan.popular 
-                      ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-lg' 
-                      : 'border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white'
-                  }`}
-                  variant={plan.popular ? 'default' : 'outline'}
-                >
+                <Button onClick={() => handleSubscribe(plan.id)} disabled={loading} className={`w-full h-12 font-bold rounded-xl transform hover:scale-105 transition-all duration-300 ${plan.popular ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-lg' : 'border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white'}`} variant={plan.popular ? 'default' : 'outline'}>
                   <CreditCard className="mr-2 h-4 w-4" />
                   Começar teste grátis
                 </Button>
               </CardContent>
-            </Card>
-          ))}
+            </Card>)}
         </div>
 
         {/* Features Section */}
@@ -379,8 +315,6 @@ const Subscription = () => {
           </p>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Subscription;
