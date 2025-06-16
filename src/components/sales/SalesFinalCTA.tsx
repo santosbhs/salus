@@ -8,9 +8,7 @@ export const SalesFinalCTA = () => {
         <h2 className="text-4xl font-bold mb-6">
           Pronto para dar o próximo passo na gestão da sua clínica?
         </h2>
-        <p className="text-xl mb-10 opacity-90 max-w-2xl mx-auto">
-          Comece agora gratuitamente. Sem cartão de crédito. Sem complicação.
-        </p>
+        <p className="text-xl mb-10 opacity-90 max-w-2xl mx-auto">Comece agora gratuitamente. Sem complicação.</p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link to="/subscription">
