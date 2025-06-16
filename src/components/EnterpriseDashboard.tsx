@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
 import { useTriagemList } from '@/hooks/useTriagemList';
+
 const EnterpriseDashboard = ({
   onNavigate,
   selectedPlan,
@@ -196,26 +197,10 @@ const EnterpriseDashboard = ({
   const upcomingAppointments = getFilteredAppointments();
   const enterpriseFeatures = ['Pacientes ilimitados', 'Profissionais ilimitados', 'Múltiplas unidades/filiais', 'Triagem avançada', 'Relatórios executivos', 'Dashboard gerencial', 'API personalizada', 'Integração com sistemas externos', 'Suporte 24/7 dedicado', 'Backup em tempo real', 'Compliance LGPD/HIPAA', 'Treinamento personalizado'];
   return <div className="space-y-6">
-      {/* Unit Selector and Plan Header */}
+      {/* Plan Header with Unit Selector in top-right */}
       <div className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-2xl p-8 text-white shadow-xl">
         <div className="flex items-center justify-between">
           <div>
-            {/* Unit Selector */}
-            <div className="mb-4">
-              <div className="bg-white/10 rounded-lg p-2 inline-block">
-                <Select value={selectedUnit} onValueChange={setSelectedUnit}>
-                  <SelectTrigger className="w-[200px] bg-transparent border-white/20 text-white">
-                    <Building2 className="mr-2 h-4 w-4" />
-                    <SelectValue placeholder="Selecionar Unidade" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {units.map(unit => <SelectItem key={unit.id} value={unit.id}>
-                        {unit.nome}
-                      </SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
             <h2 className="text-3xl font-bold mb-2 flex items-center">
               <Crown className="mr-3 h-8 w-8" />
               Plano Enterprise
@@ -230,6 +215,21 @@ const EnterpriseDashboard = ({
               <Badge className="bg-white text-purple-700 hover:bg-gray-100 text-lg px-4 py-2">
                 Demonstração
               </Badge>
+              
+              {/* Unit Selector moved to top-right */}
+              <div className="bg-white/10 rounded-lg p-2">
+                <Select value={selectedUnit} onValueChange={setSelectedUnit}>
+                  <SelectTrigger className="w-[200px] bg-transparent border-white/20 text-white">
+                    <Building2 className="mr-2 h-4 w-4" />
+                    <SelectValue placeholder="Selecionar Unidade" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {units.map(unit => <SelectItem key={unit.id} value={unit.id}>
+                        {unit.nome}
+                      </SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
               
               <Button onClick={logout} variant="ghost" className="text-white hover:bg-white/10">
                 <LogOut className="h-4 w-4 mr-2" />
@@ -444,4 +444,5 @@ const EnterpriseDashboard = ({
       </div>
     </div>;
 };
+
 export default EnterpriseDashboard;
