@@ -15,6 +15,8 @@ import { useAuth } from '@/hooks/useAuth';
 import PatientSearchInput from '@/components/PatientSearchInput';
 import MedicalPrescription from '@/components/MedicalPrescription';
 import MedicalCertificate from '@/components/MedicalCertificate';
+import ExamRequest from '@/components/ExamRequest';
+import MedicalDeclaration from '@/components/MedicalDeclaration';
 
 const NovoAtendimento = ({ onBack }) => {
   const [pacienteSelecionado, setPacienteSelecionado] = useState('');
@@ -115,7 +117,7 @@ const NovoAtendimento = ({ onBack }) => {
       avaliacao: avaliacao || null,
       plano: plano || null,
       receitas: null, // Will be handled by MedicalPrescription component
-      exames: null,
+      exames: null, // Will be handled by ExamRequest component
       atestados: null // Will be handled by MedicalCertificate component
     };
 
@@ -149,6 +151,22 @@ const NovoAtendimento = ({ onBack }) => {
     toast({
       title: "Atestado gerado",
       description: "O atestado foi criado com sucesso.",
+    });
+  };
+
+  const handleExamSave = (examRequest) => {
+    console.log('🔬 DEBUG: NovoAtendimento - Solicitação de exames salva:', examRequest);
+    toast({
+      title: "Solicitação de exames gerada",
+      description: "A solicitação de exames foi criada com sucesso.",
+    });
+  };
+
+  const handleDeclarationSave = (declaration) => {
+    console.log('📄 DEBUG: NovoAtendimento - Declaração salva:', declaration);
+    toast({
+      title: "Declaração gerada",
+      description: "A declaração médica foi criada com sucesso.",
     });
   };
 
@@ -263,10 +281,12 @@ const NovoAtendimento = ({ onBack }) => {
               </CardHeader>
               <CardContent>
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                  <TabsList className="grid w-full grid-cols-3">
+                  <TabsList className="grid w-full grid-cols-5">
                     <TabsTrigger value="soap">SOAP</TabsTrigger>
                     <TabsTrigger value="receitas">Receitas</TabsTrigger>
+                    <TabsTrigger value="exames">Exames</TabsTrigger>
                     <TabsTrigger value="atestados">Atestados</TabsTrigger>
+                    <TabsTrigger value="declaracoes">Declarações</TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="soap" className="space-y-4 mt-6">
@@ -332,6 +352,19 @@ const NovoAtendimento = ({ onBack }) => {
                     )}
                   </TabsContent>
 
+                  <TabsContent value="exames" className="mt-6">
+                    {pacienteSelecionadoObj ? (
+                      <ExamRequest 
+                        onSave={handleExamSave}
+                        patientName={pacienteSelecionadoObj.nome}
+                      />
+                    ) : (
+                      <div className="text-center py-8 text-gray-500">
+                        <p>Selecione um paciente para solicitar exames</p>
+                      </div>
+                    )}
+                  </TabsContent>
+
                   <TabsContent value="atestados" className="mt-6">
                     {pacienteSelecionadoObj ? (
                       <MedicalCertificate 
@@ -341,6 +374,19 @@ const NovoAtendimento = ({ onBack }) => {
                     ) : (
                       <div className="text-center py-8 text-gray-500">
                         <p>Selecione um paciente para criar atestados</p>
+                      </div>
+                    )}
+                  </TabsContent>
+
+                  <TabsContent value="declaracoes" className="mt-6">
+                    {pacienteSelecionadoObj ? (
+                      <MedicalDeclaration 
+                        onSave={handleDeclarationSave}
+                        patientName={pacienteSelecionadoObj.nome}
+                      />
+                    ) : (
+                      <div className="text-center py-8 text-gray-500">
+                        <p>Selecione um paciente para criar declarações</p>
                       </div>
                     )}
                   </TabsContent>
