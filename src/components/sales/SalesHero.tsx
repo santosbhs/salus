@@ -1,11 +1,9 @@
-
 import React from 'react';
 import { Check, ChevronRight, Calendar, FileText, MessageSquare, BarChart3, FileCheck, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
-
 export const SalesHero = () => {
   const plans = [{
     id: 'basic',
@@ -35,9 +33,7 @@ export const SalesHero = () => {
     popular: false,
     bgColor: "bg-gradient-to-br from-blue-50 to-indigo-50"
   }];
-
-  return (
-    <div className="bg-white">
+  return <div className="bg-white">
       {/* Hero Section */}
       <section className="py-20 px-4 bg-white">
         <div className="container mx-auto max-w-6xl">
@@ -137,64 +133,6 @@ export const SalesHero = () => {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 px-6 bg-white">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Experimente 30 dias grátis
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Comece sua jornada digital na medicina agora mesmo.
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {plans.map((plan, index) => (
-              <Card key={index} className={`relative ${plan.bgColor} border-2 ${plan.popular ? 'border-green-500 scale-105 shadow-xl' : 'border-gray-200'} transition-all duration-300`}>
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-green-600 text-white px-4 py-2 text-sm font-semibold">
-                      Mais Popular
-                    </Badge>
-                  </div>
-                )}
-
-                <CardHeader className="text-center pb-6">
-                  <CardTitle className="text-2xl font-bold text-gray-900">{plan.name}</CardTitle>
-                  <div className="mt-4">
-                    <div className="text-sm text-gray-500 mb-1">30 dias grátis, depois:</div>
-                    <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
-                    <span className="text-gray-600 text-lg">{plan.period}</span>
-                  </div>
-                  <CardDescription className="text-gray-600 mt-2">
-                    {plan.description}
-                  </CardDescription>
-                </CardHeader>
-
-                <CardContent className="space-y-6">
-                  <ul className="space-y-3">
-                    {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-center space-x-3 text-gray-700">
-                        <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                          <Check className="h-3 w-3 text-white" />
-                        </div>
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Link to="/subscription" className="block w-full">
-                    <Button className={`w-full py-3 text-lg font-semibold rounded-lg transition-all duration-300 ${plan.popular ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg' : 'bg-gray-900 hover:bg-gray-800 text-white'}`}>
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      Começar teste grátis
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-    </div>
-  );
+      
+    </div>;
 };
