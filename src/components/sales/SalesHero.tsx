@@ -171,9 +171,7 @@ export const SalesHero = () => {
                   </div>}
 
                 <CardHeader className="text-center pb-6">
-                  <div className={`w-16 h-16 bg-gradient-to-r ${plan.gradient} rounded-xl flex items-center justify-center mx-auto mb-4`}>
-                    <plan.icon className="h-8 w-8 text-white" />
-                  </div>
+                  
                   <CardTitle className="text-2xl font-bold text-gray-900">{plan.name}</CardTitle>
                   <div className="mt-4">
                     <div className="text-sm text-gray-500 mb-1">30 dias grátis, depois:</div>
