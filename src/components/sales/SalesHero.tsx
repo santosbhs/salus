@@ -1,7 +1,9 @@
+
 import React from 'react';
 import { Check, ChevronRight, Play, Calendar, FileText, MessageSquare, BarChart3, FileCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+
 export const SalesHero = () => {
   return <div className="bg-white">
       {/* Hero Section */}
@@ -54,9 +56,13 @@ export const SalesHero = () => {
               </div>
             </div>
 
-            {/* Mockup do sistema com imagem profissional */}
+            {/* Imagem da médica */}
             <div className="relative">
-              
+              <img 
+                src="/lovable-uploads/219bbfd9-3e57-4298-9273-871bf2bf1fe8.png"
+                alt="Médica profissional usando laptop em consultório"
+                className="w-full h-auto rounded-lg shadow-lg"
+              />
             </div>
           </div>
         </div>
