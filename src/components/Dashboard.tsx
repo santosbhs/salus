@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Calendar, Users, Clock, FileText, BarChart3, Activity, Plus, Search, AlertCircle, ChevronDown } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';

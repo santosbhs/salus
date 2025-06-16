@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
 import { useTriagemList } from '@/hooks/useTriagemList';
+
 const EnterpriseDashboard = ({
   onNavigate,
   selectedPlan,
@@ -134,7 +135,7 @@ const EnterpriseDashboard = ({
     type: 'Consulta',
     status: 'confirmado'
   }];
-  const enterpriseFeatures = ['Pacientes ilimitados', 'Profissionais ilimitados', 'Múltiplas unidades/filiais', 'Triagem avançada com IA', 'Relatórios executivos', 'Dashboard gerencial', 'API personalizada', 'Integração com sistemas externos', 'Suporte 24/7 dedicado', 'Backup em tempo real', 'Compliance LGPD/HIPAA', 'Treinamento personalizado'];
+  const enterpriseFeatures = ['Pacientes ilimitados', 'Profissionais ilimitados', 'Múltiplas unidades/filiais', 'Triagem avançada', 'Relatórios executivos', 'Dashboard gerencial', 'API personalizada', 'Integração com sistemas externos', 'Suporte 24/7 dedicado', 'Backup em tempo real', 'Compliance LGPD/HIPAA', 'Treinamento personalizado'];
   return <div className="space-y-6">
       {/* Plan Header */}
       <div className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-2xl p-8 text-white shadow-xl">
@@ -177,10 +178,10 @@ const EnterpriseDashboard = ({
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
               <Stethoscope className="mr-2 h-5 w-5 text-red-600" />
-              Triagem com IA
+              Triagem Inteligente
             </CardTitle>
             <CardDescription>
-              Classificação inteligente de risco
+              Classificação avançada de risco
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -197,7 +198,7 @@ const EnterpriseDashboard = ({
               Atendimento Avançado
             </CardTitle>
             <CardDescription>
-              Prontuário completo com IA
+              Prontuário completo e detalhado
             </CardDescription>
           </CardHeader>
           <CardContent>
