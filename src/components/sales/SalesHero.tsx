@@ -1,77 +1,44 @@
-
 import React from 'react';
 import { Check, ChevronRight, Play, Calendar, FileText, MessageSquare, BarChart3, FileCheck, Star, Rocket, Crown, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
-
 export const SalesHero = () => {
-  const plans = [
-    {
-      id: 'basic',
-      name: 'Básico',
-      price: 'R$ 97',
-      period: '/mês',
-      description: 'Para consultórios pequenos',
-      icon: Star,
-      features: [
-        'Até 50 pacientes',
-        '1 profissional',
-        'Agenda básica',
-        'Prontuário eletrônico',
-        'Anamnese SOAP',
-        'Sistema de triagem',
-        'Suporte por email'
-      ],
-      popular: false,
-      gradient: "from-gray-600 to-gray-700",
-      bgColor: "bg-white"
-    },
-    {
-      id: 'professional',
-      name: 'Profissional',
-      price: 'R$ 197',
-      period: '/mês',
-      description: 'Para clínicas em crescimento',
-      icon: Rocket,
-      features: [
-        'Até 200 pacientes',
-        'Até 5 profissionais',
-        'Agenda avançada',
-        'Prontuário completo',
-        'Relatórios detalhados',
-        'Integração WhatsApp',
-        'Sistema de triagem avançado',
-        'Suporte prioritário'
-      ],
-      popular: true,
-      gradient: "from-green-600 to-emerald-600",
-      bgColor: "bg-gradient-to-br from-green-50 to-emerald-50"
-    },
-    {
-      id: 'enterprise',
-      name: 'Enterprise',
-      price: 'R$ 397',
-      period: '/mês',
-      description: 'Para grandes clínicas',
-      icon: Crown,
-      features: [
-        'Pacientes ilimitados',
-        'Profissionais ilimitados',
-        'Múltiplas unidades',
-        'Funcionalidades avançadas',
-        'API personalizada',
-        'Backup automático',
-        'Treinamento incluído',
-        'Suporte 24/7'
-      ],
-      popular: false,
-      gradient: "from-blue-600 to-indigo-600",
-      bgColor: "bg-gradient-to-br from-blue-50 to-indigo-50"
-    }
-  ];
-
+  const plans = [{
+    id: 'basic',
+    name: 'Básico',
+    price: 'R$ 97',
+    period: '/mês',
+    description: 'Para consultórios pequenos',
+    icon: Star,
+    features: ['Até 50 pacientes', '1 profissional', 'Agenda básica', 'Prontuário eletrônico', 'Anamnese SOAP', 'Sistema de triagem', 'Suporte por email'],
+    popular: false,
+    gradient: "from-gray-600 to-gray-700",
+    bgColor: "bg-white"
+  }, {
+    id: 'professional',
+    name: 'Profissional',
+    price: 'R$ 197',
+    period: '/mês',
+    description: 'Para clínicas em crescimento',
+    icon: Rocket,
+    features: ['Até 200 pacientes', 'Até 5 profissionais', 'Agenda avançada', 'Prontuário completo', 'Relatórios detalhados', 'Integração WhatsApp', 'Sistema de triagem avançado', 'Suporte prioritário'],
+    popular: true,
+    gradient: "from-green-600 to-emerald-600",
+    bgColor: "bg-gradient-to-br from-green-50 to-emerald-50"
+  }, {
+    id: 'enterprise',
+    name: 'Enterprise',
+    price: 'R$ 397',
+    period: '/mês',
+    description: 'Para grandes clínicas',
+    icon: Crown,
+    features: ['Pacientes ilimitados', 'Profissionais ilimitados', 'Múltiplas unidades', 'Funcionalidades avançadas', 'API personalizada', 'Backup automático', 'Treinamento incluído', 'Suporte 24/7'],
+    popular: false,
+    gradient: "from-blue-600 to-indigo-600",
+    bgColor: "bg-gradient-to-br from-blue-50 to-indigo-50"
+  }];
   return <div className="bg-white">
       {/* Hero Section */}
       <section className="py-20 px-4 bg-white">
@@ -192,23 +159,16 @@ export const SalesHero = () => {
             <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
               Comece sua jornada digital na medicina agora mesmo. Durante o checkout você pode criar sua conta.
             </p>
-            <div className="p-4 bg-green-50 border border-green-200 rounded-2xl inline-block">
-              <p className="text-green-800 font-medium">
-                ⚡ <strong>30 dias gratuitos</strong> → Cadastre-se durante a compra → Cobrança automática após o período de teste
-              </p>
-            </div>
+            
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
-            {plans.map((plan, index) => (
-              <Card key={index} className={`relative ${plan.bgColor} border-2 ${plan.popular ? 'border-green-500 scale-105 shadow-xl' : 'border-gray-200 hover:border-gray-300'} transition-all duration-300 hover:shadow-lg`}>
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+            {plans.map((plan, index) => <Card key={index} className={`relative ${plan.bgColor} border-2 ${plan.popular ? 'border-green-500 scale-105 shadow-xl' : 'border-gray-200 hover:border-gray-300'} transition-all duration-300 hover:shadow-lg`}>
+                {plan.popular && <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                     <Badge className="bg-green-600 text-white px-4 py-2 text-sm font-semibold">
                       Mais Popular
                     </Badge>
-                  </div>
-                )}
+                  </div>}
 
                 <CardHeader className="text-center pb-6">
                   <div className={`w-16 h-16 bg-gradient-to-r ${plan.gradient} rounded-xl flex items-center justify-center mx-auto mb-4`}>
@@ -227,31 +187,22 @@ export const SalesHero = () => {
 
                 <CardContent className="space-y-6">
                   <ul className="space-y-3">
-                    {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-center space-x-3 text-gray-700">
+                    {plan.features.map((feature, featureIndex) => <li key={featureIndex} className="flex items-center space-x-3 text-gray-700">
                         <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
                           <Check className="h-3 w-3 text-white" />
                         </div>
                         <span>{feature}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
 
                   <Link to="/subscription" className="block w-full">
-                    <Button 
-                      className={`w-full py-3 text-lg font-semibold rounded-lg transition-all duration-300 ${
-                        plan.popular 
-                          ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl' 
-                          : 'bg-gray-900 hover:bg-gray-800 text-white'
-                      }`}
-                    >
+                    <Button className={`w-full py-3 text-lg font-semibold rounded-lg transition-all duration-300 ${plan.popular ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl' : 'bg-gray-900 hover:bg-gray-800 text-white'}`}>
                       <CreditCard className="mr-2 h-4 w-4" />
                       Começar teste grátis
                     </Button>
                   </Link>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
 
           <div className="text-center">
