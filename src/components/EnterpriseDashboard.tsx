@@ -18,6 +18,8 @@ const EnterpriseDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
       onNavigate('appointments');
     } else if (section === 'relatorios') {
       onNavigate('consultation-history');
+    } else if (section === 'unidades') {
+      onNavigate('units');
     }
   };
 
@@ -205,36 +207,36 @@ const EnterpriseDashboard = ({ onNavigate, selectedPlan, onPlanChange }) => {
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-purple-200" onClick={() => onNavigate('professionals')}>
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-purple-200" onClick={() => handleNavigate('unidades')}>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
               <Building2 className="mr-2 h-5 w-5 text-purple-600" />
-              Gestão Empresarial
+              Gestão de Unidades
             </CardTitle>
             <CardDescription>
-              Múltiplas unidades e profissionais
+              Múltiplas unidades e filiais
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button variant="outline" className="w-full border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white">
-              Gerenciar Organização
+              Gerenciar Unidades
             </Button>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-purple-200" onClick={() => onNavigate('patients')}>
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-purple-200" onClick={() => onNavigate('professionals')}>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center text-lg">
               <Users className="mr-2 h-5 w-5 text-purple-600" />
-              Base de Pacientes
+              Equipe de Profissionais
             </CardTitle>
             <CardDescription>
-              Gestão centralizada ilimitada
+              Gestão da equipe médica
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button variant="outline" className="w-full border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white">
-              Gerenciar Pacientes
+              Gerenciar Profissionais
             </Button>
           </CardContent>
         </Card>

@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import EnterpriseDashboard from '@/components/EnterpriseDashboard';
 import PatientManagement from '@/components/PatientManagement';
 import ProfessionalManagement from '@/components/ProfessionalManagement';
+import UnitManagement from '@/components/UnitManagement';
 import AppointmentManagement from '@/components/AppointmentManagement';
 import NovoAtendimento from '@/components/NovoAtendimento';
 import Triagem from '@/components/Triagem';
@@ -36,6 +37,8 @@ const EnterpriseDashboardPage = () => {
         return <PatientManagement onBack={handleBack} />;
       case 'professionals':
         return <ProfessionalManagement onBack={handleBack} />;
+      case 'units':
+        return <UnitManagement onBack={handleBack} />;
       case 'appointments':
         return <AppointmentManagement onBack={handleBack} />;
       case 'novo-atendimento':
