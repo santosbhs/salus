@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ArrowLeft, User, Search, Plus, Edit, Eye, Phone, Mail, Calendar, Trash2, Database } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,39 +20,57 @@ const PatientManagement = ({ onBack }) => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [convenioFilter, setConvenioFilter] = useState('todos');
   const [statusFilter, setStatusFilter] = useState('ativo');
-  const { getPatients, deletePatient, deleteAllPatients, loading } = usePatients();
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasLoaded, setHasLoaded] = useState(false);
+  const { getPatients, deletePatient, deleteAllPatients } = usePatients();
   const { user, session } = useAuth();
 
-  useEffect(() => {
-    const loadPatients = async () => {
-      // Verificar tanto user quanto session para autenticação
-      const currentUser = user || session?.user;
-      
-      if (!currentUser) {
-        console.log('🔄 Aguardando autenticação para carregar pacientes...');
-        return;
-      }
-
-      console.log('✅ Carregando pacientes para usuário autenticado:', currentUser.email);
-      
-      try {
-        const data = await getPatients();
-        console.log('📋 Pacientes carregados no PatientManagement:', data);
-        setPatients(data);
-      } catch (error) {
-        console.error('❌ Erro ao carregar pacientes no PatientManagement:', error);
-      }
-    };
+  const loadPatients = useCallback(async () => {
+    const currentUser = user || session?.user;
     
+    if (!currentUser) {
+      console.log('🔄 Aguardando autenticação para carregar pacientes...');
+      setIsLoading(false);
+      return;
+    }
+
+    if (hasLoaded) {
+      console.log('✅ Pacientes já carregados, evitando nova requisição');
+      return;
+    }
+
+    console.log('✅ Carregando pacientes para usuário autenticado:', currentUser.email);
+    
+    try {
+      setIsLoading(true);
+      const data = await getPatients();
+      console.log('📋 Pacientes carregados no PatientManagement:', data);
+      setPatients(data);
+      setHasLoaded(true);
+    } catch (error) {
+      console.error('❌ Erro ao carregar pacientes no PatientManagement:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user, session, getPatients, hasLoaded]);
+
+  useEffect(() => {
     loadPatients();
-  }, [user, session, getPatients]);
+  }, [loadPatients]);
 
   const handleSavePatient = async () => {
-    const data = await getPatients();
-    setPatients(data);
-    setShowForm(false);
-    setShowEditForm(false);
-    setSelectedPatient(null);
+    setIsLoading(true);
+    try {
+      const data = await getPatients();
+      setPatients(data);
+    } catch (error) {
+      console.error('❌ Erro ao recarregar pacientes:', error);
+    } finally {
+      setIsLoading(false);
+      setShowForm(false);
+      setShowEditForm(false);
+      setSelectedPatient(null);
+    }
   };
 
   const handleEditPatient = (patient: Patient) => {
@@ -62,19 +80,33 @@ const PatientManagement = ({ onBack }) => {
 
   const handleDeletePatient = async (patientId: string) => {
     console.log('Excluindo paciente:', patientId);
-    const success = await deletePatient(patientId);
-    if (success) {
-      const data = await getPatients();
-      setPatients(data);
+    setIsLoading(true);
+    try {
+      const success = await deletePatient(patientId);
+      if (success) {
+        const data = await getPatients();
+        setPatients(data);
+      }
+    } catch (error) {
+      console.error('❌ Erro ao excluir paciente:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleClearDatabase = async () => {
     console.log('Limpando base de dados...');
-    const success = await deleteAllPatients();
-    if (success) {
-      const data = await getPatients();
-      setPatients(data);
+    setIsLoading(true);
+    try {
+      const success = await deleteAllPatients();
+      if (success) {
+        const data = await getPatients();
+        setPatients(data);
+      }
+    } catch (error) {
+      console.error('❌ Erro ao limpar base de dados:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -155,6 +187,7 @@ const PatientManagement = ({ onBack }) => {
                 <Button 
                   variant="destructive"
                   className="bg-red-600 hover:bg-red-700"
+                  disabled={isLoading}
                 >
                   <Database className="mr-2 h-4 w-4" />
                   Limpar Base de Dados
@@ -183,6 +216,7 @@ const PatientManagement = ({ onBack }) => {
             <Button 
               onClick={() => setShowForm(true)}
               className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800"
+              disabled={isLoading}
             >
               <Plus className="mr-2 h-4 w-4" />
               Novo Paciente
@@ -243,7 +277,7 @@ const PatientManagement = ({ onBack }) => {
         </Card>
 
         {/* Estado de carregamento */}
-        {loading && (
+        {isLoading && (
           <div className="text-center py-8">
             <div className="w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-600 text-lg">Carregando pacientes...</p>
@@ -251,7 +285,7 @@ const PatientManagement = ({ onBack }) => {
         )}
 
         {/* Lista de Pacientes */}
-        {!loading && (
+        {!isLoading && (
           <div className="grid gap-4">
             {filteredPatients.map((patient) => (
               <Card key={patient.id} className="shadow-lg hover:shadow-xl transition-all duration-300 border-green-200">
@@ -341,7 +375,7 @@ const PatientManagement = ({ onBack }) => {
           </div>
         )}
 
-        {!loading && filteredPatients.length === 0 && (
+        {!isLoading && filteredPatients.length === 0 && (
           <Card className="shadow-lg border-green-200">
             <CardContent className="text-center py-12">
               <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />

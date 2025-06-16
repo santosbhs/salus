@@ -12,6 +12,9 @@ import {
   removeAllPatients 
 } from '@/services/patientService';
 
+let patientsCache: Patient[] | null = null;
+let isLoadingPatients = false;
+
 export const usePatients = () => {
   const [loading, setLoading] = useState(false);
   const { user, session } = useAuth();
@@ -19,28 +22,42 @@ export const usePatients = () => {
 
   const getPatients = async (): Promise<Patient[]> => {
     try {
-      setLoading(true);
-      
       // Verificar tanto user quanto session para autenticação
       const currentUser = user || session?.user;
       
       if (!currentUser) {
         console.log('❌ DEBUG: Usuário não autenticado para buscar pacientes');
-        console.log('📊 DEBUG: user =', user);
-        console.log('📊 DEBUG: session =', session);
         return [];
       }
+
+      // Verificar se já está carregando para evitar múltiplas requisições
+      if (isLoadingPatients) {
+        console.log('⏳ DEBUG: Já existe uma requisição em andamento, aguardando...');
+        // Aguardar um pouco e tentar novamente
+        await new Promise(resolve => setTimeout(resolve, 100));
+        return patientsCache || [];
+      }
+
+      // Se já temos dados em cache, retornar
+      if (patientsCache) {
+        console.log('💾 DEBUG: Retornando pacientes do cache');
+        return patientsCache;
+      }
+      
+      isLoadingPatients = true;
+      setLoading(true);
       
       console.log('🔍 DEBUG: Buscando pacientes para usuário:', currentUser.id);
-      console.log('🔍 DEBUG: Email do usuário:', currentUser.email);
       
       const patients = await fetchPatients(currentUser.id);
       console.log('✅ DEBUG: Pacientes retornados no usePatients:', patients);
-      console.log('📊 DEBUG: Quantidade de pacientes no usePatients:', patients.length);
+      
+      // Armazenar no cache
+      patientsCache = patients;
+      
       return patients;
     } catch (error: any) {
       console.error('❌ DEBUG: Erro ao buscar pacientes no usePatients:', error);
-      console.error('❌ DEBUG: Stack do erro:', error.stack);
       
       // Não mostrar toast de erro para problemas de rede comum
       if (!error.message?.includes('Failed to fetch')) {
@@ -53,6 +70,7 @@ export const usePatients = () => {
       return [];
     } finally {
       setLoading(false);
+      isLoadingPatients = false;
     }
   };
 
@@ -64,9 +82,6 @@ export const usePatients = () => {
       
       if (!currentUser) {
         console.error('❌ DEBUG: Usuário não autenticado - não é possível criar paciente');
-        console.log('📊 DEBUG: user =', user);
-        console.log('📊 DEBUG: session =', session);
-        console.log('📊 DEBUG: session?.user =', session?.user);
         toast({
           title: 'Erro de autenticação',
           description: 'Você precisa estar logado para cadastrar pacientes',
@@ -76,16 +91,9 @@ export const usePatients = () => {
       }
       
       console.log('🚀 DEBUG: Iniciando criação de paciente');
-      console.log('📝 DEBUG: Dados do paciente recebidos:', patientData);
-      console.log('👤 DEBUG: ID do usuário autenticado:', currentUser.id);
-      console.log('📧 DEBUG: Email do usuário:', currentUser.email);
       
       // Validar dados obrigatórios
       if (!patientData.nome || !patientData.cpf || !patientData.telefone) {
-        console.error('❌ DEBUG: Dados obrigatórios faltando');
-        console.log('📊 DEBUG: Nome:', patientData.nome);
-        console.log('📊 DEBUG: CPF:', patientData.cpf);
-        console.log('📊 DEBUG: Telefone:', patientData.telefone);
         toast({
           title: 'Dados incompletos',
           description: 'Nome, CPF e telefone são obrigatórios',
@@ -94,10 +102,10 @@ export const usePatients = () => {
         return null;
       }
       
-      console.log('✅ DEBUG: Dados validados, chamando insertPatient...');
       const result = await insertPatient(patientData, currentUser.id);
       
-      console.log('🎉 DEBUG: Paciente criado com sucesso:', result);
+      // Limpar cache para forçar recarregamento
+      patientsCache = null;
       
       toast({
         title: 'Paciente cadastrado com sucesso!',
@@ -106,22 +114,12 @@ export const usePatients = () => {
       
       return result;
     } catch (error: any) {
-      console.error('❌ DEBUG: Erro detalhado ao criar paciente:', error);
-      console.error('❌ DEBUG: Tipo do erro:', typeof error);
-      console.error('❌ DEBUG: Error message:', error.message);
-      console.error('❌ DEBUG: Error code:', error.code);
-      console.error('❌ DEBUG: Error details:', error.details);
-      console.error('❌ DEBUG: Error hint:', error.hint);
-      console.error('❌ DEBUG: Stack trace completo:', error.stack);
+      console.error('❌ DEBUG: Erro ao criar paciente:', error);
       
       let errorMessage = 'Não foi possível cadastrar o paciente';
       
       if (error.message) {
         errorMessage = error.message;
-      }
-      
-      if (error.code === '23505') {
-        errorMessage = 'Já existe um paciente com este CPF';
       }
       
       toast({
@@ -171,6 +169,9 @@ export const usePatients = () => {
       
       const result = await updatePatientById(id, patientData, currentUser.id);
       
+      // Limpar cache para forçar recarregamento
+      patientsCache = null;
+      
       toast({
         title: 'Paciente atualizado com sucesso!',
         description: `Os dados de ${result.nome} foram atualizados.`,
@@ -201,6 +202,9 @@ export const usePatients = () => {
       }
       
       await removePatient(id, currentUser.id);
+      
+      // Limpar cache para forçar recarregamento
+      patientsCache = null;
       
       toast({
         title: 'Paciente removido com sucesso',
@@ -238,6 +242,9 @@ export const usePatients = () => {
       }
       
       await removeAllPatients(currentUser.id);
+      
+      // Limpar cache
+      patientsCache = null;
       
       toast({
         title: 'Pacientes removidos com sucesso',
