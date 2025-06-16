@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { SalesHero } from '@/components/sales/SalesHero';
 import { SalesPricing } from '@/components/sales/SalesPricing';
-import { SalesTestimonial } from '@/components/sales/SalesTestimonial';
+import { SalesTestimonials } from '@/components/sales/SalesTestimonials';
 import { SalesFinalCTA } from '@/components/sales/SalesFinalCTA';
 import { Zap, Mail, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -40,7 +39,7 @@ const Sales = () => {
 
       <SalesHero />
       <SalesPricing />
-      <SalesTestimonial />
+      <SalesTestimonials />
       <SalesFinalCTA />
 
       {/* Footer */}
