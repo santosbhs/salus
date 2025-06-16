@@ -1,7 +1,9 @@
+
 import React from 'react';
 import { Check, ChevronRight, Play, Calendar, FileText, MessageSquare, BarChart3, FileCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+
 export const SalesHero = () => {
   return <div className="bg-white">
       {/* Hero Section */}
@@ -59,7 +61,11 @@ export const SalesHero = () => {
               <div className="bg-gradient-to-br from-blue-100 to-green-100 rounded-3xl p-8">
                 {/* Imagem do profissional de saúde */}
                 <div className="relative mb-6">
-                  <img src="/lovable-uploads/9146d464-2db5-40b1-9b68-6c1fde9de4a5.png" alt="Profissional de saúde trabalhando com laptop em clínica - Sistema SALUS" className="w-full h-48 object-cover rounded-2xl shadow-xl" />
+                  <img 
+                    src="/lovable-uploads/9146d464-2db5-40b1-9b68-6c1fde9de4a5.png" 
+                    alt="Profissional de saúde trabalhando com laptop em clínica - Sistema SALUS" 
+                    className="w-full h-64 object-contain rounded-2xl shadow-xl bg-white p-2" 
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent rounded-2xl"></div>
                   <div className="absolute bottom-4 left-4 text-white">
                     <div className="bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2">
