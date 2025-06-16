@@ -1,9 +1,7 @@
-
 import React from 'react';
 import { Check, ChevronRight, Play, Calendar, FileText, MessageSquare, BarChart3, FileCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-
 export const SalesHero = () => {
   return <div className="bg-white">
       {/* Hero Section */}
@@ -49,20 +47,13 @@ export const SalesHero = () => {
                     <ChevronRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
-                <Button size="lg" variant="outline" className="border-2 border-blue-800 text-blue-800 hover:bg-blue-50 text-lg px-8 py-4 rounded-lg">
-                  <Play className="mr-2 h-5 w-5" />
-                  Ver Funcionalidades
-                </Button>
+                
               </div>
             </div>
 
             {/* Imagem da médica */}
             <div className="relative">
-              <img 
-                src="/lovable-uploads/219bbfd9-3e57-4298-9273-871bf2bf1fe8.png"
-                alt="Médica profissional usando laptop em consultório"
-                className="w-full h-auto rounded-lg shadow-lg"
-              />
+              <img src="/lovable-uploads/219bbfd9-3e57-4298-9273-871bf2bf1fe8.png" alt="Médica profissional usando laptop em consultório" className="w-full h-auto rounded-lg shadow-lg" />
             </div>
           </div>
         </div>
@@ -91,7 +82,7 @@ export const SalesHero = () => {
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <FileText className="h-8 w-8 text-green-600" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Prontuário</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">Prontuário Eletrônico</h3>
               <p className="text-sm text-gray-600">com anamnese SOAP</p>
             </div>
 
@@ -116,7 +107,7 @@ export const SalesHero = () => {
                 <FileCheck className="h-8 w-8 text-orange-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Receitas</h3>
-              <p className="text-sm text-gray-600">e atestados</p>
+              <p className="text-sm text-gray-600">e atestados fáceis</p>
             </div>
           </div>
         </div>
