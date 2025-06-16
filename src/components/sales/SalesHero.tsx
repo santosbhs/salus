@@ -63,8 +63,8 @@ export const SalesHero = () => {
                 {/* Imagem do profissional de saúde */}
                 <div className="relative mb-6">
                   <img 
-                    src="https://images.unsplash.com/photo-1649972904349-6e44c42644a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                    alt="Profissional de saúde trabalhando em clínica - Sistema SALUS"
+                    src="/lovable-uploads/9146d464-2db5-40b1-9b68-6c1fde9de4a5.png"
+                    alt="Profissional de saúde trabalhando com laptop em clínica - Sistema SALUS"
                     className="w-full h-48 object-cover rounded-2xl shadow-xl"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent rounded-2xl"></div>
