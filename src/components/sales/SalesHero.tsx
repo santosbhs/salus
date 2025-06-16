@@ -1,12 +1,9 @@
-
 import React from 'react';
 import { Check, ChevronRight, Play, Calendar, FileText, MessageSquare, BarChart3, FileCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-
 export const SalesHero = () => {
-  return (
-    <div className="bg-white">
+  return <div className="bg-white">
       {/* Hero Section */}
       <section className="py-20 px-4 bg-white">
         <div className="container mx-auto max-w-6xl">
@@ -62,11 +59,7 @@ export const SalesHero = () => {
               <div className="bg-gradient-to-br from-blue-100 to-green-100 rounded-3xl p-8">
                 {/* Imagem do profissional de saúde */}
                 <div className="relative mb-6">
-                  <img 
-                    src="/lovable-uploads/9146d464-2db5-40b1-9b68-6c1fde9de4a5.png"
-                    alt="Profissional de saúde trabalhando com laptop em clínica - Sistema SALUS"
-                    className="w-full h-48 object-cover rounded-2xl shadow-xl"
-                  />
+                  <img src="/lovable-uploads/9146d464-2db5-40b1-9b68-6c1fde9de4a5.png" alt="Profissional de saúde trabalhando com laptop em clínica - Sistema SALUS" className="w-full h-48 object-cover rounded-2xl shadow-xl" />
                   <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent rounded-2xl"></div>
                   <div className="absolute bottom-4 left-4 text-white">
                     <div className="bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2">
@@ -77,17 +70,8 @@ export const SalesHero = () => {
                 </div>
 
                 {/* Mockup cards do sistema */}
-                <div className="bg-white rounded-2xl shadow-2xl p-6 mb-4 transform rotate-2">
-                  <div className="h-4 bg-gray-200 rounded mb-3"></div>
-                  <div className="h-3 bg-gray-100 rounded mb-2"></div>
-                  <div className="h-3 bg-green-200 rounded mb-2"></div>
-                  <div className="h-3 bg-blue-200 rounded"></div>
-                </div>
-                <div className="bg-white rounded-xl shadow-xl p-4 w-32 ml-auto transform -rotate-3 -mt-8">
-                  <div className="h-2 bg-gray-200 rounded mb-2"></div>
-                  <div className="h-2 bg-green-200 rounded mb-2"></div>
-                  <div className="h-2 bg-blue-200 rounded"></div>
-                </div>
+                
+                
               </div>
             </div>
           </div>
@@ -147,6 +131,5 @@ export const SalesHero = () => {
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
