@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Calendar, Users, Clock, FileText, BarChart3, Activity, Stethoscope, UserPlus, Shield, Building2, LogOut, Crown } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
 import { useTriagemList } from '@/hooks/useTriagemList';
-
 const EnterpriseDashboard = ({
   onNavigate,
   selectedPlan,
@@ -23,15 +21,25 @@ const EnterpriseDashboard = ({
   } = useTriagemList();
 
   // Mock data for units - in a real app this would come from the database
-  const units = [
-    { id: 'todas', nome: 'Todas as Unidades' },
-    { id: 'centro', nome: 'Unidade Centro' },
-    { id: 'norte', nome: 'Unidade Norte' },
-    { id: 'sul', nome: 'Unidade Sul' },
-    { id: 'oeste', nome: 'Unidade Oeste' },
-    { id: 'leste', nome: 'Unidade Leste' }
-  ];
-
+  const units = [{
+    id: 'todas',
+    nome: 'Todas as Unidades'
+  }, {
+    id: 'centro',
+    nome: 'Unidade Centro'
+  }, {
+    id: 'norte',
+    nome: 'Unidade Norte'
+  }, {
+    id: 'sul',
+    nome: 'Unidade Sul'
+  }, {
+    id: 'oeste',
+    nome: 'Unidade Oeste'
+  }, {
+    id: 'leste',
+    nome: 'Unidade Leste'
+  }];
   const handleNavigate = section => {
     if (section === 'pacientes') {
       onNavigate('patients');
@@ -41,12 +49,10 @@ const EnterpriseDashboard = ({
       onNavigate('consultation-history');
     }
   };
-
   const handleIniciarAtendimento = paciente => {
     // Navegar para o atendimento com o paciente selecionado
     onNavigate('novo-atendimento');
   };
-
   const getClassificacaoColor = classificacao => {
     switch (classificacao) {
       case 'vermelho':
@@ -63,7 +69,6 @@ const EnterpriseDashboard = ({
         return 'bg-gray-500';
     }
   };
-
   const getTempoEspera = createdAt => {
     const agora = new Date();
     const criacao = new Date(createdAt);
@@ -100,9 +105,7 @@ const EnterpriseDashboard = ({
       };
     }
   };
-
   const unitStats = getUnitStats();
-
   const enterpriseStats = [{
     title: 'Pacientes Cadastrados',
     value: unitStats.pacientes,
@@ -185,16 +188,13 @@ const EnterpriseDashboard = ({
       status: 'confirmado',
       unit: 'oeste'
     }];
-
     if (selectedUnit === 'todas') {
       return allAppointments;
     }
     return allAppointments.filter(appointment => appointment.unit === selectedUnit);
   };
-
   const upcomingAppointments = getFilteredAppointments();
   const enterpriseFeatures = ['Pacientes ilimitados', 'Profissionais ilimitados', 'Múltiplas unidades/filiais', 'Triagem avançada', 'Relatórios executivos', 'Dashboard gerencial', 'API personalizada', 'Integração com sistemas externos', 'Suporte 24/7 dedicado', 'Backup em tempo real', 'Compliance LGPD/HIPAA', 'Treinamento personalizado'];
-  
   return <div className="space-y-6">
       {/* Unit Selector and Plan Header */}
       <div className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-2xl p-8 text-white shadow-xl">
@@ -209,11 +209,9 @@ const EnterpriseDashboard = ({
                     <SelectValue placeholder="Selecionar Unidade" />
                   </SelectTrigger>
                   <SelectContent>
-                    {units.map((unit) => (
-                      <SelectItem key={unit.id} value={unit.id}>
+                    {units.map(unit => <SelectItem key={unit.id} value={unit.id}>
                         {unit.nome}
-                      </SelectItem>
-                    ))}
+                      </SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -224,9 +222,7 @@ const EnterpriseDashboard = ({
             </h2>
             <p className="text-purple-100 text-lg">Para grandes organizações de saúde</p>
             <p className="text-purple-200 text-sm mt-2">
-              {selectedUnit === 'todas' 
-                ? 'Visão geral de todas as unidades' 
-                : `Dados da ${units.find(u => u.id === selectedUnit)?.nome}`}
+              {selectedUnit === 'todas' ? 'Visão geral de todas as unidades' : `Dados da ${units.find(u => u.id === selectedUnit)?.nome}`}
             </p>
           </div>
           <div className="text-right">
@@ -234,18 +230,7 @@ const EnterpriseDashboard = ({
               <Badge className="bg-white text-purple-700 hover:bg-gray-100 text-lg px-4 py-2">
                 Demonstração
               </Badge>
-              <div className="bg-white/10 rounded-lg p-2">
-                <Select value={selectedPlan} onValueChange={onPlanChange}>
-                  <SelectTrigger className="w-[180px] bg-transparent border-white/20 text-white">
-                    <SelectValue placeholder="Selecionar Plano" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="basic">Plano Básico</SelectItem>
-                    <SelectItem value="professional">Plano Profissional</SelectItem>
-                    <SelectItem value="enterprise">Plano Enterprise</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              
               <Button onClick={logout} variant="ghost" className="text-white hover:bg-white/10">
                 <LogOut className="h-4 w-4 mr-2" />
                 Sair
@@ -362,21 +347,15 @@ const EnterpriseDashboard = ({
           <CardHeader>
             <CardTitle className="flex items-center text-xl text-purple-800">
               <Calendar className="mr-2 h-5 w-5" />
-              {selectedUnit === 'todas' 
-                ? 'Agenda Centralizada - Todas as Unidades' 
-                : `Agenda - ${units.find(u => u.id === selectedUnit)?.nome}`}
+              {selectedUnit === 'todas' ? 'Agenda Centralizada - Todas as Unidades' : `Agenda - ${units.find(u => u.id === selectedUnit)?.nome}`}
             </CardTitle>
             <CardDescription>
-              {selectedUnit === 'todas' 
-                ? 'Visão geral de todos os agendamentos' 
-                : 'Agendamentos da unidade selecionada'}
+              {selectedUnit === 'todas' ? 'Visão geral de todos os agendamentos' : 'Agendamentos da unidade selecionada'}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3 max-h-64 overflow-y-auto">
-              {upcomingAppointments.length > 0 ? (
-                upcomingAppointments.map((appointment, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-purple-50 rounded-lg border border-purple-100">
+              {upcomingAppointments.length > 0 ? upcomingAppointments.map((appointment, index) => <div key={index} className="flex items-center justify-between p-3 bg-purple-50 rounded-lg border border-purple-100">
                     <div className="flex items-center space-x-3">
                       <div className="text-sm font-bold text-purple-700 bg-white px-2 py-1 rounded">
                         {appointment.time}
@@ -390,18 +369,12 @@ const EnterpriseDashboard = ({
                     <Badge variant={appointment.status === 'confirmado' ? 'default' : 'secondary'} className="text-xs">
                       {appointment.status === 'confirmado' ? 'Confirmado' : 'Pendente'}
                     </Badge>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-6">
+                  </div>) : <div className="text-center py-6">
                   <Calendar className="h-8 w-8 text-gray-400 mx-auto mb-2" />
                   <p className="text-gray-600 text-sm">
-                    {selectedUnit === 'todas' 
-                      ? 'Nenhum agendamento encontrado' 
-                      : 'Nenhum agendamento para esta unidade'}
+                    {selectedUnit === 'todas' ? 'Nenhum agendamento encontrado' : 'Nenhum agendamento para esta unidade'}
                   </p>
-                </div>
-              )}
+                </div>}
             </div>
             <Button className="w-full mt-4 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800" onClick={() => onNavigate('appointments')}>
               Ver Agenda Completa
@@ -414,9 +387,7 @@ const EnterpriseDashboard = ({
           <CardHeader>
             <CardTitle className="text-xl text-purple-800">Pacientes Aguardando</CardTitle>
             <CardDescription>
-              {selectedUnit === 'todas' 
-                ? 'Fila centralizada por prioridade' 
-                : 'Fila da unidade por prioridade'}
+              {selectedUnit === 'todas' ? 'Fila centralizada por prioridade' : 'Fila da unidade por prioridade'}
             </CardDescription>
           </CardHeader>
           <CardContent>
