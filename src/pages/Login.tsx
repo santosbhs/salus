@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Lock, Mail, Eye, EyeOff, Zap, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -166,12 +167,12 @@ const Login = () => {
   const isFormValid = formData.email.trim() !== '' && formData.password.trim() !== '';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Back button */}
         <div className="mb-6">
           <Link to="/">
-            <Button variant="ghost" className="text-white hover:bg-white/10 p-2">
+            <Button variant="ghost" className="text-gray-700 hover:bg-gray-100 p-2">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Voltar
             </Button>
@@ -180,18 +181,18 @@ const Login = () => {
 
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center space-x-3 bg-white/10 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/20">
+          <div className="inline-flex items-center space-x-3 bg-gray-50 rounded-xl px-6 py-3 border border-gray-200">
             <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-400 rounded-lg flex items-center justify-center">
               <Zap className="text-white h-6 w-6" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">SALUS</h1>
-              <p className="text-green-200 text-xs">Healthcare Platform</p>
+              <h1 className="text-2xl font-bold text-gray-900">SALUS</h1>
+              <p className="text-gray-600 text-xs">Healthcare Platform</p>
             </div>
           </div>
         </div>
 
-        <Card className="bg-white/95 backdrop-blur-sm shadow-xl border-0">
+        <Card className="bg-white shadow-xl border border-gray-200">
           <CardHeader className="text-center pb-4">
             <CardTitle className="text-2xl font-bold text-gray-900">
               Entrar
@@ -202,17 +203,23 @@ const Login = () => {
           </CardHeader>
           
           <CardContent className="space-y-6">
-            {/* Test users - simplified */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <p className="text-xs font-medium text-blue-800 mb-2">Contas de teste:</p>
-              <div className="space-y-1">
+            {/* Test users */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm font-medium text-blue-800 mb-3">Usuários de teste disponíveis:</p>
+              <div className="space-y-2">
                 {testUsers.map((user, index) => (
                   <button
                     key={index}
                     onClick={() => fillTestUser(user)}
-                    className="w-full text-left p-2 rounded text-xs hover:bg-blue-100 transition-colors"
+                    className="w-full text-left p-3 rounded bg-white hover:bg-blue-50 border border-blue-100 transition-colors"
                   >
-                    <span className="font-medium">{user.plan}:</span> {user.email}
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <span className="font-medium text-gray-900">{user.plan}</span>
+                        <div className="text-sm text-gray-600">{user.email}</div>
+                      </div>
+                      <span className="text-xs text-blue-600">Clique para preencher</span>
+                    </div>
                   </button>
                 ))}
               </div>
@@ -289,7 +296,7 @@ const Login = () => {
         </Card>
 
         <div className="mt-6 text-center">
-          <p className="text-white/70 text-xs">
+          <p className="text-gray-500 text-xs">
             © 2024 SALUS Healthcare Platform
           </p>
         </div>
