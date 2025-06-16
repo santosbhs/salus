@@ -293,16 +293,7 @@ const Subscription = () => {
             </div>
           </div>
 
-          <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-            <h4 className="font-semibold text-gray-900 mb-2">Como funciona:</h4>
-            <ul className="text-sm text-gray-600 space-y-1">
-              <li>• Escolha seu plano e clique em "Começar teste grátis"</li>
-              <li>• Complete seu cadastro e dados de pagamento no Stripe</li>
-              <li>• Acesso imediato por 30 dias sem cobrança</li>
-              <li>• Após 30 dias, cobrança automática do plano escolhido</li>
-              <li>• Cancele a qualquer momento sem penalidades</li>
-            </ul>
-          </div>
+          
         </div>
 
         {/* Call to Action */}
