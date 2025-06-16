@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { SalesHero } from '@/components/sales/SalesHero';
-import { SalesPricing } from '@/components/sales/SalesPricing';
+import SalesPricing from '@/components/sales/SalesPricing';
 import { SalesTestimonials } from '@/components/sales/SalesTestimonials';
 import { SalesFinalCTA } from '@/components/sales/SalesFinalCTA';
 import { Zap, Mail, Phone } from 'lucide-react';

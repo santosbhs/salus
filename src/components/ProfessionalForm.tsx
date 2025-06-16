@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { useProfessionals } from '@/hooks/useProfessionals';
+import { useProfessionals, Professional } from '@/hooks/useProfessionals';
 
 const professionalSchema = z.object({
   nome: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
@@ -69,7 +69,20 @@ const ProfessionalForm = ({ onBack, onSave }: ProfessionalFormProps) => {
     console.log('Salvando profissional:', data);
     
     try {
-      const newProfessional = await createProfessional(data);
+      // Garantir que os dados obrigatórios estão presentes antes de enviar
+      const professionalData: Omit<Professional, 'id'> = {
+        nome: data.nome,
+        tipo: data.tipo,
+        registro: data.registro,
+        especialidade: data.especialidade,
+        telefone: data.telefone,
+        email: data.email,
+        horario_inicio: data.horario_inicio,
+        horario_fim: data.horario_fim,
+        observacoes: data.observacoes,
+      };
+      
+      const newProfessional = await createProfessional(professionalData);
       
       if (newProfessional) {
         onSave(newProfessional);
