@@ -154,12 +154,12 @@ const ProfessionalDashboard = ({
               <Stethoscope className="mr-2 h-5 w-5 text-red-600" />
               Triagem Avançada
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="min-h-[40px] flex items-center">
               Classificação de risco com protocolo Manchester
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800">
+            <Button className="w-full h-10 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800">
               Iniciar Triagem
             </Button>
           </CardContent>
@@ -171,12 +171,12 @@ const ProfessionalDashboard = ({
               <FileText className="mr-2 h-5 w-5 text-blue-600" />
               Atendimento SOAP
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="min-h-[40px] flex items-center">
               Anamnese completa e prescrições
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
+            <Button className="w-full h-10 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
               Novo Atendimento
             </Button>
           </CardContent>
@@ -188,12 +188,12 @@ const ProfessionalDashboard = ({
               <UserPlus className="mr-2 h-5 w-5 text-blue-600" />
               Equipe de Profissionais
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="min-h-[40px] flex items-center">
               Gerencie sua equipe médica
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
+            <Button variant="outline" className="w-full h-10 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
               Gerenciar Equipe
             </Button>
           </CardContent>
@@ -205,12 +205,12 @@ const ProfessionalDashboard = ({
               <Users className="mr-2 h-5 w-5 text-blue-600" />
               Pacientes
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="min-h-[40px] flex items-center">
               Cadastro e gestão de pacientes
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
+            <Button variant="outline" className="w-full h-10 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
               Gerenciar Pacientes
             </Button>
           </CardContent>
