@@ -1,28 +1,53 @@
 
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Stethoscope, Save, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { useProfessionals } from '@/hooks/useProfessionals';
 
-const ProfessionalForm = ({ onBack, onSave }) => {
+const professionalSchema = z.object({
+  nome: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
+  tipo: z.string().min(1, 'Selecione o tipo de profissional'),
+  registro: z.string().min(3, 'Número de registro é obrigatório'),
+  especialidade: z.string().min(2, 'Especialidade é obrigatória'),
+  telefone: z.string().min(10, 'Telefone deve ter pelo menos 10 dígitos'),
+  email: z.string().email('Email inválido'),
+  horario_inicio: z.string().optional(),
+  horario_fim: z.string().optional(),
+  observacoes: z.string().optional(),
+});
+
+type ProfessionalFormData = z.infer<typeof professionalSchema>;
+
+interface ProfessionalFormProps {
+  onBack: () => void;
+  onSave: (professional: any) => void;
+}
+
+const ProfessionalForm = ({ onBack, onSave }: ProfessionalFormProps) => {
   const { toast } = useToast();
   const { createProfessional, loading } = useProfessionals();
-  const [formData, setFormData] = useState({
-    nome: '',
-    tipo: '',
-    registro: '',
-    especialidade: '',
-    telefone: '',
-    email: '',
-    horario_inicio: '08:00',
-    horario_fim: '18:00',
-    dias_atendimento: [],
-    observacoes: ''
+
+  const form = useForm<ProfessionalFormData>({
+    resolver: zodResolver(professionalSchema),
+    defaultValues: {
+      nome: '',
+      tipo: '',
+      registro: '',
+      especialidade: '',
+      telefone: '',
+      email: '',
+      horario_inicio: '08:00',
+      horario_fim: '18:00',
+      observacoes: '',
+    },
   });
 
   const professionTypes = [
@@ -33,50 +58,33 @@ const ProfessionalForm = ({ onBack, onSave }) => {
     { value: 'fisioterapeuta', label: 'Fisioterapeuta', registro: 'CREFITO' },
     { value: 'enfermeiro', label: 'Enfermeiro', registro: 'COREN' },
     { value: 'farmaceutico', label: 'Farmacêutico', registro: 'CRF' },
-    { value: 'fonoaudiologo', label: 'Fonoaudiólogo', registro: 'CRFa' }
+    { value: 'fonoaudiologo', label: 'Fonoaudiólogo', registro: 'CRFa' },
+    { value: 'terapeutaocupacional', label: 'Terapeuta Ocupacional', registro: 'CREFITO' },
+    { value: 'biomedico', label: 'Biomédico', registro: 'CRBM' },
+    { value: 'veterinario', label: 'Veterinário', registro: 'CRMV' },
+    { value: 'assistentesocial', label: 'Assistente Social', registro: 'CRESS' },
   ];
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log('Salvando profissional:', formData);
+  const onSubmit = async (data: ProfessionalFormData) => {
+    console.log('Salvando profissional:', data);
     
     try {
-      // Validar campos obrigatórios
-      if (!formData.nome || !formData.tipo || !formData.registro || !formData.especialidade || !formData.telefone || !formData.email) {
-        toast({
-          title: "Campos obrigatórios",
-          description: "Preencha todos os campos obrigatórios.",
-          variant: "destructive",
-        });
-        return;
-      }
-      
-      // Salvar no banco de dados via Supabase
-      const newProfessional = await createProfessional(formData);
+      const newProfessional = await createProfessional(data);
       
       if (newProfessional) {
-        if (onSave) {
-          onSave(newProfessional);
-        }
+        onSave(newProfessional);
       }
     } catch (error) {
       console.error("Erro ao salvar profissional:", error);
       toast({
         title: "Erro ao salvar",
-        description: error.message || "Ocorreu um erro ao salvar o profissional.",
+        description: "Ocorreu um erro ao salvar o profissional.",
         variant: "destructive",
       });
     }
   };
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const selectedProfessionType = professionTypes.find(p => p.value === formData.tipo);
+  const selectedProfessionType = professionTypes.find(p => p.value === form.watch('tipo'));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 p-6">
@@ -100,160 +108,189 @@ const ProfessionalForm = ({ onBack, onSave }) => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <Card className="shadow-lg border-emerald-200">
-            <CardHeader>
-              <CardTitle className="text-emerald-800">Dados do Profissional</CardTitle>
-              <CardDescription>
-                Preencha todos os campos obrigatórios para cadastrar o profissional
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="nome">Nome Completo *</Label>
-                  <Input
-                    id="nome"
-                    value={formData.nome}
-                    onChange={(e) => handleInputChange('nome', e.target.value)}
-                    placeholder="Nome completo do profissional"
-                    required
-                    className="mt-1"
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <Card className="shadow-lg border-emerald-200">
+              <CardHeader>
+                <CardTitle className="text-emerald-800">Dados do Profissional</CardTitle>
+                <CardDescription>
+                  Preencha todos os campos obrigatórios para cadastrar o profissional
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="nome"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nome Completo *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Nome completo do profissional" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="tipo"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tipo de Profissional *</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione o tipo" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {professionTypes.map((type) => (
+                              <SelectItem key={type.value} value={type.value}>
+                                {type.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
                 </div>
-                <div>
-                  <Label htmlFor="tipo">Tipo de Profissional *</Label>
-                  <Select
-                    value={formData.tipo}
-                    onValueChange={(value) => handleInputChange('tipo', value)}
-                    required
-                  >
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Selecione o tipo" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {professionTypes.map((type) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="registro">
-                    Número do Registro {selectedProfessionType && `(${selectedProfessionType.registro})`} *
-                  </Label>
-                  <Input
-                    id="registro"
-                    value={formData.registro}
-                    onChange={(e) => handleInputChange('registro', e.target.value)}
-                    placeholder="Ex: 12345-SP"
-                    required
-                    className="mt-1"
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="registro"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Número do Registro {selectedProfessionType && `(${selectedProfessionType.registro})`} *
+                        </FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ex: 12345-SP" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="especialidade"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Especialidade *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Especialidade do profissional" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
                 </div>
-                <div>
-                  <Label htmlFor="especialidade">Especialidade *</Label>
-                  <Input
-                    id="especialidade"
-                    value={formData.especialidade}
-                    onChange={(e) => handleInputChange('especialidade', e.target.value)}
-                    placeholder="Especialidade do profissional"
-                    required
-                    className="mt-1"
-                  />
-                </div>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="telefone">Telefone *</Label>
-                  <Input
-                    id="telefone"
-                    value={formData.telefone}
-                    onChange={(e) => handleInputChange('telefone', e.target.value)}
-                    placeholder="(11) 99999-9999"
-                    required
-                    className="mt-1"
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="telefone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Telefone *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="(11) 99999-9999" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>E-mail *</FormLabel>
+                        <FormControl>
+                          <Input type="email" placeholder="email@clinica.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
                 </div>
-                <div>
-                  <Label htmlFor="email">E-mail *</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    placeholder="email@clinica.com"
-                    required
-                    className="mt-1"
-                  />
-                </div>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="horario_inicio">Horário de Início</Label>
-                  <Input
-                    id="horario_inicio"
-                    type="time"
-                    value={formData.horario_inicio}
-                    onChange={(e) => handleInputChange('horario_inicio', e.target.value)}
-                    className="mt-1"
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="horario_inicio"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Horário de Início</FormLabel>
+                        <FormControl>
+                          <Input type="time" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="horario_fim"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Horário de Fim</FormLabel>
+                        <FormControl>
+                          <Input type="time" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
                 </div>
-                <div>
-                  <Label htmlFor="horario_fim">Horário de Fim</Label>
-                  <Input
-                    id="horario_fim"
-                    type="time"
-                    value={formData.horario_fim}
-                    onChange={(e) => handleInputChange('horario_fim', e.target.value)}
-                    className="mt-1"
-                  />
-                </div>
-              </div>
 
-              <div>
-                <Label htmlFor="observacoes">Observações</Label>
-                <Input
-                  id="observacoes"
-                  value={formData.observacoes}
-                  onChange={(e) => handleInputChange('observacoes', e.target.value)}
-                  placeholder="Observações adicionais sobre o profissional"
-                  className="mt-1"
+                <FormField
+                  control={form.control}
+                  name="observacoes"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Observações</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Observações adicionais sobre o profissional" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          <div className="flex justify-end space-x-4 mt-6">
-            <Button type="button" variant="outline" onClick={onBack} disabled={loading}>
-              Cancelar
-            </Button>
-            <Button 
-              type="submit"
-              className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800"
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Salvando...
-                </>
-              ) : (
-                <>
-                  <Save className="mr-2 h-4 w-4" />
-                  Cadastrar Profissional
-                </>
-              )}
-            </Button>
-          </div>
-        </form>
+            <div className="flex justify-end space-x-4 mt-6">
+              <Button type="button" variant="outline" onClick={onBack} disabled={loading}>
+                Cancelar
+              </Button>
+              <Button 
+                type="submit"
+                className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Salvando...
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" />
+                    Cadastrar Profissional
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </div>
     </div>
   );
