@@ -13,19 +13,18 @@ const SalesPricing = () => {
       icon: Zap,
       price: "97",
       period: "/mês",
-      description: "Para médicos que querem organizar a clínica sem complicação",
-      target: "Ideal para consultórios pequenos (até 2 profissionais)",
+      description: "Ideal para consultórios pequenos",
+      target: "Até 2 profissionais",
       features: [
         "Agenda para 2 profissionais",
         "Prontuário eletrônico CFM",
         "1.000 pacientes cadastrados",
         "Relatórios essenciais",
         "Suporte por email",
-        "Backup automático seguro"
+        "Backup automático"
       ],
       highlight: false,
-      cta: "Começar Teste Grátis",
-      savings: null,
+      cta: "Iniciar Teste Grátis",
       popular: false
     },
     {
@@ -33,21 +32,20 @@ const SalesPricing = () => {
       icon: Star,
       price: "197", 
       period: "/mês",
-      description: "Para clínicas que querem crescer e faturar mais",
-      target: "Perfeito para clínicas em crescimento (até 10 profissionais)",
+      description: "Ideal para clínicas em crescimento",
+      target: "Até 10 profissionais",
       features: [
         "Agenda para 10 profissionais",
         "Prontuário eletrônico completo",
         "Pacientes ilimitados",
-        "Relatórios avançados + BI",
-        "Integração WhatsApp nativa",
-        "Prescrição digital válida",
+        "Relatórios avançados",
+        "Integração WhatsApp",
+        "Prescrição digital",
         "Suporte prioritário",
         "Múltiplas unidades"
       ],
       highlight: true,
-      cta: "Mais Escolhido - 30 Dias Grátis",
-      savings: "Economize R$ 1.200 por ano",
+      cta: "Mais Escolhido",
       popular: true
     },
     {
@@ -55,115 +53,102 @@ const SalesPricing = () => {
       icon: Crown,
       price: "397",
       period: "/mês", 
-      description: "Para hospitais e redes que precisam de máxima performance",
-      target: "Hospitais e grandes redes (profissionais ilimitados)",
+      description: "Para hospitais e grandes redes",
+      target: "Profissionais ilimitados",
       features: [
         "Profissionais ilimitados",
-        "Todas as funcionalidades premium",
-        "API personalizada para integrações",
-        "Relatórios personalizados",
+        "Todas as funcionalidades",
+        "API personalizada",
+        "Relatórios customizados",
         "Gerente de conta dedicado",
-        "Treinamento presencial incluso",
-        "Suporte 24/7 com SLA",
-        "Integração com sistemas existentes"
+        "Treinamento incluso",
+        "Suporte 24/7",
+        "Integrações avançadas"
       ],
       highlight: false,
       cta: "Falar com Especialista",
-      savings: "Consultoria de implementação gratuita",
       popular: false
     }
   ];
 
   return (
-    <section className="py-32 px-6 bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="container mx-auto max-w-7xl">
-        <div className="text-center mb-24">
-          <Badge className="bg-gradient-to-r from-green-100 to-blue-100 text-green-700 px-8 py-3 text-xl font-bold mb-8 border-0">
-            💰 Planos e Preços Especiais
+    <section className="py-20 px-6 bg-white">
+      <div className="container mx-auto max-w-6xl">
+        <div className="text-center mb-16">
+          <Badge className="bg-blue-50 text-blue-700 px-4 py-2 text-sm font-medium mb-6 border-0">
+            Planos e Preços
           </Badge>
-          <h2 className="text-6xl font-bold text-slate-900 mb-10">
-            Pare de Pagar Caro por Sistemas Ruins
+          <h2 className="text-3xl font-bold text-slate-900 mb-4">
+            Escolha o Plano Ideal para sua Clínica
           </h2>
-          <p className="text-3xl text-slate-600 max-w-5xl mx-auto font-medium leading-relaxed">
-            O Salus custa menos que 2 consultas particulares por mês. <br/>
-            <span className="font-bold text-slate-900">Todos os planos com 30 dias grátis</span> - sem cartão, sem compromisso.
+          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+            Todos os planos incluem 30 dias de teste gratuito - sem cartão de crédito
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-10 mb-20">
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
           {plans.map((plan, index) => {
             const Icon = plan.icon;
             return (
               <Card 
                 key={index} 
-                className={`relative overflow-hidden transition-all duration-500 transform hover:-translate-y-6 ${
+                className={`relative overflow-hidden transition-all duration-300 ${
                   plan.highlight 
-                    ? 'border-4 border-blue-500 shadow-3xl scale-110 bg-white' 
-                    : 'border-2 border-slate-200 hover:border-blue-300 shadow-2xl hover:shadow-3xl bg-white'
+                    ? 'border-2 border-blue-500 shadow-lg transform scale-105' 
+                    : 'border border-slate-200 hover:border-blue-300 shadow-md hover:shadow-lg'
                 }`}
               >
                 {plan.highlight && (
-                  <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 text-white text-center py-4 font-bold text-xl">
-                    <Rocket className="inline-block mr-3 h-6 w-6" />
-                    🔥 MAIS ESCOLHIDO - MELHOR CUSTO BENEFÍCIO
+                  <div className="absolute top-0 left-0 right-0 bg-blue-600 text-white text-center py-2 text-sm font-medium">
+                    Mais Escolhido
                   </div>
                 )}
                 
-                <CardHeader className={`text-center ${plan.highlight ? 'pt-20' : 'pt-10'} pb-8`}>
-                  <div className="flex justify-center mb-6">
-                    <div className={`w-20 h-20 rounded-2xl flex items-center justify-center shadow-xl ${
+                <CardHeader className={`text-center ${plan.highlight ? 'pt-12' : 'pt-8'} pb-4`}>
+                  <div className="flex justify-center mb-4">
+                    <div className={`w-16 h-16 rounded-lg flex items-center justify-center ${
                       plan.highlight 
-                        ? 'bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 text-white' 
+                        ? 'bg-blue-600 text-white' 
                         : 'bg-slate-100 text-slate-600'
                     }`}>
-                      <Icon className="h-10 w-10" />
+                      <Icon className="h-8 w-8" />
                     </div>
                   </div>
                   
-                  <CardTitle className="text-4xl font-bold text-slate-900 mb-4">
+                  <CardTitle className="text-2xl font-bold text-slate-900 mb-2">
                     {plan.name}
                   </CardTitle>
                   
-                  <CardDescription className="text-xl text-slate-600 mb-6 font-medium leading-relaxed">
+                  <CardDescription className="text-slate-600 mb-4">
                     {plan.description}
                   </CardDescription>
                   
-                  <div className="mb-6">
-                    <span className="text-6xl font-black text-slate-900">R$ {plan.price}</span>
-                    <span className="text-2xl text-slate-600">{plan.period}</span>
+                  <div className="mb-4">
+                    <span className="text-4xl font-bold text-slate-900">R$ {plan.price}</span>
+                    <span className="text-lg text-slate-600">{plan.period}</span>
                   </div>
                   
-                  <div className="text-xl font-bold text-blue-600 mb-6 bg-blue-50 p-4 rounded-xl">
+                  <div className="text-lg font-medium text-blue-600 bg-blue-50 p-3 rounded-lg">
                     {plan.target}
                   </div>
-                  
-                  {plan.savings && (
-                    <Badge className={`font-bold text-lg py-2 px-4 ${
-                      plan.highlight 
-                        ? 'bg-gradient-to-r from-green-500 to-green-600 text-white' 
-                        : 'bg-green-100 text-green-700'
-                    }`}>
-                      💡 {plan.savings}
-                    </Badge>
-                  )}
                 </CardHeader>
 
-                <CardContent className="px-10 pb-10">
-                  <ul className="space-y-5 mb-10">
+                <CardContent className="px-6 pb-8">
+                  <ul className="space-y-3 mb-8">
                     {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-start space-x-4">
-                        <Check className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
-                        <span className="text-slate-700 font-semibold text-lg">{feature}</span>
+                      <li key={i} className="flex items-center space-x-3">
+                        <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+                        <span className="text-slate-700">{feature}</span>
                       </li>
                     ))}
                   </ul>
 
                   <Link to="/subscription" className="block">
                     <Button 
-                      className={`w-full py-6 text-xl font-bold rounded-2xl transition-all duration-300 ${
+                      className={`w-full py-3 font-semibold ${
                         plan.highlight
-                          ? 'bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 hover:from-blue-700 hover:via-purple-700 hover:to-green-700 text-white shadow-2xl hover:shadow-3xl transform hover:scale-105'
-                          : 'bg-slate-900 hover:bg-slate-800 text-white shadow-xl hover:shadow-2xl'
+                          ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                          : 'bg-slate-900 hover:bg-slate-800 text-white'
                       }`}
                     >
                       {plan.cta}
@@ -175,27 +160,26 @@ const SalesPricing = () => {
           })}
         </div>
 
-        {/* Enhanced guarantee section */}
-        <div className="bg-white rounded-3xl p-16 text-center border-2 border-slate-200 shadow-2xl">
-          <h3 className="text-4xl font-bold text-slate-900 mb-8">
-            🛡️ Garantia Total de Satisfação
+        {/* Guarantee section */}
+        <div className="bg-slate-50 rounded-lg p-8 text-center border border-slate-200">
+          <h3 className="text-2xl font-bold text-slate-900 mb-4">
+            Garantia de Satisfação
           </h3>
-          <p className="text-2xl text-slate-600 mb-10 max-w-4xl mx-auto font-medium">
-            Teste o Salus por <span className="font-bold text-slate-900">30 dias completos</span>. 
-            Se não ficar 100% satisfeito, devolvemos todo seu dinheiro.
+          <p className="text-lg text-slate-600 mb-6 max-w-2xl mx-auto">
+            Teste o Salus por 30 dias completos. Se não ficar satisfeito, devolvemos seu dinheiro.
           </p>
-          <div className="flex justify-center items-center space-x-16 text-slate-600">
-            <div className="flex items-center space-x-3">
-              <Check className="h-8 w-8 text-green-600" />
-              <span className="font-bold text-xl">Sem fidelidade</span>
+          <div className="flex justify-center items-center space-x-8 text-slate-600">
+            <div className="flex items-center space-x-2">
+              <Check className="h-5 w-5 text-green-600" />
+              <span className="font-medium">Sem fidelidade</span>
             </div>
-            <div className="flex items-center space-x-3">
-              <Check className="h-8 w-8 text-green-600" />
-              <span className="font-bold text-xl">Cancele quando quiser</span>
+            <div className="flex items-center space-x-2">
+              <Check className="h-5 w-5 text-green-600" />
+              <span className="font-medium">Cancele quando quiser</span>
             </div>
-            <div className="flex items-center space-x-3">
-              <Check className="h-8 w-8 text-green-600" />
-              <span className="font-bold text-xl">Suporte especializado</span>
+            <div className="flex items-center space-x-2">
+              <Check className="h-5 w-5 text-green-600" />
+              <span className="font-medium">Suporte especializado</span>
             </div>
           </div>
         </div>
