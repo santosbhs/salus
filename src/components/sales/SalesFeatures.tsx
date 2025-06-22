@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { Calendar, FileText, Users, TrendingUp, Shield, Heart, Clock, Award, Zap, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Link } from 'react-router-dom';
 
 export const SalesFeatures = () => {
   const features = [
