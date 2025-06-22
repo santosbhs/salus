@@ -7,7 +7,7 @@ import { SalesFinalCTA } from '@/components/sales/SalesFinalCTA';
 import { SalesFeatures } from '@/components/sales/SalesFeatures';
 import { SalesPlatformPreview } from '@/components/sales/SalesPlatformPreview';
 import { SalesScreenshots } from '@/components/sales/SalesScreenshots';
-import { Stethoscope, Mail, Phone, MapPin } from 'lucide-react';
+import { Zap, Mail, Phone, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
@@ -18,12 +18,12 @@ const Sales = () => {
       <header className="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between max-w-7xl">
           <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Stethoscope className="text-white h-7 w-7" />
+            <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-400 rounded-lg flex items-center justify-center">
+              <Zap className="text-white h-7 w-7" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">SALUS</h1>
-              <p className="text-sm text-slate-600 font-medium">Sistema de Gestão Médica</p>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">SALUS</h1>
+              <p className="text-sm text-green-600 font-medium">Sistema de Gestão Médica</p>
             </div>
           </div>
           <div className="flex items-center space-x-4">
@@ -33,7 +33,7 @@ const Sales = () => {
               </Button>
             </Link>
             <Link to="/subscription">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold shadow-sm transition-all duration-300">
+              <Button className="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white px-8 py-3 rounded-lg font-semibold shadow-sm transition-all duration-300">
                 Teste Gratuito
               </Button>
             </Link>
@@ -81,11 +81,11 @@ const Sales = () => {
           <div className="grid md:grid-cols-4 gap-8 mb-12">
             <div className="space-y-6">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <Stethoscope className="text-white h-7 w-7" />
+                <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-400 rounded-lg flex items-center justify-center">
+                  <Zap className="text-white h-7 w-7" />
                 </div>
                 <div>
-                  <span className="text-2xl font-bold">SALUS</span>
+                  <span className="text-2xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">SALUS</span>
                   <p className="text-slate-400 text-sm">Sistema de Gestão Médica</p>
                 </div>
               </div>

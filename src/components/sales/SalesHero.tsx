@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Check, ChevronRight, Calendar, FileText, MessageSquare, BarChart3, FileCheck, Shield } from 'lucide-react';
+import { Check, ChevronRight, Calendar, FileText, MessageSquare, BarChart3, FileCheck, Shield, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
@@ -16,6 +16,17 @@ export const SalesHero = () => {
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left content */}
           <div className="space-y-8">
+            {/* Logo/Brand Section */}
+            <div className="flex items-center space-x-4 mb-8">
+              <div className="w-16 h-16 bg-gradient-to-r from-green-400 to-blue-400 rounded-xl flex items-center justify-center">
+                <Zap className="text-white h-9 w-9" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">SALUS</h1>
+                <p className="text-green-600 text-lg font-medium">Healthcare Platform</p>
+              </div>
+            </div>
+            
             {/* Professional badge */}
             <Badge variant="outline" className="w-fit bg-blue-50 border-blue-200 text-blue-700 px-4 py-2 text-sm font-medium">
               Plataforma Líder em Gestão Médica
@@ -23,13 +34,13 @@ export const SalesHero = () => {
             
             {/* Main headline */}
             <div className="space-y-6">
-              <h1 className="text-5xl md:text-6xl font-bold leading-tight tracking-tight">
+              <h2 className="text-5xl md:text-6xl font-bold leading-tight tracking-tight">
                 <span className="text-slate-900 block">Sistema Completo</span>
                 <span className="text-slate-900 block">para</span>
                 <span className="bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent block">
                   Gestão Médica
                 </span>
-              </h1>
+              </h2>
               
               <p className="text-xl text-slate-600 leading-relaxed max-w-xl">
                 Plataforma integrada para otimizar processos clínicos, aumentar eficiência operacional e melhorar a experiência do paciente.
@@ -58,7 +69,7 @@ export const SalesHero = () => {
             {/* CTA */}
             <div className="flex flex-col sm:flex-row gap-4 pt-6">
               <Link to="/subscription">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-10 py-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 font-semibold">
+                <Button size="lg" className="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white text-lg px-10 py-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 font-semibold">
                   Iniciar Teste Gratuito
                   <ChevronRight className="ml-2 h-5 w-5" />
                 </Button>
@@ -97,9 +108,9 @@ export const SalesHero = () => {
         {/* Feature icons section */}
         <div className="mt-24">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">
+            <h3 className="text-3xl font-bold text-slate-900 mb-4">
               Módulos Integrados
-            </h2>
+            </h3>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
               Solução completa para todas as necessidades da sua prática médica
             </p>
@@ -118,7 +129,7 @@ export const SalesHero = () => {
                 <div className={`w-16 h-16 ${feature.color} rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-105 transition-transform duration-300`}>
                   <feature.icon className="h-8 w-8" />
                 </div>
-                <h3 className="font-semibold text-slate-900 text-sm">{feature.name}</h3>
+                <h4 className="font-semibold text-slate-900 text-sm">{feature.name}</h4>
               </div>
             ))}
           </div>
