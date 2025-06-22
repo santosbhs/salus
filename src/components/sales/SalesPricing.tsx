@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Check, Star, Zap, Crown, Rocket } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,11 +13,12 @@ const SalesPricing = () => {
       price: "97",
       period: "/mês",
       description: "Ideal para consultórios pequenos",
-      target: "Até 2 profissionais",
+      target: "1 profissional • 50 pacientes",
       features: [
-        "Agenda para 2 profissionais",
+        "1 profissional",
+        "Até 50 pacientes cadastrados",
         "Prontuário eletrônico CFM",
-        "1.000 pacientes cadastrados",
+        "Agenda básica",
         "Relatórios essenciais",
         "Suporte por email",
         "Backup automático"
@@ -33,16 +33,16 @@ const SalesPricing = () => {
       price: "197", 
       period: "/mês",
       description: "Ideal para clínicas em crescimento",
-      target: "Até 10 profissionais",
+      target: "Até 5 profissionais • 200 pacientes",
       features: [
-        "Agenda para 10 profissionais",
+        "Até 5 profissionais",
+        "Até 200 pacientes cadastrados",
         "Prontuário eletrônico completo",
-        "Pacientes ilimitados",
-        "Relatórios avançados",
+        "Agenda avançada",
+        "Relatórios detalhados",
         "Integração WhatsApp",
         "Prescrição digital",
-        "Suporte prioritário",
-        "Múltiplas unidades"
+        "Suporte prioritário"
       ],
       highlight: true,
       cta: "Mais Escolhido",
@@ -54,9 +54,10 @@ const SalesPricing = () => {
       price: "397",
       period: "/mês", 
       description: "Para hospitais e grandes redes",
-      target: "Profissionais ilimitados",
+      target: "Profissionais ilimitados • Pacientes ilimitados",
       features: [
         "Profissionais ilimitados",
+        "Pacientes ilimitados",
         "Todas as funcionalidades",
         "API personalizada",
         "Relatórios customizados",
@@ -72,7 +73,7 @@ const SalesPricing = () => {
   ];
 
   return (
-    <section className="py-20 px-6 bg-white">
+    <section className="py-16 px-6 bg-white">
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-16">
           <Badge className="bg-blue-50 text-blue-700 px-4 py-2 text-sm font-medium mb-6 border-0">
@@ -128,7 +129,7 @@ const SalesPricing = () => {
                     <span className="text-lg text-slate-600">{plan.period}</span>
                   </div>
                   
-                  <div className="text-lg font-medium text-blue-600 bg-blue-50 p-3 rounded-lg">
+                  <div className="text-sm font-medium text-blue-600 bg-blue-50 p-3 rounded-lg">
                     {plan.target}
                   </div>
                 </CardHeader>
