@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Check, ChevronRight, Calendar, FileText, MessageSquare, BarChart3, FileCheck, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,51 +10,63 @@ export const SalesHero = () => {
   return (
     <div className="bg-white">
       {/* Hero Section */}
-      <section className="py-24 px-4 bg-white">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-8 leading-[1.1] tracking-tight">
-                <span className="bg-gradient-to-r from-blue-800 via-blue-700 to-blue-900 bg-clip-text text-transparent">
-                  Organize sua Clínica,
-                </span>
-                <br />
-                <span className="text-gray-900">Ganhe Tempo e</span>
-                <br />
-                <span className="bg-gradient-to-r from-green-600 via-emerald-600 to-green-700 bg-clip-text text-transparent">
-                  Fidelize Pacientes
-                </span>
-                <span className="block text-2xl md:text-3xl lg:text-4xl mt-4 font-bold text-gray-600 leading-tight">
-                  – Tudo em uma Única Plataforma
-                </span>
-              </h1>
-              <p className="text-xl text-gray-700 mb-10 leading-relaxed font-medium">
+      <section className="py-20 px-4 bg-gradient-to-br from-white via-blue-50/30 to-green-50/20">
+        <div className="container mx-auto max-w-7xl">
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
+            <div className="space-y-8">
+              <div className="space-y-6">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1] tracking-tight">
+                  <span className="bg-gradient-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent block">
+                    Organize sua Clínica,
+                  </span>
+                  <span className="text-gray-900 block">Ganhe Tempo e</span>
+                  <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent block">
+                    Fidelize Pacientes
+                  </span>
+                </h1>
+                
+                <div className="max-w-md">
+                  <p className="text-xl md:text-2xl font-semibold text-gray-700 leading-relaxed">
+                    Tudo em uma Única Plataforma
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-lg text-gray-600 leading-relaxed max-w-xl">
                 Elimine papelada, automatize agendamentos e tenha total controle da sua clínica com o SALUS. 
                 Seus pacientes vão notar a diferença!
               </p>
 
-              <div className="grid grid-cols-2 gap-6 mb-10">
-                <div className="flex items-center">
-                  <Check className="h-5 w-5 text-green-600 mr-3" />
-                  <span className="text-gray-700">Agenda online integrada</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Check className="h-3 w-3 text-white" />
+                  </div>
+                  <span className="text-gray-700 font-medium">Agenda online integrada</span>
                 </div>
-                <div className="flex items-center">
-                  <Check className="h-5 w-5 text-green-600 mr-3" />
-                  <span className="text-gray-700">Prontuário eletrônico seguro</span>
+                <div className="flex items-center space-x-3">
+                  <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Check className="h-3 w-3 text-white" />
+                  </div>
+                  <span className="text-gray-700 font-medium">Prontuário eletrônico seguro</span>
                 </div>
-                <div className="flex items-center">
-                  <Check className="h-5 w-5 text-green-600 mr-3" />
-                  <span className="text-gray-700">Relatórios e controle financeiro</span>
+                <div className="flex items-center space-x-3">
+                  <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Check className="h-3 w-3 text-white" />
+                  </div>
+                  <span className="text-gray-700 font-medium">Relatórios e controle financeiro</span>
                 </div>
-                <div className="flex items-center">
-                  <Check className="h-5 w-5 text-green-600 mr-3" />
-                  <span className="text-gray-700">Suporte dedicado</span>
+                <div className="flex items-center space-x-3">
+                  <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Check className="h-3 w-3 text-white" />
+                  </div>
+                  <span className="text-gray-700 font-medium">Suporte dedicado</span>
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-6">
+              <div className="pt-4">
                 <Link to="/subscription">
-                  <Button size="lg" className="bg-blue-800 hover:bg-blue-900 text-white text-lg px-10 py-4 rounded-lg">
+                  <Button size="lg" className="bg-gradient-to-r from-blue-700 to-blue-800 hover:from-blue-800 hover:to-blue-900 text-white text-lg px-12 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                     Começar Teste Grátis
                     <ChevronRight className="ml-2 h-5 w-5" />
                   </Button>
@@ -61,61 +74,66 @@ export const SalesHero = () => {
               </div>
             </div>
 
-            <div className="relative">
-              <img 
-                src="/lovable-uploads/219bbfd9-3e57-4298-9273-871bf2bf1fe8.png" 
-                alt="Médica profissional usando laptop em consultório" 
-                className="w-full h-auto rounded-lg shadow-xl"
-              />
+            <div className="relative lg:pl-8">
+              <div className="relative">
+                <div className="absolute -inset-4 bg-gradient-to-r from-blue-200 via-purple-200 to-green-200 rounded-2xl blur-lg opacity-30"></div>
+                <img 
+                  src="/lovable-uploads/219bbfd9-3e57-4298-9273-871bf2bf1fe8.png" 
+                  alt="Médica profissional usando laptop em consultório" 
+                  className="relative w-full h-auto rounded-xl shadow-2xl border border-white/20"
+                />
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-24 px-4 bg-gradient-to-br from-gray-50 to-blue-50">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-8">
-            Tudo que sua clínica precisa
-          </h2>
-          <p className="text-xl text-gray-700 mb-16 max-w-3xl mx-auto">
-            Automatize processos, evite erros manuais e melhore a experiência do paciente.
-          </p>
+      <section className="py-20 px-4 bg-gradient-to-br from-gray-50 to-blue-50">
+        <div className="container mx-auto max-w-5xl text-center">
+          <div className="space-y-4 mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+              Tudo que sua clínica precisa
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+              Automatize processos, evite erros manuais e melhore a experiência do paciente.
+            </p>
+          </div>
 
-          <div className="grid md:grid-cols-5 gap-10">
-            <div className="text-center">
-              <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Calendar className="h-10 w-10 text-blue-800" />
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                <Calendar className="h-8 w-8 text-blue-700" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Agenda Online</h3>
+              <h3 className="font-semibold text-gray-900 text-sm">Agenda Online</h3>
             </div>
 
-            <div className="text-center">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FileText className="h-10 w-10 text-green-600" />
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                <FileText className="h-8 w-8 text-green-700" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Prontuário Eletrônico</h3>
+              <h3 className="font-semibold text-gray-900 text-sm">Prontuário Eletrônico</h3>
             </div>
 
-            <div className="text-center">
-              <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <MessageSquare className="h-10 w-10 text-emerald-600" />
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                <MessageSquare className="h-8 w-8 text-emerald-700" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">WhatsApp</h3>
+              <h3 className="font-semibold text-gray-900 text-sm">WhatsApp</h3>
             </div>
 
-            <div className="text-center">
-              <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <BarChart3 className="h-10 w-10 text-purple-600" />
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                <BarChart3 className="h-8 w-8 text-purple-700" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Relatórios</h3>
+              <h3 className="font-semibold text-gray-900 text-sm">Relatórios</h3>
             </div>
 
-            <div className="text-center">
-              <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FileCheck className="h-10 w-10 text-orange-600" />
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                <FileCheck className="h-8 w-8 text-orange-700" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Receitas</h3>
+              <h3 className="font-semibold text-gray-900 text-sm">Receitas</h3>
             </div>
           </div>
         </div>
