@@ -1,143 +1,153 @@
 
 import React from 'react';
-import { Check, ChevronRight, Calendar, FileText, MessageSquare, BarChart3, FileCheck, CreditCard } from 'lucide-react';
+import { Check, ChevronRight, Calendar, FileText, MessageSquare, BarChart3, FileCheck, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 
 export const SalesHero = () => {
   return (
-    <div className="bg-white">
-      {/* Hero Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-white via-blue-50/30 to-green-50/20">
-        <div className="container mx-auto max-w-7xl">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
-            <div className="space-y-8">
-              <div className="space-y-6">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1] tracking-tight">
-                  <span className="bg-gradient-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent block">
-                    Organize sua Clínica,
-                  </span>
-                  <span className="text-gray-900 block">Ganhe Tempo e</span>
-                  <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent block">
-                    Fidelize Pacientes
-                  </span>
-                </h1>
-                
-                <div className="max-w-md">
-                  <p className="text-xl md:text-2xl font-semibold text-gray-700 leading-relaxed">
-                    Tudo em uma Única Plataforma
-                  </p>
-                </div>
-              </div>
-
-              <p className="text-lg text-gray-600 leading-relaxed max-w-xl">
-                Elimine papelada, automatize agendamentos e tenha total controle da sua clínica com o SALUS. 
-                Seus pacientes vão notar a diferença!
+    <section className="relative py-24 px-6 bg-gradient-to-br from-white via-blue-50/30 to-slate-50/50 overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 right-20 w-72 h-72 bg-gradient-to-br from-blue-100/40 to-blue-200/30 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-br from-green-100/40 to-emerald-200/30 rounded-full blur-3xl"></div>
+      </div>
+      
+      <div className="container mx-auto max-w-7xl relative z-10">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left content */}
+          <div className="space-y-8">
+            {/* Badge */}
+            <Badge variant="outline" className="w-fit bg-blue-50 border-blue-200 text-blue-700 px-4 py-2 text-sm font-medium">
+              ✨ Plataforma #1 para Clínicas no Brasil
+            </Badge>
+            
+            {/* Main headline */}
+            <div className="space-y-6">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight">
+                <span className="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 bg-clip-text text-transparent block">
+                  Organize
+                </span>
+                <span className="text-slate-900 block">sua Clínica,</span>
+                <span className="bg-gradient-to-r from-emerald-600 via-green-600 to-emerald-700 bg-clip-text text-transparent block">
+                  Ganhe Tempo
+                </span>
+              </h1>
+              
+              <p className="text-xl md:text-2xl text-slate-600 leading-relaxed max-w-2xl font-medium">
+                Tudo em uma única plataforma integrada. 
+                <span className="text-slate-700 font-semibold"> Seus pacientes vão notar a diferença!</span>
               </p>
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Check className="h-3 w-3 text-white" />
+            {/* Value proposition */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/50 shadow-lg">
+              <p className="text-lg text-slate-700 leading-relaxed mb-6">
+                Elimine papelada, automatize agendamentos e tenha total controle da sua clínica com o SALUS.
+              </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  "Agenda online integrada",
+                  "Prontuário eletrônico seguro", 
+                  "Relatórios e controle financeiro",
+                  "Suporte dedicado brasileiro"
+                ].map((feature, index) => (
+                  <div key={index} className="flex items-center space-x-3">
+                    <div className="w-5 h-5 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="h-3 w-3 text-white" />
+                    </div>
+                    <span className="text-slate-700 font-medium">{feature}</span>
                   </div>
-                  <span className="text-gray-700 font-medium">Agenda online integrada</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Check className="h-3 w-3 text-white" />
-                  </div>
-                  <span className="text-gray-700 font-medium">Prontuário eletrônico seguro</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Check className="h-3 w-3 text-white" />
-                  </div>
-                  <span className="text-gray-700 font-medium">Relatórios e controle financeiro</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Check className="h-3 w-3 text-white" />
-                  </div>
-                  <span className="text-gray-700 font-medium">Suporte dedicado</span>
-                </div>
-              </div>
-
-              <div className="pt-4">
-                <Link to="/subscription">
-                  <Button size="lg" className="bg-gradient-to-r from-blue-700 to-blue-800 hover:from-blue-800 hover:to-blue-900 text-white text-lg px-12 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                    Começar Teste Grátis
-                    <ChevronRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
+                ))}
               </div>
             </div>
 
-            <div className="relative lg:pl-8">
-              <div className="relative">
-                <div className="absolute -inset-4 bg-gradient-to-r from-blue-200 via-purple-200 to-green-200 rounded-2xl blur-lg opacity-30"></div>
+            {/* CTA */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <Link to="/subscription">
+                <Button size="lg" className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-lg px-12 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                  Começar Teste Grátis
+                  <ChevronRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Button size="lg" variant="outline" className="text-slate-700 border-slate-300 hover:bg-slate-50 px-8 py-4 rounded-xl text-lg font-semibold">
+                Ver Demonstração
+              </Button>
+            </div>
+            
+            {/* Trust indicators */}
+            <div className="flex items-center space-x-6 text-sm text-slate-600 pt-4">
+              <div className="flex items-center space-x-2">
+                <Shield className="h-4 w-4 text-green-500" />
+                <span>100% Seguro</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span>Ativação imediata</span>
+              </div>
+              <span>•</span>
+              <span>Sem cartão de crédito</span>
+            </div>
+          </div>
+
+          {/* Right content - Image */}
+          <div className="relative">
+            <div className="relative">
+              {/* Glow effect */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-blue-300/20 via-purple-300/20 to-green-300/20 rounded-3xl blur-2xl animate-pulse"></div>
+              
+              {/* Main image */}
+              <div className="relative bg-white rounded-2xl p-2 shadow-2xl border border-slate-200/50">
                 <img 
                   src="/lovable-uploads/219bbfd9-3e57-4298-9273-871bf2bf1fe8.png" 
-                  alt="Médica profissional usando laptop em consultório" 
-                  className="relative w-full h-auto rounded-xl shadow-2xl border border-white/20"
+                  alt="Médica profissional usando laptop em consultório moderno" 
+                  className="w-full h-auto rounded-xl"
                 />
+              </div>
+              
+              {/* Floating elements */}
+              <div className="absolute -top-4 -right-4 bg-white rounded-xl p-3 shadow-lg border border-slate-100 animate-float">
+                <Calendar className="h-6 w-6 text-blue-600" />
+              </div>
+              <div className="absolute -bottom-4 -left-4 bg-white rounded-xl p-3 shadow-lg border border-slate-100 animate-float" style={{animationDelay: '1s'}}>
+                <FileText className="h-6 w-6 text-green-600" />
               </div>
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-gray-50 to-blue-50">
-        <div className="container mx-auto max-w-5xl text-center">
-          <div className="space-y-4 mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-              Tudo que sua clínica precisa
+        
+        {/* Feature icons section */}
+        <div className="mt-24">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
+              Funcionalidades completas para sua clínica
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Automatize processos, evite erros manuais e melhore a experiência do paciente.
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Automatize processos, evite erros manuais e melhore a experiência do paciente
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                <Calendar className="h-8 w-8 text-blue-700" />
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
+            {[
+              { icon: Calendar, name: "Agenda Online", color: "from-blue-500 to-blue-600" },
+              { icon: FileText, name: "Prontuário Digital", color: "from-green-500 to-green-600" },
+              { icon: MessageSquare, name: "WhatsApp", color: "from-emerald-500 to-emerald-600" },
+              { icon: BarChart3, name: "Relatórios", color: "from-purple-500 to-purple-600" },
+              { icon: FileCheck, name: "Receitas", color: "from-orange-500 to-orange-600" },
+              { icon: Shield, name: "Segurança", color: "from-indigo-500 to-indigo-600" }
+            ].map((feature, index) => (
+              <div key={index} className="text-center group">
+                <div className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                  <feature.icon className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="font-semibold text-slate-900 text-sm">{feature.name}</h3>
               </div>
-              <h3 className="font-semibold text-gray-900 text-sm">Agenda Online</h3>
-            </div>
-
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                <FileText className="h-8 w-8 text-green-700" />
-              </div>
-              <h3 className="font-semibold text-gray-900 text-sm">Prontuário Eletrônico</h3>
-            </div>
-
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                <MessageSquare className="h-8 w-8 text-emerald-700" />
-              </div>
-              <h3 className="font-semibold text-gray-900 text-sm">WhatsApp</h3>
-            </div>
-
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                <BarChart3 className="h-8 w-8 text-purple-700" />
-              </div>
-              <h3 className="font-semibold text-gray-900 text-sm">Relatórios</h3>
-            </div>
-
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                <FileCheck className="h-8 w-8 text-orange-700" />
-              </div>
-              <h3 className="font-semibold text-gray-900 text-sm">Receitas</h3>
-            </div>
+            ))}
           </div>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   );
 };
