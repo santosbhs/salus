@@ -21,12 +21,12 @@ export const SalesHero = () => {
             {/* Main headline */}
             <div className="space-y-6">
               <h1 className="text-4xl md:text-5xl font-bold leading-tight text-slate-900">
-                Sistema de Gestão Médica
+                Sistema de Gestão de Clínicas
                 <span className="block text-blue-600 mt-2">Completo e Integrado</span>
               </h1>
               
               <p className="text-xl text-slate-600 leading-relaxed max-w-lg">
-                Controle total da sua clínica em uma plataforma única. 
+                Controle total da gestão de sua clínica em uma plataforma única. 
                 Agenda, prontuários, relatórios e muito mais.
               </p>
             </div>
@@ -35,7 +35,7 @@ export const SalesHero = () => {
             <div className="space-y-4">
               {[
                 "Agenda sem conflitos de horário",
-                "Prontuário eletrônico certificado CFM",
+                "Prontuário eletrônico certificado",
                 "Relatórios gerenciais em tempo real",
                 "Integração nativa com WhatsApp"
               ].map((benefit, index) => (

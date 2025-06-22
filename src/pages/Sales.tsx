@@ -23,7 +23,7 @@ const Sales = () => {
             </div>
             <div>
               <h1 className="text-xl font-bold text-slate-900">SALUS</h1>
-              <p className="text-sm text-slate-600">Sistema de Gestão Médica</p>
+              <p className="text-sm text-slate-600">Sistema de Gestão de Clínicas</p>
             </div>
           </div>
           <div className="flex items-center space-x-4">
@@ -74,7 +74,7 @@ const Sales = () => {
                 <span className="text-lg font-bold">SALUS</span>
               </div>
               <p className="text-slate-300 text-sm leading-relaxed">
-                Sistema de gestão médica desenvolvido no Brasil para profissionais brasileiros.
+                Sistema de gestão de clínicas desenvolvido no Brasil para profissionais brasileiros da área da saúde.
               </p>
             </div>
             

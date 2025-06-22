@@ -14,7 +14,7 @@ export const SalesFinalCTA = () => {
             Transforme sua Clínica Hoje Mesmo
           </h2>
           <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-            Mais de 5.000 médicos já modernizaram sua gestão com o Salus. 
+            Mais de 5.000 profissionais de saúde já modernizaram sua gestão com o Salus. 
             Chegou a sua vez de oferecer o melhor atendimento.
           </p>
         </div>
@@ -28,7 +28,7 @@ export const SalesFinalCTA = () => {
               ))}
             </div>
             <h3 className="font-bold text-2xl mb-2">5.000+</h3>
-            <p className="text-slate-300">Médicos Satisfeitos</p>
+            <p className="text-slate-300">Profissionais Satisfeitos</p>
           </div>
           
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">

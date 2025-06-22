@@ -18,17 +18,17 @@ export const SalesTestimonials = () => {
     },
     {
       name: "Dra. Fernanda Silva",
-      specialty: "Pediatra",
+      specialty: "Fisioterapeuta",
       location: "Rio de Janeiro, RJ",
       rating: 5,
-      comment: "O Salus me devolveu 3 horas por dia que eu perdia com burocracia. Os pais adoram receber os lembretes automáticos.",
+      comment: "O Salus me devolveu 3 horas por dia que eu perdia com burocracia. Os pacientes adoram receber os lembretes automáticos.",
       highlight: "3h economizadas/dia",
       initials: "FS",
       photo: "https://images.unsplash.com/photo-1594824694996-8c184e7893a7?w=400&h=400&fit=crop&crop=face"
     },
     {
       name: "Dr. Carlos Eduardo",
-      specialty: "Ortopedista",
+      specialty: "Psicólogo",
       location: "Brasília, DF",
       rating: 5,
       comment: "Administro 4 clínicas e o Salus sincroniza tudo perfeitamente. O relatório financeiro me mostrou onde estava perdendo dinheiro.",
@@ -96,7 +96,7 @@ export const SalesTestimonials = () => {
           <div className="grid md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="text-3xl font-bold text-blue-600 mb-2">5.000+</div>
-              <p className="text-gray-700 font-medium">Médicos Ativos</p>
+              <p className="text-gray-700 font-medium">Profissionais Ativos</p>
             </div>
             <div>
               <div className="text-3xl font-bold text-green-600 mb-2">4.9/5</div>
