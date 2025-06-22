@@ -211,11 +211,7 @@ const Subscription = () => {
           <p className="text-xl text-gray-200 max-w-2xl mx-auto mb-8">
             Comece sua jornada digital na medicina agora mesmo. Durante o checkout você pode criar sua conta.
           </p>
-          <div className="p-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl inline-block">
-            <p className="text-green-200 font-medium">
-              ⚡ <strong className="text-white">30 dias gratuitos</strong> → Cadastre-se durante a compra → Cobrança automática após o período de teste
-            </p>
-          </div>
+          
         </div>
 
         {/* Plans Grid */}
