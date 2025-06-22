@@ -1,12 +1,9 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, Star, Shield, Clock, Award, Zap, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
 export const SalesFinalCTA = () => {
-  return (
-    <section className="relative py-20 px-6 bg-slate-900">
+  return <section className="relative py-20 px-6 bg-slate-900">
       <div className="container mx-auto max-w-4xl text-center text-white">
         {/* Main content */}
         <div className="space-y-8 mb-16">
@@ -23,9 +20,7 @@ export const SalesFinalCTA = () => {
         <div className="grid md:grid-cols-4 gap-8 mb-16">
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
             <div className="flex justify-center mb-3">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
-              ))}
+              {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />)}
             </div>
             <h3 className="font-bold text-2xl mb-2">5.000+</h3>
             <p className="text-slate-300">Profissionais Satisfeitos</p>
@@ -59,31 +54,11 @@ export const SalesFinalCTA = () => {
             </Button>
           </Link>
           
-          <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-slate-900 text-lg px-8 py-4 font-semibold">
-            Agendar Demonstração
-          </Button>
+          
         </div>
         
         {/* Final trust indicators */}
-        <div className="flex flex-wrap justify-center items-center gap-8 text-slate-300 text-sm">
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-            <span>✓ Sem cartão de crédito</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-            <span>⚡ Ativação imediata</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-            <span>🎯 Suporte especializado</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-            <span>🔄 Cancelamento fácil</span>
-          </div>
-        </div>
+        
       </div>
-    </section>
-  );
+    </section>;
 };

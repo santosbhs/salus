@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { SalesHero } from '@/components/sales/SalesHero';
 import SalesPricing from '@/components/sales/SalesPricing';
@@ -10,10 +9,8 @@ import { SalesScreenshots } from '@/components/sales/SalesScreenshots';
 import { Zap, Mail, Phone, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-
 const Sales = () => {
-  return (
-    <div className="min-h-screen bg-white">
+  return <div className="min-h-screen bg-white">
       {/* Clean Header */}
       <header className="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between max-w-6xl">
@@ -45,15 +42,11 @@ const Sales = () => {
       <main>
         <SalesHero />
         
-        <section className="py-16 bg-white">
-          <SalesScreenshots />
-        </section>
+        
         
         <SalesFeatures />
         
-        <section className="py-16 bg-white">
-          <SalesPlatformPreview />
-        </section>
+        
         
         <SalesPricing />
         
@@ -129,8 +122,6 @@ const Sales = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Sales;

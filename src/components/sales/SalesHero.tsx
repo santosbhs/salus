@@ -1,22 +1,16 @@
-
 import React from 'react';
 import { Check, ChevronRight, Calendar, FileText, MessageSquare, BarChart3, FileCheck, Shield, Zap, Star, Clock, Users, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
-
 export const SalesHero = () => {
-  return (
-    <section className="relative py-16 px-6 bg-white">
+  return <section className="relative py-16 px-6 bg-white">
       <div className="container mx-auto max-w-6xl">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left content */}
           <div className="space-y-8">
             {/* Professional badge */}
-            <Badge variant="outline" className="w-fit bg-blue-50 border-blue-200 text-blue-700 px-4 py-2 text-sm font-medium rounded-md">
-              <Star className="w-4 h-4 mr-2 text-yellow-500 fill-current" />
-              Confiado por mais de 5.000 profissionais de saúde
-            </Badge>
+            
             
             {/* Main headline */}
             <div className="space-y-6">
@@ -33,17 +27,10 @@ export const SalesHero = () => {
 
             {/* Key benefits */}
             <div className="space-y-4">
-              {[
-                "Agenda sem conflitos de horário",
-                "Prontuário eletrônico certificado",
-                "Relatórios gerenciais em tempo real",
-                "Integração nativa com WhatsApp"
-              ].map((benefit, index) => (
-                <div key={index} className="flex items-center space-x-3">
+              {["Agenda sem conflitos de horário", "Prontuário eletrônico certificado", "Relatórios gerenciais em tempo real", "Integração nativa com WhatsApp"].map((benefit, index) => <div key={index} className="flex items-center space-x-3">
                   <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
                   <span className="text-slate-700 font-medium">{benefit}</span>
-                </div>
-              ))}
+                </div>)}
             </div>
 
             {/* CTA buttons */}
@@ -54,9 +41,7 @@ export const SalesHero = () => {
                   <ChevronRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="text-slate-700 border-slate-300 hover:bg-slate-50 px-8 py-3 text-lg font-semibold">
-                Agendar Demonstração
-              </Button>
+              
             </div>
             
             {/* Trust indicators */}
@@ -79,11 +64,7 @@ export const SalesHero = () => {
           {/* Right content - Platform preview */}
           <div className="relative">
             <div className="bg-white rounded-lg shadow-xl border border-slate-200 p-6">
-              <img 
-                src="/lovable-uploads/219bbfd9-3e57-4298-9273-871bf2bf1fe8.png" 
-                alt="Interface do sistema SALUS" 
-                className="w-full h-auto rounded-md"
-              />
+              <img src="/lovable-uploads/219bbfd9-3e57-4298-9273-871bf2bf1fe8.png" alt="Interface do sistema SALUS" className="w-full h-auto rounded-md" />
               <div className="absolute -top-3 -right-3 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
                 Online
               </div>
@@ -103,25 +84,39 @@ export const SalesHero = () => {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
-            {[
-              { icon: Calendar, name: "Agenda", description: "Inteligente" },
-              { icon: FileText, name: "Prontuário", description: "Digital" },
-              { icon: MessageSquare, name: "WhatsApp", description: "Integrado" },
-              { icon: BarChart3, name: "Relatórios", description: "Automáticos" },
-              { icon: FileCheck, name: "Prescrições", description: "Válidas" },
-              { icon: Shield, name: "Segurança", description: "Total" }
-            ].map((feature, index) => (
-              <div key={index} className="text-center group">
+            {[{
+            icon: Calendar,
+            name: "Agenda",
+            description: "Inteligente"
+          }, {
+            icon: FileText,
+            name: "Prontuário",
+            description: "Digital"
+          }, {
+            icon: MessageSquare,
+            name: "WhatsApp",
+            description: "Integrado"
+          }, {
+            icon: BarChart3,
+            name: "Relatórios",
+            description: "Automáticos"
+          }, {
+            icon: FileCheck,
+            name: "Prescrições",
+            description: "Válidas"
+          }, {
+            icon: Shield,
+            name: "Segurança",
+            description: "Total"
+          }].map((feature, index) => <div key={index} className="text-center group">
                 <div className="w-16 h-16 bg-blue-50 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-100 transition-colors">
                   <feature.icon className="h-8 w-8 text-blue-600" />
                 </div>
                 <h4 className="font-semibold text-slate-900 text-sm mb-1">{feature.name}</h4>
                 <p className="text-xs text-slate-600">{feature.description}</p>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };

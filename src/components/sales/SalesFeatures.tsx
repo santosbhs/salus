@@ -1,57 +1,46 @@
-
 import React from 'react';
 import { Calendar, FileText, Users, TrendingUp, Shield, Heart, Clock, Award, Zap, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
-
 export const SalesFeatures = () => {
-  const features = [
-    {
-      icon: Calendar,
-      title: "Gestão de Agenda",
-      description: "Sistema inteligente de agendamento com confirmações automáticas via WhatsApp e redução significativa de faltas.",
-      benefits: ["Agenda sincronizada", "Lembretes automáticos", "Reagendamento online"],
-      highlight: "Redução de 85% nas faltas"
-    },
-    {
-      icon: FileText,
-      title: "Prontuário Eletrônico",
-      description: "Prontuário digital certificado pelo CFM com assinatura digital válida e backup automático na nuvem.",
-      benefits: ["Certificação CFM", "Assinatura digital", "Backup automático"],
-      highlight: "Certificado CFM"
-    },
-    {
-      icon: Users,
-      title: "Portal do Paciente",
-      description: "Portal exclusivo onde pacientes acessam histórico, documentos e podem agendar consultas online.",
-      benefits: ["Acesso ao histórico", "Documentos organizados", "Agendamento online"],
-      highlight: "Experiência premium"
-    },
-    {
-      icon: TrendingUp,
-      title: "Relatórios Gerenciais",
-      description: "Análises detalhadas de performance com insights para otimização de processos e aumento do faturamento.",
-      benefits: ["Análise de lucratividade", "Métricas em tempo real", "Insights estratégicos"],
-      highlight: "Aumento do faturamento"
-    },
-    {
-      icon: Shield,
-      title: "Segurança e Compliance",
-      description: "Proteção de dados com certificação ISO 27001 e total conformidade com a LGPD.",
-      benefits: ["ISO 27001", "Criptografia avançada", "Conformidade LGPD"],
-      highlight: "Segurança bancária"
-    },
-    {
-      icon: Heart,
-      title: "Prescrição Digital",
-      description: "Receitas digitais com certificação ICP-Brasil, válidas em todas as farmácias do país.",
-      benefits: ["Válida nacionalmente", "Base de medicamentos", "Alertas de interação"],
-      highlight: "ICP-Brasil"
-    }
-  ];
-
-  return (
-    <div className="bg-slate-50 py-20">
+  const features = [{
+    icon: Calendar,
+    title: "Gestão de Agenda",
+    description: "Sistema inteligente de agendamento com confirmações automáticas via WhatsApp e redução significativa de faltas.",
+    benefits: ["Agenda sincronizada", "Lembretes automáticos", "Reagendamento online"],
+    highlight: "Redução de 85% nas faltas"
+  }, {
+    icon: FileText,
+    title: "Prontuário Eletrônico",
+    description: "Prontuário digital certificado pelo CFM com assinatura digital válida e backup automático na nuvem.",
+    benefits: ["Certificação CFM", "Assinatura digital", "Backup automático"],
+    highlight: "Certificado CFM"
+  }, {
+    icon: Users,
+    title: "Portal do Paciente",
+    description: "Portal exclusivo onde pacientes acessam histórico, documentos e podem agendar consultas online.",
+    benefits: ["Acesso ao histórico", "Documentos organizados", "Agendamento online"],
+    highlight: "Experiência premium"
+  }, {
+    icon: TrendingUp,
+    title: "Relatórios Gerenciais",
+    description: "Análises detalhadas de performance com insights para otimização de processos e aumento do faturamento.",
+    benefits: ["Análise de lucratividade", "Métricas em tempo real", "Insights estratégicos"],
+    highlight: "Aumento do faturamento"
+  }, {
+    icon: Shield,
+    title: "Segurança e Compliance",
+    description: "Proteção de dados com certificação ISO 27001 e total conformidade com a LGPD.",
+    benefits: ["ISO 27001", "Criptografia avançada", "Conformidade LGPD"],
+    highlight: "Segurança bancária"
+  }, {
+    icon: Heart,
+    title: "Prescrição Digital",
+    description: "Receitas digitais com certificação ICP-Brasil, válidas em todas as farmácias do país.",
+    benefits: ["Válida nacionalmente", "Base de medicamentos", "Alertas de interação"],
+    highlight: "ICP-Brasil"
+  }];
+  return <div className="bg-slate-50 py-20">
       <div className="container mx-auto max-w-6xl px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold text-slate-900 mb-4">
@@ -63,8 +52,7 @@ export const SalesFeatures = () => {
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {features.map((feature, index) => (
-            <Card key={index} className="bg-white border-0 shadow-md hover:shadow-lg transition-shadow duration-300">
+          {features.map((feature, index) => <Card key={index} className="bg-white border-0 shadow-md hover:shadow-lg transition-shadow duration-300">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between mb-4">
                   <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
@@ -85,45 +73,17 @@ export const SalesFeatures = () => {
                 </CardDescription>
                 
                 <div className="space-y-3">
-                  {feature.benefits.map((benefit, i) => (
-                    <div key={i} className="flex items-center space-x-3 text-slate-700">
+                  {feature.benefits.map((benefit, i) => <div key={i} className="flex items-center space-x-3 text-slate-700">
                       <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
                       <span className="text-sm font-medium">{benefit}</span>
-                    </div>
-                  ))}
+                    </div>)}
                 </div>
               </CardContent>
-            </Card>
-          ))}
+            </Card>)}
         </div>
         
         {/* Stats section */}
-        <div className="bg-white rounded-lg p-8 shadow-md border border-slate-200">
-          <div className="text-center mb-8">
-            <h3 className="text-2xl font-bold text-slate-900 mb-3">
-              Números que Comprovam a Eficiência
-            </h3>
-          </div>
-          
-          <div className="grid md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-3xl font-bold text-blue-600 mb-2">5.000+</div>
-              <p className="text-slate-700 font-medium">Médicos Ativos</p>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-green-600 mb-2">500k+</div>
-              <p className="text-slate-700 font-medium">Pacientes Atendidos</p>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-purple-600 mb-2">99.9%</div>
-              <p className="text-slate-700 font-medium">Disponibilidade</p>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-orange-600 mb-2">4.9/5</div>
-              <p className="text-slate-700 font-medium">Satisfação</p>
-            </div>
-          </div>
-        </div>
+        
         
         {/* CTA section */}
         <div className="text-center mt-16">
@@ -141,9 +101,7 @@ export const SalesFeatures = () => {
                   Começar Teste Gratuito
                 </button>
               </Link>
-              <button className="border-2 border-white text-white hover:bg-white hover:text-blue-600 px-8 py-3 rounded-lg font-semibold transition-colors">
-                Falar com Especialista
-              </button>
+              
             </div>
             
             <div className="flex justify-center items-center space-x-8 mt-6 text-blue-100 text-sm">
@@ -163,6 +121,5 @@ export const SalesFeatures = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
