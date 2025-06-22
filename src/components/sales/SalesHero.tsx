@@ -1,122 +1,137 @@
 
 import React from 'react';
-import { Check, ChevronRight, Calendar, FileText, MessageSquare, BarChart3, FileCheck, Shield, Zap } from 'lucide-react';
+import { Check, ChevronRight, Calendar, FileText, MessageSquare, BarChart3, FileCheck, Shield, Zap, Star, Clock, Users, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 
 export const SalesHero = () => {
   return (
-    <section className="relative py-20 px-6 bg-white overflow-hidden">
+    <section className="relative py-32 px-6 bg-gradient-to-br from-white via-blue-50/20 to-green-50/20 overflow-hidden">
       {/* Professional grid background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-blue-50/30"></div>
-      <div className="absolute inset-0 bg-grid-pattern opacity-20"></div>
+      <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
       
       <div className="container mx-auto max-w-7xl relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-20 items-center">
           {/* Left content */}
-          <div className="space-y-8">
+          <div className="space-y-10 animate-fade-in">
             {/* Logo/Brand Section */}
-            <div className="flex items-center space-x-4 mb-8">
-              <div className="w-16 h-16 bg-gradient-to-r from-green-400 to-blue-400 rounded-xl flex items-center justify-center">
-                <Zap className="text-white h-9 w-9" />
+            <div className="flex items-center space-x-4 mb-12">
+              <div className="w-20 h-20 bg-gradient-to-r from-green-400 to-blue-400 rounded-2xl flex items-center justify-center shadow-lg">
+                <Zap className="text-white h-11 w-11" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">SALUS</h1>
-                <p className="text-green-600 text-lg font-medium">Healthcare Platform</p>
+                <h1 className="text-5xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">SALUS</h1>
+                <p className="text-green-600 text-xl font-medium">Sistema de Gestão Médica</p>
               </div>
             </div>
             
             {/* Professional badge */}
-            <Badge variant="outline" className="w-fit bg-blue-50 border-blue-200 text-blue-700 px-4 py-2 text-sm font-medium">
-              Plataforma Líder em Gestão Médica
+            <Badge variant="outline" className="w-fit bg-gradient-to-r from-blue-50 to-green-50 border-blue-200 text-blue-700 px-6 py-3 text-base font-semibold rounded-full">
+              <Star className="w-4 h-4 mr-2" />
+              Mais de 5.000 médicos confiam no Salus
             </Badge>
             
-            {/* Main headline */}
-            <div className="space-y-6">
-              <h2 className="text-5xl md:text-6xl font-bold leading-tight tracking-tight">
-                <span className="text-slate-900 block">Sistema Completo</span>
-                <span className="text-slate-900 block">para</span>
-                <span className="bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent block">
-                  Gestão Médica
+            {/* Main headline - Updated */}
+            <div className="space-y-8">
+              <h2 className="text-6xl md:text-7xl font-bold leading-tight tracking-tight">
+                <span className="text-slate-900 block">Organize sua</span>
+                <span className="text-slate-900 block">Clínica,</span>
+                <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent block">
+                  Ganhe Tempo
+                </span>
+                <span className="text-slate-900 block">e Fidelize</span>
+                <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent block">
+                  Pacientes
                 </span>
               </h2>
               
-              <p className="text-xl text-slate-600 leading-relaxed max-w-xl">
-                Plataforma integrada para otimizar processos clínicos, aumentar eficiência operacional e melhorar a experiência do paciente.
+              <p className="text-2xl text-slate-600 leading-relaxed max-w-2xl font-medium">
+                Agenda, Prontuário e Relatórios – Tudo em um só lugar, fácil e online
               </p>
             </div>
 
-            {/* Value proposition */}
-            <div className="bg-white rounded-lg p-8 border border-slate-200 shadow-sm">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {/* Quick Benefits Section - New */}
+            <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-xl">
+              <h3 className="text-xl font-bold text-slate-900 mb-6">Por que mais de 5.000 médicos escolheram o Salus:</h3>
+              <div className="grid grid-cols-2 gap-6">
                 {[
-                  "Agenda integrada e automatizada",
-                  "Prontuário eletrônico certificado", 
-                  "Relatórios gerenciais completos",
-                  "Suporte especializado 24/7"
-                ].map((feature, index) => (
-                  <div key={index} className="flex items-center space-x-3">
-                    <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Check className="h-3 w-3 text-white" />
+                  { icon: Clock, text: "Menos burocracia", color: "text-green-600" },
+                  { icon: Users, text: "Mais pacientes por dia", color: "text-blue-600" },
+                  { icon: BarChart3, text: "Relatórios automáticos", color: "text-purple-600" },
+                  { icon: MessageSquare, text: "Integração com WhatsApp", color: "text-emerald-600" }
+                ].map((benefit, index) => (
+                  <div key={index} className="flex items-center space-x-3 group">
+                    <div className={`w-8 h-8 ${benefit.color} bg-opacity-10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                      <benefit.icon className={`h-5 w-5 ${benefit.color}`} />
                     </div>
-                    <span className="text-slate-700 font-medium">{feature}</span>
+                    <span className="text-slate-700 font-semibold">{benefit.text}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* CTA */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-6">
+            {/* Enhanced CTA */}
+            <div className="flex flex-col sm:flex-row gap-6 pt-8">
               <Link to="/subscription">
-                <Button size="lg" className="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white text-lg px-10 py-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 font-semibold">
-                  Iniciar Teste Gratuito
-                  <ChevronRight className="ml-2 h-5 w-5" />
+                <Button size="lg" className="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white text-xl px-12 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 font-bold transform hover:scale-105">
+                  Começar Teste Grátis
+                  <ChevronRight className="ml-3 h-6 w-6" />
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="text-slate-700 border-slate-300 hover:bg-slate-50 px-8 py-4 rounded-lg text-lg font-semibold">
-                Solicitar Demonstração
+              <Button size="lg" variant="outline" className="text-slate-700 border-2 border-slate-300 hover:bg-slate-50 px-10 py-6 rounded-xl text-xl font-bold transition-all duration-300 hover:border-blue-400">
+                Ver Demonstração
               </Button>
             </div>
             
             {/* Trust indicators */}
-            <div className="flex items-center space-x-8 text-sm text-slate-600 pt-4">
+            <div className="flex items-center space-x-8 text-slate-600 pt-6">
               <div className="flex items-center space-x-2">
-                <Shield className="h-4 w-4 text-blue-600" />
-                <span>Certificado LGPD</span>
+                <Shield className="h-5 w-5 text-blue-600" />
+                <span className="font-medium">Certificado LGPD</span>
               </div>
               <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span>Setup em 24h</span>
+                <Clock className="h-5 w-5 text-green-600" />
+                <span className="font-medium">Setup em 24h</span>
               </div>
-              <span>Sem taxa de adesão</span>
+              <div className="flex items-center space-x-2">
+                <Award className="h-5 w-5 text-purple-600" />
+                <span className="font-medium">30 dias grátis</span>
+              </div>
             </div>
           </div>
 
           {/* Right content - Professional image */}
-          <div className="relative">
-            <div className="relative bg-white rounded-lg p-3 shadow-lg border border-slate-200">
+          <div className="relative animate-fade-in">
+            <div className="relative bg-white rounded-2xl p-6 shadow-2xl border border-slate-200 transform hover:scale-105 transition-transform duration-500">
               <img 
                 src="/lovable-uploads/219bbfd9-3e57-4298-9273-871bf2bf1fe8.png" 
                 alt="Profissional de saúde utilizando sistema SALUS" 
-                className="w-full h-auto rounded-lg"
+                className="w-full h-auto rounded-xl"
               />
+              {/* Floating elements for visual appeal */}
+              <div className="absolute -top-4 -right-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg animate-gentle-bounce">
+                Online
+              </div>
+              <div className="absolute -bottom-4 -left-4 bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                Seguro
+              </div>
             </div>
           </div>
         </div>
         
         {/* Feature icons section */}
-        <div className="mt-24">
-          <div className="text-center mb-16">
-            <h3 className="text-3xl font-bold text-slate-900 mb-4">
+        <div className="mt-32">
+          <div className="text-center mb-20">
+            <h3 className="text-4xl font-bold text-slate-900 mb-6">
               Módulos Integrados
             </h3>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Solução completa para todas as necessidades da sua prática médica
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-10">
             {[
               { icon: Calendar, name: "Agendamento", color: "bg-blue-100 text-blue-600" },
               { icon: FileText, name: "Prontuário", color: "bg-green-100 text-green-600" },
@@ -125,11 +140,11 @@ export const SalesHero = () => {
               { icon: FileCheck, name: "Prescrições", color: "bg-indigo-100 text-indigo-600" },
               { icon: Shield, name: "Segurança", color: "bg-red-100 text-red-600" }
             ].map((feature, index) => (
-              <div key={index} className="text-center group">
-                <div className={`w-16 h-16 ${feature.color} rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-105 transition-transform duration-300`}>
-                  <feature.icon className="h-8 w-8" />
+              <div key={index} className="text-center group cursor-pointer">
+                <div className={`w-20 h-20 ${feature.color} rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-all duration-300 shadow-lg group-hover:shadow-xl`}>
+                  <feature.icon className="h-10 w-10" />
                 </div>
-                <h4 className="font-semibold text-slate-900 text-sm">{feature.name}</h4>
+                <h4 className="font-bold text-slate-900 text-base group-hover:text-blue-600 transition-colors duration-300">{feature.name}</h4>
               </div>
             ))}
           </div>
