@@ -65,9 +65,7 @@ export const SalesHero = () => {
           <div className="relative">
             <div className="bg-white rounded-lg shadow-xl border border-slate-200 p-6">
               <img src="/lovable-uploads/219bbfd9-3e57-4298-9273-871bf2bf1fe8.png" alt="Interface do sistema SALUS" className="w-full h-auto rounded-md" />
-              <div className="absolute -top-3 -right-3 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                Online
-              </div>
+              
             </div>
           </div>
         </div>
