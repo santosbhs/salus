@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { Monitor, Calendar, FileText, Users, BarChart3, Stethoscope } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Link } from 'react-router-dom';
 import {
   Carousel,
   CarouselContent,
