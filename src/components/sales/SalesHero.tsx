@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Check, ChevronRight, Calendar, FileText, MessageSquare, BarChart3, FileCheck, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,12 +13,21 @@ export const SalesHero = () => {
         <div className="container mx-auto max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h1 className="text-5xl font-bold text-gray-900 mb-8 leading-tight">
-                Organize sua Clínica, Ganhe Tempo e 
-                <span className="text-blue-800"> Fidelize Pacientes</span>
-                <span className="block text-3xl mt-2 text-gray-700">– Tudo em uma Única Plataforma</span>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-8 leading-[1.1] tracking-tight">
+                <span className="bg-gradient-to-r from-blue-800 via-blue-700 to-blue-900 bg-clip-text text-transparent">
+                  Organize sua Clínica,
+                </span>
+                <br />
+                <span className="text-gray-900">Ganhe Tempo e</span>
+                <br />
+                <span className="bg-gradient-to-r from-green-600 via-emerald-600 to-green-700 bg-clip-text text-transparent">
+                  Fidelize Pacientes
+                </span>
+                <span className="block text-2xl md:text-3xl lg:text-4xl mt-4 font-bold text-gray-600 leading-tight">
+                  – Tudo em uma Única Plataforma
+                </span>
               </h1>
-              <p className="text-xl text-gray-700 mb-10 leading-relaxed">
+              <p className="text-xl text-gray-700 mb-10 leading-relaxed font-medium">
                 Elimine papelada, automatize agendamentos e tenha total controle da sua clínica com o SALUS. 
                 Seus pacientes vão notar a diferença!
               </p>
