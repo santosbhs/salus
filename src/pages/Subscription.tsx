@@ -208,9 +208,7 @@ const Subscription = () => {
           <h2 className="text-5xl font-bold text-white mb-6">
             Experimente 30 dias grátis
           </h2>
-          <p className="text-xl text-gray-200 max-w-2xl mx-auto mb-8">
-            Comece sua jornada digital na medicina agora mesmo. Durante o checkout você pode criar sua conta.
-          </p>
+          <p className="text-xl text-gray-200 max-w-2xl mx-auto mb-8">Comece sua jornada digital agora mesmo. Durante o checkout você pode criar sua conta.</p>
           
         </div>
 
