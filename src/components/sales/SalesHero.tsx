@@ -15,11 +15,13 @@ export const SalesHero = () => {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
               <h1 className="text-5xl font-bold text-gray-900 mb-8 leading-tight">
-                SALUS — Gestão inteligente para 
-                <span className="text-blue-800"> clínicas modernas</span>
+                Organize sua Clínica, Ganhe Tempo e 
+                <span className="text-blue-800"> Fidelize Pacientes</span>
+                <span className="block text-3xl mt-2 text-gray-700">– Tudo em uma Única Plataforma</span>
               </h1>
               <p className="text-xl text-gray-700 mb-10 leading-relaxed">
-                Plataforma completa para agendamento, prontuário, integração com WhatsApp e muito mais.
+                Elimine papelada, automatize agendamentos e tenha total controle da sua clínica com o SALUS. 
+                Seus pacientes vão notar a diferença!
               </p>
 
               <div className="grid grid-cols-2 gap-6 mb-10">
