@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, User, Stethoscope, FileText, Save, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -30,42 +31,24 @@ const NovoAtendimento = ({ onBack }) => {
 
   const [patients, setPatients] = useState<Patient[]>([]);
   const [professionals, setProfessionals] = useState<Professional[]>([]);
-  const [loadingPatients, setLoadingPatients] = useState(true);
-  const [authReady, setAuthReady] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
+  const [hasLoadedData, setHasLoadedData] = useState(false);
 
   const { getPatients } = usePatients();
   const { getProfessionals } = useProfessionals();
   const { createConsultation } = useConsultations();
   const { toast } = useToast();
-  const { user, session } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
-  // Aguardar autenticação estar pronta
+  // Carregar dados apenas uma vez quando o usuário estiver autenticado
   useEffect(() => {
-    console.log('🔐 DEBUG: NovoAtendimento - Verificando estado de autenticação');
-    console.log('👤 DEBUG: NovoAtendimento - user:', user);
-    console.log('🎫 DEBUG: NovoAtendimento - session:', session);
-    
-    const currentUser = user || session?.user;
-    
-    if (currentUser) {
-      console.log('✅ DEBUG: NovoAtendimento - Usuário autenticado:', currentUser.id);
-      setAuthReady(true);
-    } else {
-      console.log('⏳ DEBUG: NovoAtendimento - Aguardando autenticação...');
-      setAuthReady(false);
-    }
-  }, [user, session]);
-
-  // Carregar dados apenas quando autenticação estiver pronta
-  useEffect(() => {
-    if (!authReady) {
-      console.log('⏳ DEBUG: NovoAtendimento - Autenticação não está pronta');
+    if (authLoading || !user || hasLoadedData) {
       return;
     }
 
     const loadData = async () => {
-      console.log('📥 DEBUG: NovoAtendimento - Carregando pacientes e profissionais...');
-      setLoadingPatients(true);
+      console.log('📥 Carregando dados do atendimento...');
+      setLoadingData(true);
       
       try {
         const [patientsData, professionalsData] = await Promise.all([
@@ -73,15 +56,14 @@ const NovoAtendimento = ({ onBack }) => {
           getProfessionals()
         ]);
         
-        console.log('✅ DEBUG: NovoAtendimento - Pacientes encontrados:', patientsData);
-        console.log('✅ DEBUG: NovoAtendimento - Profissionais encontrados:', professionalsData);
+        console.log('✅ Dados carregados - Pacientes:', patientsData.length, 'Profissionais:', professionalsData.length);
         
         setPatients(patientsData);
         setProfessionals(professionalsData);
+        setHasLoadedData(true);
       } catch (error) {
-        console.error('❌ DEBUG: NovoAtendimento - Erro ao carregar dados:', error);
+        console.error('❌ Erro ao carregar dados:', error);
         
-        // Só mostrar toast se não for erro de rede
         if (!error?.message?.includes('Failed to fetch')) {
           toast({
             title: "Erro ao carregar dados",
@@ -90,12 +72,12 @@ const NovoAtendimento = ({ onBack }) => {
           });
         }
       } finally {
-        setLoadingPatients(false);
+        setLoadingData(false);
       }
     };
-    
+
     loadData();
-  }, [authReady, getPatients, getProfessionals, toast]);
+  }, [authLoading, user?.id, hasLoadedData]); // Dependências simplificadas e estáveis
 
   const handleSalvar = async () => {
     if (!pacienteSelecionado || !profissionalSelecionado) {
@@ -173,15 +155,15 @@ const NovoAtendimento = ({ onBack }) => {
   const pacienteSelecionadoObj = patients.find(p => p.id === pacienteSelecionado);
   const profissionalSelecionadoObj = professionals.find(p => p.id === profissionalSelecionado);
 
-  // Mostrar loading enquanto autenticação não estiver pronta
-  if (!authReady) {
+  // Mostrar loading enquanto dados não estiverem prontos
+  if (authLoading || loadingData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Carregando...</p>
+              <p className="text-gray-600">Carregando dados do atendimento...</p>
             </div>
           </div>
         </div>
@@ -229,7 +211,7 @@ const NovoAtendimento = ({ onBack }) => {
                     patients={patients}
                     selectedPatient={pacienteSelecionado}
                     onSelectPatient={setPacienteSelecionado}
-                    loading={loadingPatients}
+                    loading={loadingData}
                     label="Paciente"
                     placeholder="Digite o nome, telefone ou CPF do paciente..."
                   />
@@ -258,7 +240,7 @@ const NovoAtendimento = ({ onBack }) => {
                 </div>
                 
                 {/* Aviso se não há dados */}
-                {!loadingPatients && patients.length === 0 && (
+                {!loadingData && patients.length === 0 && (
                   <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <div className="flex items-center">
                       <AlertCircle className="h-5 w-5 text-yellow-600 mr-2" />
