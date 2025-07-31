@@ -59,44 +59,7 @@ const Login = () => {
       }
 
       // Aguardar limpeza completa
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Verificar se é usuário teste e criar/confirmar se necessário
-      const isTestUser = testUsers.find(user => 
-        user.email === formData.email && user.password === formData.password
-      );
-      
-      if (isTestUser) {
-        console.log('Usuário teste detectado, garantindo que existe...');
-        
-        // Tentar criar o usuário (falhará se já existir)
-        try {
-          const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-            email: formData.email,
-            password: formData.password,
-            options: {
-              emailRedirectTo: `${window.location.origin}${isTestUser.redirect}`
-            }
-          });
-          
-          console.log('Resultado do signup:', { signUpData, signUpError });
-          
-          // Tentar confirmar via edge function
-          try {
-            const { data: confirmData, error: confirmError } = await supabase.functions.invoke('confirm-test-users', {
-              body: { email: formData.email }
-            });
-            console.log('Resultado da confirmação:', { confirmData, confirmError });
-          } catch (confirmErr) {
-            console.log('Erro na função de confirmação (continuando):', confirmErr);
-          }
-          
-          // Aguardar processamento
-          await new Promise(resolve => setTimeout(resolve, 2000));
-        } catch (createError) {
-          console.log('Erro ao criar usuário teste (pode já existir):', createError);
-        }
-      }
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       console.log('Tentando fazer login...');
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -112,13 +75,29 @@ const Login = () => {
 
       if (data.user && data.session) {
         console.log('Login bem-sucedido para usuário:', data.user.email);
+        
+        // Buscar o perfil do usuário para determinar o plano
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('plan_type')
+          .eq('user_id', data.user.id)
+          .single();
+
         toast({
           title: "Login realizado com sucesso!",
           description: "Redirecionando para o dashboard...",
         });
         
-        // Redirecionar para o dashboard específico do plano
-        const redirectPath = isTestUser ? isTestUser.redirect : '/dashboard';
+        // Redirecionar baseado no plano do usuário
+        let redirectPath = '/dashboard';
+        if (profile?.plan_type === 'basico') {
+          redirectPath = '/dashboard-basico';
+        } else if (profile?.plan_type === 'profissional') {
+          redirectPath = '/dashboard-profissional';
+        } else if (profile?.plan_type === 'enterprise') {
+          redirectPath = '/dashboard-enterprise';
+        }
+        
         setTimeout(() => {
           window.location.href = redirectPath;
         }, 1000);
@@ -134,6 +113,8 @@ const Login = () => {
         errorMessage = "Email ou senha incorretos";
       } else if (error.message?.includes('Email not confirmed')) {
         errorMessage = "Email não confirmado. Verifique sua caixa de entrada.";
+      } else if (error.message?.includes('503') || error.message?.includes('Failed to fetch')) {
+        errorMessage = "Serviço temporariamente indisponível. Tente novamente em alguns instantes.";
       } else if (error.message) {
         errorMessage = error.message;
       }
