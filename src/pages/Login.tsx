@@ -77,11 +77,28 @@ const Login = () => {
         console.log('Login bem-sucedido para usuário:', data.user.email);
         
         // Buscar o perfil do usuário para determinar o plano
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('plan_type')
           .eq('user_id', data.user.id)
           .single();
+
+        console.log('Perfil encontrado:', { profile, profileError });
+        
+        // Determinar plano baseado no email se não há perfil
+        let planType = profile?.plan_type;
+        if (!planType) {
+          // Fallback baseado no email para usuários de teste
+          if (formData.email === 'admin.basico@teste.com') {
+            planType = 'basico';
+          } else if (formData.email === 'admin.profissional@teste.com') {
+            planType = 'profissional';
+          } else if (formData.email === 'admin.enterprise@teste.com') {
+            planType = 'enterprise';
+          } else {
+            planType = 'basico'; // default
+          }
+        }
 
         toast({
           title: "Login realizado com sucesso!",
@@ -90,13 +107,15 @@ const Login = () => {
         
         // Redirecionar baseado no plano do usuário
         let redirectPath = '/dashboard';
-        if (profile?.plan_type === 'basico') {
+        if (planType === 'basico') {
           redirectPath = '/dashboard-basico';
-        } else if (profile?.plan_type === 'profissional') {
+        } else if (planType === 'profissional') {
           redirectPath = '/dashboard-profissional';
-        } else if (profile?.plan_type === 'enterprise') {
+        } else if (planType === 'enterprise') {
           redirectPath = '/dashboard-enterprise';
         }
+        
+        console.log('Redirecionando para:', redirectPath, 'com plano:', planType);
         
         setTimeout(() => {
           window.location.href = redirectPath;
